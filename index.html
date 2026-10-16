@@ -1,0 +1,65 @@
+
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070b14">
+  <title>So‘fi Ollohyor | Telegram</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #070b14;
+      color: #f5f7ff;
+      font-family: Arial, sans-serif;
+    }
+    main { max-width: 520px; margin: 35px auto; }
+    .card {
+      background: #111c2d;
+      border: 1px solid #30415b;
+      border-radius: 20px;
+      padding: 22px;
+      margin: 14px 0;
+    }
+    h1 { color: #60d8ff; }
+    button {
+      width: 100%;
+      padding: 15px;
+      border: 0;
+      border-radius: 12px;
+      background: #60d8ff;
+      color: #07101d;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="card">
+      <p>✦ SO‘FI OLLOHYOR O‘QUV MARKAZI</p>
+      <h1>Bilim sari qadam!</h1>
+      <p>Darslar, testlar va yutuqlaringiz bir joyda.</p>
+      <button id="start">Ilovani boshlash</button>
+    </div>
+    <div class="card">📅 Dars jadvali</div>
+    <div class="card">⭐ Yulduzlar va reyting</div>
+    <div class="card">📝 Testlar va natijalar</div>
+  </main>
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+    }
+    document.getElementById("start").onclick = () => {
+      if (tg) {
+        tg.showAlert("So‘fi Ollohyor ilovasiga xush kelibsiz!");
+      } else {
+        alert("Xush kelibsiz!");
+      }
+    };
+  </script>
+</body>
+</html>
