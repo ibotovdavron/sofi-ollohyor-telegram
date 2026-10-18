@@ -252,6 +252,100 @@
         "Reytingni chiqarish uchun o‘quvchi profillari va yulduzlar bo‘yicha xavfsiz so‘rov sozlanadi.";
     }
   }
+  
+async function loadStars() {
+  const output = document.getElementById("starsList");
+
+  if (!db) {
+    output.textContent = "Supabase bilan ulanish sozlanmagan.";
+    return;
+  }
+
+  output.textContent = "Reyting yuklanmoqda...";
+
+  const { data, error } = await db
+    .from("student_star_ranking")
+    .select("student_id, full_name, class_name, avatar_url, total_stars")
+    .order("total_stars", { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error("Reyting xatosi:", error.message);
+    output.textContent =
+      "Reyting yuklanmadi. Supabase ruxsatlarini tekshirish kerak.";
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    output.textContent = "Hozircha reytingda o‘quvchilar yo‘q.";
+    return;
+  }
+
+  output.replaceChildren();
+
+  data.forEach((student, index) => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const row = document.createElement("div");
+    row.style.display = "flex";
+    row.style.alignItems = "center";
+    row.style.gap = "12px";
+    row.style.marginBottom = "12px";
+
+    const rank = document.createElement("strong");
+    rank.textContent = `${index + 1}.`;
+    rank.style.minWidth = "24px";
+
+    const avatar = document.createElement("div");
+    avatar.style.width = "48px";
+    avatar.style.height = "48px";
+    avatar.style.borderRadius = "50%";
+    avatar.style.overflow = "hidden";
+    avatar.style.flexShrink = "0";
+    avatar.style.background = "#26364e";
+    avatar.style.display = "grid";
+    avatar.style.placeItems = "center";
+
+    if (student.avatar_url) {
+      const img = document.createElement("img");
+      img.src = student.avatar_url;
+      img.alt = "";
+      img.loading = "lazy";
+      img.referrerPolicy = "no-referrer";
+      img.style.width = "100%";
+      img.style.height = "100%";
+      img.style.objectFit = "cover";
+      img.onerror = () => {
+        avatar.replaceChildren();
+        avatar.textContent = "👤";
+      };
+      avatar.appendChild(img);
+    } else {
+      avatar.textContent = "👤";
+    }
+
+    const details = document.createElement("div");
+    details.style.flex = "1";
+    details.style.minWidth = "0";
+
+    const name = document.createElement("strong");
+    name.textContent = student.full_name || "O‘quvchi";
+
+    const className = document.createElement("p");
+    className.textContent = student.class_name || "Sinf belgilanmagan";
+    className.style.margin = "4px 0 0";
+
+    const stars = document.createElement("strong");
+    stars.textContent = `⭐ ${student.total_stars ?? 0}`;
+
+    details.append(name, className);
+    row.append(rank, avatar, details, stars);
+    card.appendChild(row);
+    output.appendChild(card);
+  });
+}
+  
 
   async function loadSchedule() {
     const output = document.getElementById("scheduleList");
