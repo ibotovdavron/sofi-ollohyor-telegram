@@ -339,7 +339,55 @@ async function loadStars() {
     output.appendChild(card);
   });
 }
-  
+
+  async function loadRanking() {
+  const output = document.getElementById("rankingList");
+
+  if (!db) {
+    output.textContent = "Supabase bilan ulanish sozlanmagan.";
+    return;
+  }
+
+  output.textContent = "Reyting yuklanmoqda...";
+
+  const { data, error } = await db
+    .from("student_star_ranking")
+    .select("student_id, full_name, class_name, avatar_url, total_stars")
+    .order("total_stars", { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error("Reyting xatosi:", error.message);
+    output.textContent = "Reyting yuklanmadi. Supabase ruxsatlarini tekshiring.";
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    output.textContent = "Hozircha reytingda o‘quvchilar yo‘q.";
+    return;
+  }
+
+  output.replaceChildren();
+
+  data.forEach((student, index) => {
+    const card = document.createElement("div");
+    card.className = "notice";
+
+    const name = document.createElement("strong");
+    name.textContent = `${index + 1}. ${student.full_name || "Noma’lum o‘quvchi"}`;
+
+    const stars = document.createElement("p");
+    stars.textContent = `⭐ ${student.total_stars ?? 0} ta yulduz`;
+
+    const classInfo = document.createElement("p");
+    classInfo.textContent = student.class_name
+      ? `Sinf: ${student.class_name}`
+      : "Sinf ko‘rsatilmagan";
+
+    card.append(name, stars, classInfo);
+    output.appendChild(card);
+  });
+  }
 
   async function loadSchedule() {
     const output = document.getElementById("scheduleList");
