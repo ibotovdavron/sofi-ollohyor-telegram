@@ -1,65 +1,463 @@
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070b14">
-  <title>So‘fi Ollohyor | Telegram</title>
+  <meta name="theme-color" content="#080b12">
+  <title>So‘fi Ollohyor | O‘quv markazi</title>
+
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <style>
+    :root {
+      --bg: #080b12;
+      --panel: #111827;
+      --panel2: #172236;
+      --line: #28364b;
+      --text: #f5f7ff;
+      --muted: #9aa9bf;
+      --blue: #61d9ff;
+      --gold: #ffc857;
+      --green: #53dfa5;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      padding: 24px;
-      background: #070b14;
-      color: #f5f7ff;
-      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(ellipse at top, #13233b 0%, var(--bg) 58%);
+      color: var(--text);
+      font-family: system-ui, Arial, sans-serif;
+      min-height: 100vh;
     }
-    main { max-width: 520px; margin: 35px auto; }
-    .card {
-      background: #111c2d;
-      border: 1px solid #30415b;
-      border-radius: 20px;
-      padding: 22px;
-      margin: 14px 0;
+
+    button, input, select, textarea { font: inherit; }
+
+    button { cursor: pointer; }
+
+    .wrap {
+      width: min(100%, 680px);
+      margin: auto;
+      padding: 18px 15px 35px;
     }
-    h1 { color: #60d8ff; }
-    button {
-      width: 100%;
-      padding: 15px;
+
+    .top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0 24px;
+    }
+
+    .logo {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #42607b;
+      border-radius: 17px;
+      background: linear-gradient(145deg, #203a56, #101726);
+      font-size: 27px;
+      box-shadow: 0 0 24px #61d9ff18;
+    }
+
+    .top h1 { margin: 0; font-size: 19px; }
+    .top p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+
+    .hero {
+      padding: 25px 21px;
+      border: 1px solid #36516d;
+      border-radius: 24px;
+      background: linear-gradient(135deg, #172b43, #101622 75%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 11px;
+      letter-spacing: 1.7px;
+      font-weight: 800;
+    }
+
+    .hero h2 { font-size: 29px; line-height: 1.15; margin: 13px 0; }
+    .hero p { color: #bdc9d9; line-height: 1.6; font-size: 14px; }
+
+    .button {
       border: 0;
+      border-radius: 13px;
+      padding: 13px 16px;
+      background: var(--blue);
+      color: #07101b;
+      font-weight: 800;
+    }
+
+    .button.secondary {
+      background: #1b2a40;
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 25px 2px 12px;
+    }
+
+    .section-title h3 { margin: 0; font-size: 17px; }
+    .hint { color: var(--muted); font-size: 12px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
+    }
+
+    .nav-card, .panel, .data-card {
+      background: #111a29eF;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .nav-card {
+      text-align: left;
+      color: var(--text);
+      min-height: 120px;
+      transition: .15s;
+    }
+
+    .nav-card:active { transform: scale(.98); }
+    .nav-card .emoji { font-size: 26px; }
+    .nav-card strong { display: block; margin-top: 12px; font-size: 14px; }
+    .nav-card small { color: var(--muted); display: block; margin-top: 5px; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .data-card { margin-bottom: 10px; }
+    .data-card strong { display: block; margin-bottom: 7px; }
+    .data-card p { margin: 5px 0; color: #c3cfdf; font-size: 13px; overflow-wrap: anywhere; }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #20354a;
+      color: var(--blue);
+      font-size: 11px;
+    }
+
+    .notice {
+      padding: 13px;
+      margin: 10px 0;
       border-radius: 12px;
-      background: #60d8ff;
-      color: #07101d;
-      font-weight: bold;
+      background: #172236;
+      color: #c3cfdf;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .status { color: var(--muted); font-size: 12px; }
+    .error { color: #ff9d9d; }
+    .success { color: var(--green); }
+
+    .back { margin-bottom: 16px; }
+    .empty { text-align: center; padding: 22px 10px; color: var(--muted); }
+
+    .footer {
+      text-align: center;
+      color: #718198;
+      font-size: 11px;
+      margin-top: 30px;
+    }
+
+    @media (max-width: 360px) {
+      .hero h2 { font-size: 25px; }
+      .nav-card { padding: 12px; }
     }
   </style>
 </head>
+
 <body>
-  <main>
-    <div class="card">
-      <p>✦ SO‘FI OLLOHYOR O‘QUV MARKAZI</p>
-      <h1>Bilim sari qadam!</h1>
-      <p>Darslar, testlar va yutuqlaringiz bir joyda.</p>
-      <button id="start">Ilovani boshlash</button>
-    </div>
-    <div class="card">📅 Dars jadvali</div>
-    <div class="card">⭐ Yulduzlar va reyting</div>
-    <div class="card">📝 Testlar va natijalar</div>
-  </main>
+  <div class="wrap">
+    <header class="top">
+      <div class="logo">✦</div>
+      <div>
+        <h1>So‘fi Ollohyor</h1>
+        <p>O‘quv markazi · Bilim sari qadam</p>
+      </div>
+    </header>
+
+    <main>
+      <section id="home" class="page active">
+        <div class="hero">
+          <div class="eyebrow">KELAJAK SARI</div>
+          <h2>Bilim bilan<br>yuksaling!</h2>
+          <p>Dars jadvali, yutuqlar va o‘quv markazi yangiliklari — bir joyda.</p>
+          <button class="button" onclick="openPage('schedule')">
+            Dars jadvalini ko‘rish →
+          </button>
+        </div>
+
+        <div class="section-title">
+          <h3>Ilova bo‘limlari</h3>
+          <span class="tag">SO‘FI OLLOHYOR</span>
+        </div>
+
+        <div class="grid">
+          <button class="nav-card" onclick="openPage('schedule')">
+            <span class="emoji">📅</span>
+            <strong>Dars jadvali</strong>
+            <small>Guruhlar va fanlar</small>
+          </button>
+
+          <button class="nav-card" onclick="openPage('stars')">
+            <span class="emoji">⭐</span>
+            <strong>Yulduzlar</strong>
+            <small>Yutuqlar va mukofotlar</small>
+          </button>
+
+          <button class="nav-card" onclick="openPage('ranking')">
+            <span class="emoji">🏆</span>
+            <strong>Reyting</strong>
+            <small>O‘quvchilar natijalari</small>
+          </button>
+
+          <button class="nav-card" onclick="openPage('news')">
+            <span class="emoji">📢</span>
+            <strong>E’lonlar</strong>
+            <small>Markaz yangiliklari</small>
+          </button>
+
+          <button class="nav-card" onclick="openPage('tests')">
+            <span class="emoji">📝</span>
+            <strong>Testlar</strong>
+            <small>Bilimni mustahkamlash</small>
+          </button>
+
+          <button class="nav-card" onclick="openPage('profile')">
+            <span class="emoji">👤</span>
+            <strong>Profil</strong>
+            <small>Foydalanuvchi ma’lumotlari</small>
+          </button>
+        </div>
+
+        <div class="section-title"><h3>Ulanish holati</h3></div>
+        <div class="panel">
+          <div id="connection" class="status">Supabase ulanishi sozlanmagan.</div>
+          <p class="hint">Ma’lumotlar bazasiga ulanish uchun pastdagi kod sozlamalarini to‘ldirish kerak.</p>
+        </div>
+      </section>
+
+      <section id="schedule" class="page">
+        <button class="button secondary back" onclick="openPage('home')">← Bosh sahifa</button>
+        <div class="section-title"><h3>📅 Dars jadvali</h3></div>
+        <div id="scheduleData"><div class="empty">Ma’lumot yuklanmoqda...</div></div>
+      </section>
+
+      <section id="stars" class="page">
+        <button class="button secondary back" onclick="openPage('home')">← Bosh sahifa</button>
+        <div class="section-title"><h3>⭐ Yulduzlar</h3></div>
+        <div class="notice">O‘quvchilarning yulduzlari va mukofotlari mavjud bazadan yuklanadi. Faqat ruxsat berilgan ma’lumotlar ko‘rsatiladi.</div>
+        <div id="starsData"><div class="empty">Ma’lumot yuklanmoqda...</div></div>
+      </section>
+
+      <section id="ranking" class="page">
+        <button class="button secondary back" onclick="openPage('home')">← Bosh sahifa</button>
+        <div class="section-title"><h3>🏆 Reyting</h3></div>
+        <div class="notice">Reyting faqat bazadagi ruxsat etilgan ma’lumotlardan tuziladi.</div>
+        <div id="rankingData"><div class="empty">Ma’lumot yuklanmoqda...</div></div>
+      </section>
+
+      <section id="news" class="page">
+        <button class="button secondary back" onclick="openPage('home')">← Bosh sahifa</button>
+        <div class="section-title"><h3>📢 E’lonlar</h3></div>
+        <div id="newsData"><div class="empty">Ma’lumot yuklanmoqda...</div></div>
+      </section>
+
+      <section id="tests" class="page">
+        <button class="button secondary back" onclick="openPage('home')">← Bosh sahifa</button>
+        <div class="section-title"><h3>📝 Testlar va natijalar</h3></div>
+        <div class="notice">Testlar uchun mavjud jadvalni aniqlaganimizdan keyin bu bo‘limni to‘liq ishga tushiramiz. Hozircha bazada testlar jadvali aniqlanmagan.</div>
+      </section>
+
+      <section id="profile" class="page">
+        <button class="button secondary back" onclick="openPage('home')">← Bosh sahifa</button>
+        <div class="section-title"><h3>👤 Profil</h3></div>
+        <div class="panel">
+          <p id="profileName">Telegram foydalanuvchisi</p>
+          <p id="profileRole" class="hint">Rol: tasdiqlanmagan</p>
+          <div class="notice">Bu ko‘rinish Telegram profilingizdan ismni olishi mumkin. Supabase’dagi shaxsiy profil va admin huquqlari autentifikatsiya orqali tekshirilishi kerak.</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      So‘fi Ollohyor o‘quv markazi<br>
+      Bilim · Intizom · Natija
+    </footer>
+  </div>
+
   <script>
+    // 1. Bu ikki qiymatni o'zingizning Supabase loyihangizdan kiriting.
+    // Project URL: https://....supabase.co
+    // Publishable key: sb_publishable_... yoki eski anon kaliti.
+    // Secret/service_role kalitini hech qachon bu yerga yozmang.
+    const SUPABASE_URL = "SUPABASE_PROJECT_URLNI_SHU_YERGA_QOYING";
+    const SUPABASE_PUBLISHABLE_KEY = "SUPABASE_PUBLISHABLE_KEYNI_SHU_YERGA_QOYING";
+
     const tg = window.Telegram?.WebApp;
     if (tg) {
       tg.ready();
       tg.expand();
+      try { tg.setHeaderColor("#080b12"); } catch (_) {}
     }
-    document.getElementById("start").onclick = () => {
-      if (tg) {
-        tg.showAlert("So‘fi Ollohyor ilovasiga xush kelibsiz!");
-      } else {
-        alert("Xush kelibsiz!");
+
+    const tgUser = tg?.initDataUnsafe?.user;
+    if (tgUser) {
+      document.getElementById("profileName").textContent =
+        tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "");
+    }
+
+    function openPage(id) {
+      document.querySelectorAll(".page").forEach(page => page.classList.remove("active"));
+      const target = document.getElementById(id);
+      if (target) target.classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      if (id === "schedule") loadTable("schedule_items", "scheduleData");
+      if (id === "stars") loadTable("star_awards", "starsData");
+      if (id === "news") loadTable("announcements", "newsData");
+      if (id === "ranking") loadRanking();
+    }
+
+    function safeValue(value) {
+      if (value === null || value === undefined || value === "") return "—";
+      if (typeof value === "object") return JSON.stringify(value);
+      return String(value);
+    }
+
+    function makeCard(row, omit = []) {
+      const card = document.createElement("div");
+      card.className = "data-card";
+
+      const entries = Object.entries(row).filter(([key]) => !omit.includes(key));
+      const titleEntry = entries.find(([key]) =>
+        /title|name|class|subject|full_name|student/i.test(key)
+      ) || entries[0];
+
+      const title = document.createElement("strong");
+      title.textContent = titleEntry
+        ? safeValue(titleEntry[1])
+        : "Ma’lumot";
+      card.appendChild(title);
+
+      entries.filter(([key]) => !titleEntry || key !== titleEntry[0]).forEach(([key, value]) => {
+        const p = document.createElement("p");
+        p.textContent = key.replaceAll("_", " ") + ": " + safeValue(value);
+        card.appendChild(p);
+      });
+      return card;
+    }
+
+    function isConfigured() {
+      return window.supabase &&
+        SUPABASE_URL.startsWith("https://") &&
+        !SUPABASE_URL.includes("SHU_YERGA") &&
+        SUPABASE_PUBLISHABLE_KEY.length > 20 &&
+        !SUPABASE_PUBLISHABLE_KEY.includes("SHU_YERGA");
+    }
+
+    let db = null;
+    if (isConfigured()) {
+      db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+      document.getElementById("connection").textContent = "Supabase sozlamalari kiritildi; jadval ruxsatlari tekshirilmoqda.";
+    }
+
+    async function loadTable(table, elementId) {
+      const root = document.getElementById(elementId);
+      root.replaceChildren();
+
+      if (!db) {
+        root.textContent = "Supabase URL va Publishable key hali kiritilmagan.";
+        root.className = "notice";
+        return;
       }
-    };
+
+      root.className = "";
+      root.textContent = "Yuklanmoqda...";
+
+      const { data, error } = await db.from(table).select("*").limit(50);
+      root.replaceChildren();
+
+      if (error) {
+        root.className = "notice error";
+        root.textContent = "Ma’lumotni yuklab bo‘lmadi. Jadval nomi yoki RLS ruxsatlarini tekshirish kerak. " + error.message;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        root.className = "empty";
+        root.textContent = "Hozircha ko‘rsatish uchun ma’lumot yo‘q yoki jadval bo‘sh.";
+        return;
+      }
+
+      data.forEach(row => root.appendChild(makeCard(row, ["id"])));
+    }
+
+    async function loadRanking() {
+      const root = document.getElementById("rankingData");
+      root.replaceChildren();
+
+      if (!db) {
+        root.className = "notice";
+        root.textContent = "Avval Supabase URL va Publishable key kiriting.";
+        return;
+      }
+
+      const { data, error } = await db.from("profiles").select("full_name, role").limit(50);
+      if (error) {
+        root.className = "notice error";
+        root.textContent = "Reyting ma’lumotini yuklab bo‘lmadi. RLS ruxsatlarini tekshiring. " + error.message;
+        return;
+      }
+
+      root.className = "";
+      if (!data || !data.length) {
+        root.className = "empty";
+        root.textContent = "Ko‘rsatish uchun profil topilmadi.";
+        return;
+      }
+
+      data.forEach((row, index) => {
+        const card = document.createElement("div");
+        card.className = "data-card";
+        const title = document.createElement("strong");
+        title.textContent = ["🥇", "🥈", "🥉"][index] || "⭐";
+        title.textContent += " " + (row.full_name || "Ismi ko‘rsatilmagan");
+        const role = document.createElement("p");
+        role.textContent = "Rol: " + (row.role || "—");
+        card.append(title, role);
+        root.appendChild(card);
+      });
+
+      const note = document.createElement("div");
+      note.className = "notice";
+      note.textContent = "Bu vaqtinchalik profil ro‘yxati; haqiqiy reytingni yulduzlar ustuni va uning ustun nomlarini tekshirgach hisoblaymiz.";
+      root.appendChild(note);
+    }
+
+    if (!db) {
+      document.getElementById("connection").className = "status";
+      document.getElementById("connection").textContent = "Supabase ulanmagan — URL va Publishable key kerak.";
+    } else {
+      document.getElementById("connection").className = "status success";
+      document.getElementById("connection").textContent = "Supabase mijozi ishga tayyor.";
+    }
   </script>
 </body>
 </html>
