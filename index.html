@@ -244,10 +244,7 @@
 
     if (id === "schedule") loadSchedule();
     if (id === "stars") loadStars();
-    if (id === "ranking") {
-      document.getElementById("rankingList").textContent =
-        "Reytingni chiqarish uchun o‘quvchi profillari va yulduzlar bo‘yicha xavfsiz so‘rov sozlanadi.";
-    }
+    if (id === "ranking") loadRanking();
   }
   
 async function loadStars() {
