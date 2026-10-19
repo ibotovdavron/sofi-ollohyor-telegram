@@ -199,14 +199,41 @@
     <div class="notice">Testlar bo‘limi keyingi bosqichda mavjud testlar bazasiga ulanadi.</div>
   </section>
 
-  <section id="admin" class="hidden">
-    <button onclick="showPage('home')">← Bosh sahifa</button>
-    <h2>🔐 Administrator</h2>
-    <div class="notice">
-      Administrator paneli uchun xavfsiz kirish tizimi sozlanishi kerak.
-      Bu sahifa hozircha ma’lumotlarni o‘zgartirmaydi.
-    </div>
-  </section>
+  
+<section id="admin" class="hidden">
+  <button onclick="showPage('home')">← Bosh sahifa</button>
+  <h2>🔐 Administrator paneli</h2>
+
+  <form id="adminLoginForm" class="card">
+    <label for="adminEmail">Email manzil</label>
+    <input
+      id="adminEmail"
+      type="email"
+      value="ibotovdavron.ok@gmail.com"
+      autocomplete="username"
+      required
+    >
+
+    <label for="adminPassword">Parol</label>
+    <input
+      id="adminPassword"
+      type="password"
+      autocomplete="current-password"
+      placeholder="Supabase parolingiz"
+      required
+    >
+
+    <button class="primary" type="submit">🔐 Kirish</button>
+    <p id="adminLoginStatus" role="status"></p>
+  </form>
+
+  <div id="adminDashboard" class="card hidden">
+    <h3>✅ Administrator tasdiqlandi</h3>
+    <p>So‘fi Ollohyor boshqaruv paneliga xush kelibsiz!</p>
+    <button type="button" onclick="adminLogout()">Chiqish</button>
+  </div>
+</section>
+  
 
   <footer>
     So‘fi Ollohyor o‘quv markazi<br>
