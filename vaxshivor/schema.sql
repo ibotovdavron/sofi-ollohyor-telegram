@@ -84,3 +84,37 @@ create policy "profile_insert" on public.profiles
 drop policy if exists "profile_update" on public.profiles;
 create policy "profile_update" on public.profiles
   for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
+
+-- 5) Baho va sharhlar. Har bir foydalanuvchi bitta e'longa bitta baho beradi.
+create table if not exists public.reviews (
+  id bigint generated always as identity primary key,
+  listing_id bigint not null references public.listings (id) on delete cascade,
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  author_name text not null check (char_length(author_name) between 1 and 80),
+  rating int not null check (rating between 1 and 5),
+  comment text check (char_length(comment) <= 600),
+  created_at timestamptz not null default now(),
+  unique (listing_id, user_id)
+);
+create index if not exists reviews_listing_idx on public.reviews (listing_id);
+alter table public.reviews enable row level security;
+
+drop policy if exists "reviews_read" on public.reviews;
+create policy "reviews_read" on public.reviews
+  for select to anon, authenticated using (true);
+
+-- O'z e'loniga baho berib bo'lmaydi.
+drop policy if exists "reviews_insert" on public.reviews;
+create policy "reviews_insert" on public.reviews
+  for insert to authenticated with check (
+    user_id = auth.uid()
+    and not exists (select 1 from public.listings l where l.id = listing_id and l.user_id = auth.uid())
+  );
+
+drop policy if exists "reviews_update" on public.reviews;
+create policy "reviews_update" on public.reviews
+  for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+drop policy if exists "reviews_delete" on public.reviews;
+create policy "reviews_delete" on public.reviews
+  for delete to authenticated using (user_id = auth.uid() or public.is_admin());

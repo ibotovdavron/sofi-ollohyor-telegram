@@ -436,6 +436,27 @@
     .pbuy { margin-top: auto; display: block; text-align: center; padding: 10px 6px; border-radius: 12px; font-size: 14px; font-weight: 600; background: rgba(59, 130, 246, .16); border-color: transparent; color: #93c5fd; }
     .pbody .pbuy { margin-top: 8px; }
 
+    .prate { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+    .prate b { color: var(--text); font-weight: 600; }
+    .star-on { color: #fbbf24; } .star-off { color: #3b4c66; }
+    .reviews { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); }
+    .reviews h3 { margin: 0 0 10px; }
+    .rsummary { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+    .rsummary .big { font-size: 38px; font-weight: 800; line-height: 1; }
+    .rsummary .stars { font-size: 18px; letter-spacing: 2px; }
+    .rform { background: #0b1321; border: 1px solid var(--border); border-radius: 16px; padding: 12px; margin-bottom: 12px; }
+    .rform textarea { min-height: 70px; margin: 8px 0; }
+    .starpick { display: flex; gap: 4px; }
+    .starpick button { background: none; border: 0; padding: 2px 4px; font-size: 32px; line-height: 1; color: #3b4c66; transition: transform .15s ease, color .15s ease; }
+    .starpick button.on { color: #fbbf24; }
+    .starpick button:active { transform: scale(1.25); }
+    .review { padding: 12px 0; border-top: 1px solid rgba(48, 65, 91, .6); animation: fadeUp .3s ease both; }
+    .review .head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .review .who { font-weight: 600; }
+    .review .stars { font-size: 13px; letter-spacing: 1px; }
+    .review p { margin: 4px 0 0; white-space: pre-line; overflow-wrap: anywhere; }
+    .review .del { margin-left: auto; background: none; border: 0; padding: 2px 6px; color: #8291a8; font-size: 13px; text-decoration: underline; }
+
     @keyframes sheetUp { from { transform: translateY(100%); } to { transform: none; } }
     .sheet-wrap { position: fixed; inset: 0; z-index: 50; display: flex; align-items: flex-end; justify-content: center; background: rgba(3, 7, 14, .65); backdrop-filter: blur(4px); animation: wholeIn .25s ease both; }
     .sheet {
@@ -869,6 +890,7 @@
   let currentUser = null;
   let profile = null;              // profiles jadvalidagi yozuv
   let profileState = "unknown";    // unknown | ok | missing | unavailable
+  let isAdminUser = false;
 
   // ---------- Bo‘limlar sozlamasi ----------
   const KINDS = {
@@ -1030,6 +1052,7 @@
     const actions = el("div", { class: "actions" },
       phone && el("a", { class: "btn success", href: `tel:${phone}` }, "📞 Qo‘ng‘iroq"),
       handle && el("a", { class: "btn", href: `https://t.me/${handle}`, target: "_blank", rel: "noopener" }, "✈️ Telegram"),
+      !admin && el("button", { type: "button", onclick: () => openProduct(item) }, "⭐ Sharhlar"),
       !admin && !own && el("button", { type: "button", onclick: () => shareItem(item) }, "🔗 Ulashish"),
       own && el("button", { type: "button", class: "danger", onclick: () => deleteOwn(item.id) }, "🗑 O‘chirish")
     );
@@ -1048,6 +1071,7 @@
           el("h3", {}, item.title),
           extra.price ? el("div", { class: "price" }, money(extra.price)) : null,
           tags,
+          ratingRow(item),
           item.description ? el("p", { class: "desc" }, item.description) : null,
           el("div", { class: "time" }, `👤 ${item.contact_name || "—"} · ${timeAgo(item.created_at)}`)
         )
@@ -1088,6 +1112,7 @@
     const list = document.getElementById("latestList");
     list.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
     const items = await loadAll();
+    await loadRatings();
 
     countUp("statTotal", items.length);
     countUp("statMasters", items.filter(i => i.kind === "master").length);
@@ -1131,7 +1156,9 @@
     out.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
 
     const q = document.getElementById("searchInput").value.trim().toLowerCase();
-    let items = (await loadAll()).filter(i =>
+    const all = await loadAll();
+    await loadRatings();
+    let items = all.filter(i =>
       i.kind === kind &&
       (currentCategory === "Hammasi" || i.category === currentCategory) &&
       (!q || [i.title, i.description, i.contact_name, ...Object.values(i.extra || {})]
@@ -1195,10 +1222,10 @@
     const box = el("div", { class: "pimg" });
     if (item.photo_url) {
       const img = el("img", { src: item.photo_url, alt: "", loading: "lazy", referrerpolicy: "no-referrer" });
-      img.onerror = () => { img.remove(); box.prepend(useIcon("shop")); };
+      img.onerror = () => { img.remove(); box.prepend(useIcon(item.kind in KINDS ? item.kind : "shop")); };
       box.append(img);
     } else {
-      box.append(useIcon("shop"));
+      box.append(useIcon(item.kind in KINDS ? item.kind : "shop"));
     }
     return box;
   }
@@ -1229,12 +1256,163 @@
       el("div", { class: "pbody" },
         ...priceBlock(item),
         el("div", { class: "ptitle" }, item.title),
+        ratingRow(item),
         el("div", { class: "pseller" }, `🏪 ${(item.extra || {}).location || item.contact_name || "Do‘kon"}`),
         phone
           ? el("a", { class: "btn pbuy", href: `tel:${phone}`, onclick: event => event.stopPropagation() }, "📞 Bog‘lanish")
           : el("button", { type: "button", class: "pbuy" }, "Batafsil")
       )
     );
+  }
+
+  // ---------- Reyting va sharhlar ----------
+  let ratingMap = null;            // e’lon id → { sum, count }
+  let reviewsAvailable = true;
+
+  async function loadRatings(force = false) {
+    if (ratingMap && !force) return ratingMap;
+    const map = new Map();
+    if (db && !demoMode) {
+      const { data, error } = await db.from("reviews").select("listing_id, rating").limit(5000);
+      if (error) {
+        // Jadval hali o‘rnatilmagan bo‘lsa, sayt sharhlarsiz ishlayveradi.
+        console.warn("reviews jadvali o‘qilmadi:", error.message);
+        reviewsAvailable = false;
+      } else {
+        reviewsAvailable = true;
+        for (const r of data || []) {
+          const cur = map.get(r.listing_id) || { sum: 0, count: 0 };
+          cur.sum += r.rating;
+          cur.count++;
+          map.set(r.listing_id, cur);
+        }
+      }
+    }
+    return (ratingMap = map);
+  }
+
+  const ratingOf = item => {
+    const r = ratingMap?.get(item.id);
+    return r ? { avg: r.sum / r.count, count: r.count } : null;
+  };
+
+  function starsEl(value) {
+    const full = Math.round(value);
+    return el("span", { class: "stars", "aria-label": `${value} / 5` },
+      el("span", { class: "star-on" }, "★".repeat(full)),
+      el("span", { class: "star-off" }, "★".repeat(5 - full)));
+  }
+
+  function ratingRow(item) {
+    const r = ratingOf(item);
+    if (!r) return null;
+    return el("div", { class: "prate" },
+      el("span", {}, el("span", { class: "star-on" }, "★ "), el("b", {}, r.avg.toFixed(1))),
+      el("span", {}, `💬 ${r.count}`));
+  }
+
+  async function renderReviews(item, box) {
+    box.replaceChildren(el("h3", {}, "⭐ Baho va sharhlar"));
+
+    if (!db || demoMode || !reviewsAvailable) {
+      box.append(el("p", {}, demoMode ? "Namuna e’lonlarga sharh yozib bo‘lmaydi." : "Sharhlar hozircha mavjud emas."));
+      return;
+    }
+
+    const status = el("p", { role: "status" }, "Yuklanmoqda...");
+    box.append(status);
+    const { data, error } = await db
+      .from("reviews")
+      .select("id, user_id, author_name, rating, comment, created_at")
+      .eq("listing_id", item.id)
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) { status.textContent = "Sharhlar yuklanmadi."; return; }
+    status.remove();
+
+    const reviews = data || [];
+    const mine = currentUser ? reviews.find(r => r.user_id === currentUser.id) : null;
+
+    // Umumiy baho
+    if (reviews.length) {
+      const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+      box.append(el("div", { class: "rsummary" },
+        el("span", { class: "big" }, avg.toFixed(1)),
+        el("div", {}, starsEl(avg), el("div", { class: "time" }, `${reviews.length} ta baho`))));
+    } else {
+      box.append(el("p", {}, "Hali baho berilmagan. Birinchi bo‘lib baholang!"));
+    }
+
+    // Baho berish formasi
+    if (!currentUser) {
+      box.append(el("button", { type: "button", class: "primary", onclick: () => { closeSheet(); go("account"); } },
+        "Baho berish uchun kiring"));
+    } else if (item.user_id && item.user_id === currentUser.id) {
+      box.append(el("p", { class: "time" }, "O‘z e’loningizga baho bera olmaysiz."));
+    } else {
+      let chosen = mine?.rating || 0;
+      const pick = el("div", { class: "starpick", role: "radiogroup", "aria-label": "Baho" });
+      const paint = () => [...pick.children].forEach((b, i) => b.classList.toggle("on", i < chosen));
+      for (let n = 1; n <= 5; n++) {
+        pick.append(el("button", { type: "button", "aria-label": `${n} yulduz`, onclick: () => { chosen = n; paint(); } }, "★"));
+      }
+      paint();
+      const text = el("textarea", { maxlength: "600", placeholder: "Fikringizni yozing (ixtiyoriy)" });
+      text.value = mine?.comment || "";
+      const formStatus = el("p", { role: "status", class: "time" });
+      const save = el("button", { type: "button", class: "primary" }, mine ? "Bahoni yangilash" : "Baho berish");
+      save.addEventListener("click", async () => {
+        if (!chosen) { formStatus.textContent = "Avval yulduzchalardan birini tanlang."; return; }
+        save.disabled = true;
+        formStatus.textContent = "Saqlanmoqda...";
+        const { error: saveError } = await db.from("reviews").upsert({
+          listing_id: item.id,
+          user_id: currentUser.id,
+          author_name: (profile?.full_name || userName(currentUser)).slice(0, 80),
+          rating: chosen,
+          comment: text.value.trim() || null
+        }, { onConflict: "listing_id,user_id" });
+        save.disabled = false;
+        if (saveError) {
+          console.error("Sharh xatosi:", saveError.message);
+          formStatus.textContent = "Saqlanmadi. Birozdan so‘ng qayta urinib ko‘ring.";
+          return;
+        }
+        tg?.HapticFeedback?.notificationOccurred("success");
+        await afterReviewChange(item, box);
+      });
+      box.append(el("div", { class: "rform" },
+        el("strong", {}, mine ? "Sizning bahoyingiz" : "Baho bering"), pick, text, save, formStatus));
+    }
+
+    // Sharhlar ro‘yxati
+    reviews.forEach(r => {
+      const canDelete = currentUser && (r.user_id === currentUser.id || isAdminUser);
+      box.append(el("div", { class: "review" },
+        el("div", { class: "head" },
+          el("span", { class: "who" }, r.author_name || "Foydalanuvchi"),
+          starsEl(r.rating),
+          el("span", { class: "time" }, timeAgo(r.created_at)),
+          canDelete ? el("button", {
+            type: "button", class: "del",
+            onclick: async () => {
+              if (!confirm("Sharh o‘chirilsinmi?")) return;
+              const { error: delError } = await db.from("reviews").delete().eq("id", r.id);
+              if (delError) { alert("O‘chirib bo‘lmadi."); return; }
+              await afterReviewChange(item, box);
+            }
+          }, "O‘chirish") : null),
+        r.comment ? el("p", {}, r.comment) : null));
+    });
+  }
+
+  // Sharh o‘zgargach: reytinglarni yangilab, oynani va orqadagi ro‘yxatni qayta chizamiz.
+  async function afterReviewChange(item, box) {
+    await loadRatings(true);
+    await renderReviews(item, box);
+    const page = location.hash.slice(1) || "home";
+    if (page in KINDS) renderList(page);
+    else if (page === "home") renderHome();
   }
 
   function closeSheet() {
@@ -1249,13 +1427,14 @@
     const handle = tgHandle(item.telegram);
     const image = productImage(item);
     image.append(favButton(item));
+    const reviewsBox = el("div", { class: "reviews" });
 
     const sheet = el("div", { class: "sheet", onclick: event => event.stopPropagation() },
       el("div", { style: "position:relative" },
         image,
         el("button", { type: "button", class: "sheet-close", "aria-label": "Yopish", onclick: closeSheet }, "✕")),
       el("div", { class: "sheet-body" },
-        ...priceBlock(item),
+        ...(extra.price || item.kind === "shop" ? priceBlock(item) : []),
         el("h3", {}, item.title),
         el("div", { class: "meta" },
           el("span", { class: "tag" }, item.category || "Boshqa"),
@@ -1266,9 +1445,11 @@
         el("div", { class: "actions" },
           phone && el("a", { class: "btn success", href: `tel:${phone}` }, "📞 Qo‘ng‘iroq qilish"),
           handle && el("a", { class: "btn", href: `https://t.me/${handle}`, target: "_blank", rel: "noopener" }, "✈️ Telegram"),
-          el("button", { type: "button", onclick: () => shareItem(item) }, "🔗 Ulashish"))
+          el("button", { type: "button", onclick: () => shareItem(item) }, "🔗 Ulashish")),
+        reviewsBox
       )
     );
+    renderReviews(item, reviewsBox);
     wrap.replaceChildren(sheet);
     wrap.onclick = closeSheet;
     wrap.classList.remove("hidden");
@@ -1494,7 +1675,9 @@
   async function loadProfile() {
     profile = null;
     profileState = "unknown";
+    isAdminUser = false;
     if (!db || !currentUser) return;
+    db.rpc("is_admin").then(r => { isAdminUser = !!r.data; }, () => {});
     const { data, error } = await db.from("profiles").select("*").eq("id", currentUser.id).maybeSingle();
     if (error) {
       // Jadval hali o‘rnatilmagan bo‘lsa, sayt ro‘yxatdan o‘tishsiz ishlayveradi.
