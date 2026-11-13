@@ -118,3 +118,40 @@ create policy "reviews_update" on public.reviews
 drop policy if exists "reviews_delete" on public.reviews;
 create policy "reviews_delete" on public.reviews
   for delete to authenticated using (user_id = auth.uid() or public.is_admin());
+
+-- 6) Onlayn taksilar: haydovchining joriy yo'nalishi va joylashuvi.
+create table if not exists public.taxi_live (
+  user_id uuid primary key default auth.uid() references auth.users (id) on delete cascade,
+  driver_name text not null check (char_length(driver_name) between 1 and 80),
+  phone text check (char_length(phone) <= 20),
+  car text check (char_length(car) <= 80),
+  plate text check (char_length(plate) <= 15),
+  from_place text not null check (char_length(from_place) between 1 and 60),
+  to_place text not null check (char_length(to_place) between 1 and 60),
+  seats int check (seats between 0 and 20),
+  lat double precision not null check (lat between -90 and 90),
+  lng double precision not null check (lng between -180 and 180),
+  is_online boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+alter table public.taxi_live enable row level security;
+
+drop policy if exists "taxi_live_read" on public.taxi_live;
+create policy "taxi_live_read" on public.taxi_live
+  for select to anon, authenticated using (true);
+
+-- Faqat "taksi haydovchisi" sifatida ro'yxatdan o'tgan foydalanuvchi o'z joylashuvini yozadi.
+drop policy if exists "taxi_live_insert" on public.taxi_live;
+create policy "taxi_live_insert" on public.taxi_live
+  for insert to authenticated with check (
+    user_id = auth.uid()
+    and exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'taxi')
+  );
+
+drop policy if exists "taxi_live_update" on public.taxi_live;
+create policy "taxi_live_update" on public.taxi_live
+  for update to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+drop policy if exists "taxi_live_delete" on public.taxi_live;
+create policy "taxi_live_delete" on public.taxi_live
+  for delete to authenticated using (user_id = auth.uid() or public.is_admin());
