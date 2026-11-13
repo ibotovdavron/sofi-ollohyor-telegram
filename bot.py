@@ -24,7 +24,7 @@ dp = Dispatcher()
 async def start(message: Message):
     text = (
         f"Assalomu alaykum, {message.from_user.full_name}!\n\n"
-        "So‘fi Ollohyor o‘quv markaziga xush kelibsiz!"
+        "Vaxshivor o‘quv markaziga xush kelibsiz!"
     )
 
     keyboard = None
