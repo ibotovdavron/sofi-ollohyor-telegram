@@ -36,7 +36,8 @@
 
     body {
       margin: 0;
-      background: radial-gradient(ellipse at top, #142743, var(--bg) 70%) fixed;
+      --accent: #3b82f6; --accent2: #1d4ed8;
+      background: radial-gradient(ellipse at top, color-mix(in srgb, var(--accent) 24%, #0a1322), var(--bg) 68%) fixed;
       color: var(--text);
       font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
       min-height: 100vh;
@@ -105,7 +106,7 @@
       flex-shrink: 0; padding: 8px 14px; border-radius: 999px; font-size: 14px;
       background: var(--card2); border: 1px solid #344965;
     }
-    .chip.active { background: #245ba6; border-color: #3b74c4; }
+    .chip.active { background: color-mix(in srgb, var(--accent) 30%, #111c2e); border-color: var(--accent); color: #fff; }
 
     .item { display: flex; gap: 12px; align-items: flex-start; }
     .thumb {
@@ -142,7 +143,7 @@
       font-size: 11px; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px;
     }
     .tabbar button span { font-size: 20px; }
-    .tabbar button.active { color: var(--blue); }
+    .tabbar button.active { color: color-mix(in srgb, var(--accent) 70%, #fff); }
 
     .fab {
       position: fixed; right: max(16px, calc(50% - 304px)); bottom: 86px; z-index: 11;
@@ -491,6 +492,44 @@
     .linkish { background: none; border: 0; color: var(--muted); text-decoration: underline; display: block; margin: 6px auto; }
     .profile-info { margin-top: 12px; }
 
+    /* ---------- Ichki sahifalar: ixcham yuqori panel ---------- */
+    .appbar {
+      position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 10px;
+      padding: calc(8px + env(safe-area-inset-top)) 12px 8px;
+      background: rgba(8, 13, 23, .78); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+    .appbar-inner { width: min(100%, 640px); margin: auto; display: flex; align-items: center; gap: 10px; }
+    .appbar .round { width: 40px; height: 40px; padding: 0; flex-shrink: 0; display: grid; place-items: center; border-radius: 50%; font-size: 20px; background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.08); overflow: hidden; }
+    .appbar .round img { width: 100%; height: 100%; object-fit: cover; }
+    .appbar .round:active { transform: scale(.9); }
+    .appbar .badge {
+      width: 38px; height: 38px; flex-shrink: 0; display: grid; place-items: center; font-size: 19px; color: #fff; border-radius: 12px;
+      background: linear-gradient(145deg, var(--accent), var(--accent2)); box-shadow: 0 6px 14px -6px var(--accent);
+      animation: pop .35s ease;
+    }
+    .appbar .titles { flex: 1; min-width: 0; }
+    .appbar .titles strong { display: block; font-size: 17px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .appbar .titles span { display: block; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    body.inner main { padding-top: 12px; }
+    body.inner #bigHeader { display: none; }
+    body.reg .appbar .round { display: none; }
+    .back { display: none !important; }
+    [data-page]:not(#home) > h2, #listIntro, [data-page]:not(#home) > .subtitle { display: none; }
+    #register > .subtitle { display: block; }
+
+    .fab.primary { background: linear-gradient(145deg, var(--accent), var(--accent2)); border-color: transparent; box-shadow: 0 10px 24px -8px var(--accent), 0 8px 24px rgba(0,0,0,.45); }
+    .tabbar button.active::before { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+
+    .empty { text-align: center; padding: 34px 18px; grid-column: 1 / -1; animation: fadeUp .4s ease both; }
+    .empty .ico {
+      width: 76px; height: 76px; margin: 0 auto 14px; display: grid; place-items: center; font-size: 34px; border-radius: 24px;
+      color: color-mix(in srgb, var(--accent) 75%, #fff); background: color-mix(in srgb, var(--accent) 16%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    }
+    .empty h3 { margin-bottom: 4px; }
+    .empty .btn { margin-top: 12px; background: linear-gradient(145deg, var(--accent), var(--accent2)); border-color: transparent; color: #fff; font-weight: 600; }
+
     footer { text-align: center; margin: 30px 0 10px; font-size: 13px; color: #8291a8; }
   </style>
 </head>
@@ -506,6 +545,9 @@
   <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
   <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
@@ -560,8 +602,16 @@
   try { if (sessionStorage.getItem("introPlayed")) document.getElementById("splash").classList.add("out", "instant"); } catch (e) {}
 </script>
 <div id="offlineBar" class="offline-bar hidden">Internet yo‘q — oxirgi saqlangan sahifa ko‘rsatilmoqda</div>
+<div id="appbar" class="appbar hidden">
+  <div class="appbar-inner">
+    <button type="button" class="round" id="appBack" aria-label="Orqaga" onclick="goBack()"><svg class="i"><use href="#i-back"/></svg></button>
+    <span class="badge" id="appIcon"></span>
+    <div class="titles"><strong id="appTitle"></strong><span id="appSub"></span></div>
+    <button type="button" class="round" id="appAccount" aria-label="Mening hisobim" onclick="go('account')"></button>
+  </div>
+</div>
 <main>
-  <header onclick="go('home')">
+  <header id="bigHeader" onclick="go('home')">
     <div class="logo"><img src="icons/icon-192.png" alt="Vaxshivor logosi" width="60" height="60"></div>
     <div>
       <h1>Vaxshivor</h1>
@@ -1172,9 +1222,13 @@
 
     out.replaceChildren(demoNotice() || "");
     if (items.length === 0) {
-      out.append(el("div", { class: "notice" },
-        isShop && favOnly ? "Saralangan mahsulotlar yo‘q. " : "Hech narsa topilmadi. ",
-        el("a", { href: "#add", class: "price", onclick: () => { addPreset = kind; } }, "E’lon qo‘shing →")));
+      const favEmpty = isShop && favOnly;
+      const searching = !!q || currentCategory !== "Hammasi";
+      out.append(el("div", { class: "empty" },
+        el("div", { class: "ico" }, useIcon(favEmpty ? "heart" : searching ? "search" : kind)),
+        el("h3", {}, favEmpty ? "Saralanganlar bo‘sh" : searching ? "Hech narsa topilmadi" : "Hozircha bo‘sh"),
+        el("p", {}, favEmpty ? "Yoqqan mahsulotdagi yurakchani bosing." : searching ? "Boshqa so‘z yoki tur bilan qidirib ko‘ring." : "Birinchi bo‘lib e’lon qo‘shing — bu bepul."),
+        favEmpty ? null : el("a", { href: "#add", class: "btn", onclick: () => { addPreset = kind; } }, "➕ E’lon qo‘shish")));
       return;
     }
     items.forEach(i => out.append(isShop ? productCard(i) : itemCard(i)));
@@ -1620,6 +1674,11 @@
     } else {
       btn.append("👤 Kirish");
     }
+    const small = document.getElementById("appAccount");
+    const smallPic = currentUser && userAvatar(currentUser);
+    small.replaceChildren(smallPic
+      ? el("img", { src: smallPic, alt: "", referrerpolicy: "no-referrer" })
+      : useIcon("user"));
 
     document.getElementById("addLogin").classList.toggle("hidden", !!currentUser);
     document.getElementById("addForm").classList.toggle("hidden", !currentUser);
@@ -1944,6 +2003,32 @@
     else route();
   }
 
+  const PAGE_META = {
+    home:     { title: "Vaxshivor", sub: "", icon: "home", c: "#3b82f6", c2: "#1d4ed8" },
+    shop:     { title: "Do‘kon", sub: "Mahsulotlar va narxlar", icon: "shop", c: "#22c55e", c2: "#15803d" },
+    master:   { title: "Ustalar", sub: "Bir qo‘ng‘iroq bilan chaqiring", icon: "master", c: "#f59e0b", c2: "#b45309" },
+    taxi:     { title: "Taksi", sub: "Qatnovlar va haydovchilar", icon: "taxi", c: "#eab308", c2: "#a16207" },
+    ad:       { title: "E’lonlar", sub: "Sotish, ijara va xabarlar", icon: "ad", c: "#f43f5e", c2: "#be123c" },
+    job:      { title: "Ish o‘rinlari", sub: "Ish beruvchi va izlovchilar", icon: "job", c: "#8b5cf6", c2: "#6d28d9" },
+    add:      { title: "E’lon qo‘shish", sub: "Tekshiruvdan so‘ng saytda chiqadi", icon: "plus", c: "#3b82f6", c2: "#1d4ed8" },
+    account:  { title: "Mening hisobim", sub: "Profil va e’lonlarim", icon: "user", c: "#06b6d4", c2: "#0e7490" },
+    about:    { title: "Vaxshivor haqida", sub: "Tarixi, So‘fi Olloyor, manzili", icon: "mountain", c: "#14b8a6", c2: "#0f766e" },
+    admin:    { title: "Administrator", sub: "E’lonlarni boshqarish", icon: "lock", c: "#64748b", c2: "#334155" },
+    register: { title: "Ro‘yxatdan o‘tish", sub: "Bir daqiqa vaqt oladi", icon: "user", c: "#3b82f6", c2: "#1d4ed8" }
+  };
+
+  // "Orqaga": ilova ichida yurilgan bo‘lsa oldingi sahifaga, aks holda bosh sahifaga.
+  let navDepth = 0;
+  let goingBack = false;
+  function goBack() {
+    if (navDepth > 0) { goingBack = true; history.back(); }
+    else go("home");
+  }
+  window.addEventListener("hashchange", () => {
+    if (goingBack) { navDepth = Math.max(0, navDepth - 1); goingBack = false; }
+    else navDepth++;
+  });
+
   function route() {
     let page = location.hash.slice(1) || "home";
 
@@ -1957,6 +2042,20 @@
     const isKind = page in KINDS;
     const sectionId = isKind ? "list" : (["home", "add", "admin", "account", "about", "register"].includes(page) ? page : "home");
     document.body.classList.toggle("reg", sectionId === "register");
+
+    // Yuqori panel: har bir sahifaning o‘z nomi, belgisi va rangi bor.
+    const meta = PAGE_META[isKind ? page : sectionId] || PAGE_META.home;
+    const inner = sectionId !== "home";
+    document.body.classList.toggle("inner", inner);
+    document.body.style.setProperty("--accent", meta.c);
+    document.body.style.setProperty("--accent2", meta.c2);
+    document.getElementById("appbar").classList.toggle("hidden", !inner);
+    if (inner) {
+      document.getElementById("appTitle").textContent = sectionId === "register" && profileState === "ok" ? "Profilni tahrirlash" : meta.title;
+      document.getElementById("appSub").textContent = meta.sub;
+      document.getElementById("appIcon").replaceChildren(useIcon(meta.icon));
+      document.getElementById("appAccount").classList.toggle("hidden", sectionId === "account");
+    }
 
     document.querySelectorAll("[data-page]").forEach(s => s.classList.toggle("hidden", s.id !== sectionId));
     document.querySelectorAll(".tabbar button").forEach(b =>
