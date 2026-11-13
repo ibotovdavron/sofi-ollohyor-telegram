@@ -278,14 +278,44 @@
       *, *::before, *::after { animation: none !important; transition: none !important; }
     }
 
+    /* ---------- Chiziqli belgilar (SVG) ---------- */
+    .i { width: 1em; height: 1em; display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .logo { color: #fff; background: linear-gradient(145deg, #3b82f6, #1e3a8a); border-color: rgba(255,255,255,.18); box-shadow: 0 8px 20px -6px #3b82f6; }
+    nav.tiles .ico { color: #fff; border-radius: 16px; box-shadow: 0 8px 16px -6px var(--c), inset 0 1px 0 rgba(255,255,255,.35); }
+    .about-banner .ico {
+      width: 48px; height: 48px; display: grid; place-items: center; font-size: 24px; color: #fff; flex-shrink: 0;
+      border-radius: 16px; background: linear-gradient(145deg, #14b8a6, #0f766e);
+      box-shadow: 0 8px 16px -6px #14b8a6, inset 0 1px 0 rgba(255,255,255,.35);
+    }
+    .about-hero .big {
+      width: 76px; height: 76px; margin: 0 auto 8px; display: grid; place-items: center; font-size: 38px; color: #fff;
+      border-radius: 24px; background: linear-gradient(145deg, #14b8a6, #0f766e); box-shadow: 0 12px 26px -8px #14b8a6;
+    }
+    details.acc summary .ico { color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+    .tabbar button span { font-size: 22px; height: 26px; display: grid; place-items: center; }
+    .tabbar button.active .i { stroke-width: 2.4; }
+
     footer { text-align: center; margin: 30px 0 10px; font-size: 13px; color: #8291a8; }
   </style>
 </head>
 
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  <symbol id="i-shop" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></symbol>
+  <symbol id="i-master" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+  <symbol id="i-taxi" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+  <symbol id="i-ad" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+  <symbol id="i-job" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l8 5H4z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+</svg>
 <main>
   <header onclick="go('home')">
-    <div class="logo">🏡</div>
+    <div class="logo"><svg class="i"><use href="#i-home"/></svg></div>
     <div>
       <h1>Vaxshivor</h1>
       <p class="subtitle">Qishloq portali · Hammasi bir joyda</p>
@@ -307,18 +337,18 @@
     </div>
 
     <button class="about-banner" onclick="go('about')">
-      <span class="ico">🏔️</span>
+      <span class="ico"><svg class="i"><use href="#i-mountain"/></svg></span>
       <span>Vaxshivor haqida<small>Tarixi, So‘fi Olloyor, manzili</small></span>
       <span class="arrow">→</span>
     </button>
 
     <nav class="tiles">
-      <button onclick="go('shop')" style="--c:#22c55e;--c2:#15803d"><span class="ico">🛒</span><span class="arrow">→</span>Do‘kon<small>Mahsulot va narxlar</small></button>
-      <button onclick="go('master')" style="--c:#f59e0b;--c2:#b45309"><span class="ico">🔧</span><span class="arrow">→</span>Ustalar<small>Elektrik, santexnik...</small></button>
-      <button onclick="go('taxi')" style="--c:#facc15;--c2:#ca8a04"><span class="ico">🚕</span><span class="arrow">→</span>Taksi<small>Qatnovlar va haydovchilar</small></button>
-      <button onclick="go('ad')" style="--c:#f43f5e;--c2:#be123c"><span class="ico">📢</span><span class="arrow">→</span>E’lonlar<small>Sotish, ijara, xabarlar</small></button>
-      <button onclick="go('job')" style="--c:#8b5cf6;--c2:#6d28d9"><span class="ico">💼</span><span class="arrow">→</span>Ish o‘rinlari<small>Ish beruvchi va izlovchi</small></button>
-      <button onclick="go('add')" style="--c:#3b82f6;--c2:#1d4ed8"><span class="ico">➕</span><span class="arrow">→</span>E’lon qo‘shish<small>Bepul joylang</small></button>
+      <button onclick="go('shop')" style="--c:#22c55e;--c2:#15803d"><span class="ico"><svg class="i"><use href="#i-shop"/></svg></span><span class="arrow">→</span>Do‘kon<small>Mahsulot va narxlar</small></button>
+      <button onclick="go('master')" style="--c:#f59e0b;--c2:#b45309"><span class="ico"><svg class="i"><use href="#i-master"/></svg></span><span class="arrow">→</span>Ustalar<small>Elektrik, santexnik...</small></button>
+      <button onclick="go('taxi')" style="--c:#facc15;--c2:#ca8a04"><span class="ico"><svg class="i"><use href="#i-taxi"/></svg></span><span class="arrow">→</span>Taksi<small>Qatnovlar va haydovchilar</small></button>
+      <button onclick="go('ad')" style="--c:#f43f5e;--c2:#be123c"><span class="ico"><svg class="i"><use href="#i-ad"/></svg></span><span class="arrow">→</span>E’lonlar<small>Sotish, ijara, xabarlar</small></button>
+      <button onclick="go('job')" style="--c:#8b5cf6;--c2:#6d28d9"><span class="ico"><svg class="i"><use href="#i-job"/></svg></span><span class="arrow">→</span>Ish o‘rinlari<small>Ish beruvchi va izlovchi</small></button>
+      <button onclick="go('add')" style="--c:#3b82f6;--c2:#1d4ed8"><span class="ico"><svg class="i"><use href="#i-plus"/></svg></span><span class="arrow">→</span>E’lon qo‘shish<small>Bepul joylang</small></button>
     </nav>
 
     <h2>🆕 So‘nggi e’lonlar</h2>
@@ -350,7 +380,7 @@
     <button class="back" onclick="go('home')">← Bosh sahifa</button>
 
     <div class="card hero about-hero">
-      <span class="big">🏔️</span>
+      <span class="big"><svg class="i"><use href="#i-mountain"/></svg></span>
       <h2>Vaxshivor qishlog‘i</h2>
       <p>Hisor tog‘lari etagidagi qadimiy qishloq — buyuk shoir va mutafakkir So‘fi Olloyor abadiy qo‘nim topgan maskan.</p>
       <div class="facts">
@@ -362,7 +392,7 @@
     </div>
 
     <details class="card acc" open style="--c:#3b82f6;--c2:#1d4ed8">
-      <summary><span class="ico">📜</span>Qishloq tarixi</summary>
+      <summary><span class="ico"><svg class="i"><use href="#i-book"/></svg></span>Qishloq tarixi</summary>
       <div class="body">
         <p>Vaxshivor — Surxondaryo viloyati Oltinsoy tumanining tog‘ etagida joylashgan qadimiy qishloqlardan biri. Qishloq toza havosi, buloqlari, bog‘lari va mehmondo‘st xalqi bilan tanilgan.</p>
         <p>Qishloqning nomi butun Markaziy Osiyoda So‘fi Olloyor nomi bilan bog‘liq holda mashhur: shoir umrining so‘nggi yillarini shu yerda o‘tkazgan va shu yerda dafn etilgan. Uning qabri ustidagi maqbara asrlar davomida ziyoratgoh bo‘lib kelgan, mustaqillik yillarida esa ziyoratgoh majmuasi obod qilingan.</p>
@@ -371,7 +401,7 @@
     </details>
 
     <details class="card acc" style="--c:#f59e0b;--c2:#b45309">
-      <summary><span class="ico">🕌</span>So‘fi Olloyor</summary>
+      <summary><span class="ico"><svg class="i"><use href="#i-landmark"/></svg></span>So‘fi Olloyor</summary>
       <div class="body">
         <p>So‘fi Olloyor (taxminan 1644–1721) — o‘zbek mumtoz adabiyotining yirik vakili, shoir va tasavvuf olimi. Uning asarlari asrlar davomida madrasalarda darslik sifatida o‘qitilgan.</p>
         <ul class="timeline">
@@ -385,7 +415,7 @@
     </details>
 
     <details class="card acc" style="--c:#22c55e;--c2:#15803d">
-      <summary><span class="ico">📍</span>Manzil va yo‘l</summary>
+      <summary><span class="ico"><svg class="i"><use href="#i-pin"/></svg></span>Manzil va yo‘l</summary>
       <div class="body">
         <p><strong style="color:var(--text)">Manzil:</strong> O‘zbekiston, Surxondaryo viloyati, Oltinsoy tumani, Vaxshivor qishlog‘i.</p>
         <p><strong style="color:var(--text)">Asosiy ziyoratgoh:</strong> So‘fi Olloyor maqbarasi va ziyoratgoh majmuasi — qishloqning o‘zida.</p>
@@ -527,12 +557,12 @@
 <button class="fab primary" id="fab" onclick="go('add')">➕ E’lon</button>
 
 <div class="tabbar">
-  <button data-tab="home" onclick="go('home')"><span>🏠</span>Bosh</button>
-  <button data-tab="shop" onclick="go('shop')"><span>🛒</span>Do‘kon</button>
-  <button data-tab="master" onclick="go('master')"><span>🔧</span>Usta</button>
-  <button data-tab="taxi" onclick="go('taxi')"><span>🚕</span>Taksi</button>
-  <button data-tab="ad" onclick="go('ad')"><span>📢</span>E’lon</button>
-  <button data-tab="job" onclick="go('job')"><span>💼</span>Ish</button>
+  <button data-tab="home" onclick="go('home')"><span><svg class="i"><use href="#i-home"/></svg></span>Bosh</button>
+  <button data-tab="shop" onclick="go('shop')"><span><svg class="i"><use href="#i-shop"/></svg></span>Do‘kon</button>
+  <button data-tab="master" onclick="go('master')"><span><svg class="i"><use href="#i-master"/></svg></span>Usta</button>
+  <button data-tab="taxi" onclick="go('taxi')"><span><svg class="i"><use href="#i-taxi"/></svg></span>Taksi</button>
+  <button data-tab="ad" onclick="go('ad')"><span><svg class="i"><use href="#i-ad"/></svg></span>E’lon</button>
+  <button data-tab="job" onclick="go('job')"><span><svg class="i"><use href="#i-job"/></svg></span>Ish</button>
 </div>
 
 <script>
