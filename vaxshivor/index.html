@@ -313,48 +313,92 @@
     .logo img { width: 100%; height: 100%; display: block; }
 
     /* ---------- Animatsiyali kirish ---------- */
-    @keyframes pieceIn { from { opacity: 0; transform: var(--from); } 55% { opacity: 1; } to { opacity: 1; transform: none; } }
+    @keyframes pieceIn {
+      0% { opacity: 0; transform: var(--from); filter: blur(14px) brightness(1.8); }
+      60% { opacity: 1; filter: blur(0) brightness(1.15); }
+      100% { opacity: 1; transform: none; filter: none; }
+    }
     @keyframes wholeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes logoPulse { 0% { transform: scale(1); } 40% { transform: scale(1.07); } 100% { transform: scale(1); } }
-    @keyframes ringOut { from { opacity: .9; transform: scale(.7); } to { opacity: 0; transform: scale(1.9); } }
-    @keyframes shine { from { transform: translateX(-140%) skewX(-20deg); } to { transform: translateX(260%) skewX(-20deg); } }
-    @keyframes letterIn { from { opacity: 0; transform: translateY(18px) scale(.8); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+    @keyframes auraIn { from { opacity: 0; transform: scale(.6) rotate(0deg); } to { opacity: .6; transform: scale(1) rotate(120deg); } }
+    @keyframes auraSpin { from { transform: rotate(120deg); } to { transform: rotate(480deg); } }
+    @keyframes floatTilt {
+      0%, 100% { transform: rotateX(0) rotateY(0) translateY(0); }
+      25% { transform: rotateX(5deg) rotateY(-7deg) translateY(-5px); }
+      75% { transform: rotateX(-4deg) rotateY(6deg) translateY(3px); }
+    }
+    @keyframes settle { 0% { transform: scale(1); } 35% { transform: scale(1.09); } 70% { transform: scale(.98); } 100% { transform: scale(1); } }
+    @keyframes ripple { from { opacity: .8; transform: scale(.75); } to { opacity: 0; transform: scale(2.3); } }
+    @keyframes shine { from { transform: translateX(-160%) skewX(-22deg); } to { transform: translateX(320%) skewX(-22deg); } }
+    @keyframes letterIn {
+      from { opacity: 0; transform: translateY(26px) rotateX(-80deg) scale(.7); filter: blur(8px); }
+      to { opacity: 1; transform: none; filter: none; }
+    }
+    @keyframes subIn { from { opacity: 0; letter-spacing: 8px; filter: blur(6px); } to { opacity: 1; letter-spacing: .5px; filter: none; } }
+    @keyframes rise { 0% { opacity: 0; transform: translateY(0) scale(.5); } 15% { opacity: .9; } 100% { opacity: 0; transform: translateY(-105vh) scale(1.1); } }
+    @keyframes blobA { from { transform: translate(-10%, -8%) scale(1); } to { transform: translate(14%, 10%) scale(1.25); } }
+    @keyframes blobB { from { transform: translate(8%, 6%) scale(1.1); } to { transform: translate(-12%, -10%) scale(.9); } }
+    @keyframes load { from { transform: scaleX(0); } to { transform: scaleX(1); } }
     @keyframes splashAuto { to { opacity: 0; visibility: hidden; pointer-events: none; } }
-    @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } }
 
     .splash {
       position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column;
       align-items: center; justify-content: center; padding: 24px; text-align: center; overflow: hidden;
-      background: radial-gradient(ellipse at 50% 35%, #10402e, #04110c 70%);
-      transition: opacity .55s ease, visibility .55s ease;
+      background: #030d0a;
+      transition: opacity .6s ease, visibility .6s ease, transform .6s cubic-bezier(.16, 1, .3, 1), filter .6s ease;
       animation: splashAuto .01s 9s forwards; /* skript ishlamasa ham o‘zi yopiladi */
     }
     .splash.hold { animation: none; }
-    .splash.out { opacity: 0; visibility: hidden; pointer-events: none; }
+    .splash.out { opacity: 0; visibility: hidden; pointer-events: none; transform: scale(1.12); filter: blur(8px); }
     .splash.instant { transition: none; }
-    .splash-logo { position: relative; width: min(54vw, 210px); aspect-ratio: 1; animation: logoPulse .7s ease 1.65s both; transition: width .45s ease; }
-    .splash .piece, .splash .whole { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .splash .piece { animation: pieceIn 1s cubic-bezier(.2, .9, .25, 1.12) both; }
-    .splash .p-left  { clip-path: polygon(0 0, 53% 0, 53% 7%, 19% 7%, 19% 30%, 15% 40%, 15% 73%, 0 73%); --from: translate(-130%, -80%) rotate(-28deg); animation-delay: .1s; }
-    .splash .p-mount { clip-path: polygon(53% 0, 100% 0, 100% 73%, 73% 73%, 73% 33%, 53% 28%); --from: translate(130%, -80%) rotate(28deg); animation-delay: .3s; }
-    .splash .p-book  { clip-path: polygon(0 73%, 100% 73%, 100% 100%, 0 100%); --from: translate(0, 170%) rotate(8deg); animation-delay: .5s; }
-    .splash .p-build { clip-path: polygon(19% 7%, 53% 7%, 53% 28%, 73% 33%, 73% 73%, 15% 73%, 15% 40%, 19% 30%); --from: translate(0, -160%) scale(1.5); animation-delay: .75s; }
-    .splash .whole { animation: wholeIn .3s ease 1.6s both; }
-    .splash .ring { position: absolute; inset: 0; border-radius: 22%; border: 3px solid #4ade80; animation: ringOut .9s ease-out 1.65s both; opacity: 0; }
-    .splash .shine-box { position: absolute; inset: 0; border-radius: 18.5%; overflow: hidden; pointer-events: none; }
-    .splash .shine-box::after {
-      content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
-      animation: shine .9s ease 1.9s both;
+    .splash > * { position: relative; }
+
+    .splash .blob { position: absolute; width: 90vmax; height: 90vmax; border-radius: 50%; filter: blur(70px); opacity: .55; pointer-events: none; }
+    .splash .blob.a { left: -35vmax; top: -40vmax; background: radial-gradient(circle, #15803d, transparent 65%); animation: blobA 7s ease-in-out infinite alternate; }
+    .splash .blob.b { right: -40vmax; bottom: -45vmax; background: radial-gradient(circle, #1d4ed8, transparent 65%); animation: blobB 8s ease-in-out infinite alternate; }
+    .splash .dot { position: absolute; bottom: -12px; border-radius: 50%; background: #bbf7d0; box-shadow: 0 0 12px 2px rgba(74, 222, 128, .8); opacity: 0; animation: rise linear infinite; pointer-events: none; }
+
+    .splash-stage { width: min(56vw, 220px); aspect-ratio: 1; perspective: 900px; transition: width .5s cubic-bezier(.16, 1, .3, 1); }
+    .splash-logo { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; animation: settle .8s cubic-bezier(.16, 1, .3, 1) 1.75s both, floatTilt 6s ease-in-out 2.6s infinite; }
+    .splash .aura {
+      position: absolute; inset: -22%; border-radius: 50%; opacity: 0; filter: blur(30px);
+      background: conic-gradient(from 0deg, #22c55e, #3b82f6, #14b8a6, #facc15, #22c55e);
+      animation: auraIn 1.1s ease 1.5s both, auraSpin 9s linear 2.6s infinite;
     }
-    .splash .star { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #bbf7d0; box-shadow: 0 0 10px #4ade80; opacity: 0; animation: twinkle 1.6s ease-in-out infinite; }
-    .splash-title { margin: 22px 0 4px; font-size: 34px; letter-spacing: 1px; color: #fff; }
-    .splash-title span { display: inline-block; animation: letterIn .5s ease both; }
-    .splash-sub { margin: 0; color: #a7d8bf; animation: letterIn .6s ease 2.45s both; }
-    .welcome { width: min(100%, 360px); margin-top: 22px; animation: fadeUp .5s ease both; }
-    .welcome p { color: #cfe9dc; }
+    .splash .piece, .splash .whole { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .splash .piece { animation: pieceIn 1.15s cubic-bezier(.16, 1, .3, 1) both; will-change: transform, opacity, filter; }
+    .splash .p1 { clip-path: polygon(0 0, 53% 0, 53% 7%, 19% 7%, 19% 30%, 15% 40%, 0 40%);          --from: translate3d(-140%, -110%, 300px) rotate3d(1, 1, 0, 70deg); animation-delay: .15s; }
+    .splash .p2 { clip-path: polygon(53% 0, 100% 0, 100% 45%, 73% 45%, 73% 33%, 53% 28%);          --from: translate3d(150%, -120%, 260px) rotate3d(1, -1, 0, 75deg); animation-delay: .24s; }
+    .splash .p3 { clip-path: polygon(0 40%, 15% 40%, 15% 73%, 0 73%);                              --from: translate3d(-190%, 30%, -200px) rotateY(-95deg); animation-delay: .33s; }
+    .splash .p4 { clip-path: polygon(73% 45%, 100% 45%, 100% 73%, 73% 73%);                        --from: translate3d(190%, 40%, -200px) rotateY(95deg); animation-delay: .42s; }
+    .splash .p5 { clip-path: polygon(0 73%, 50% 73%, 50% 100%, 0 100%);                            --from: translate3d(-90%, 190%, 200px) rotate3d(1, 0, 1, -80deg); animation-delay: .51s; }
+    .splash .p6 { clip-path: polygon(50% 73%, 100% 73%, 100% 100%, 50% 100%);                      --from: translate3d(90%, 190%, 200px) rotate3d(1, 0, -1, -80deg); animation-delay: .6s; }
+    .splash .p7 { clip-path: polygon(19% 30%, 53% 30%, 53% 28%, 73% 33%, 73% 73%, 15% 73%, 15% 40%); --from: translate3d(0, 60%, -700px) rotateX(70deg) scale(.4); animation-delay: .72s; }
+    .splash .p8 { clip-path: polygon(19% 7%, 53% 7%, 53% 30%, 19% 30%);                            --from: translate3d(0, -220%, 400px) rotateX(-110deg) scale(1.4); animation-delay: .86s; }
+    .splash .whole { animation: wholeIn .35s ease 1.8s both; }
+    .splash .ripple { position: absolute; inset: 0; border-radius: 23%; border: 2px solid #86efac; opacity: 0; animation: ripple 1.2s cubic-bezier(.16, 1, .3, 1) 1.8s forwards; }
+    .splash .ripple.r2 { animation-delay: 2.05s; border-color: #60a5fa; }
+    .splash .shine-box { position: absolute; inset: 0; border-radius: 23%; overflow: hidden; pointer-events: none; }
+    .splash .shine-box::after {
+      content: ""; position: absolute; top: -10%; bottom: -10%; left: 0; width: 34%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent);
+      animation: shine 1s cubic-bezier(.4, 0, .2, 1) 2.05s both;
+    }
+
+    .splash-title { margin: 30px 0 6px; font-size: 38px; font-weight: 800; letter-spacing: 1.5px; perspective: 600px; }
+    .splash-title span {
+      display: inline-block; animation: letterIn .7s cubic-bezier(.16, 1, .3, 1) both;
+      background: linear-gradient(180deg, #ffffff 30%, #86efac); -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .splash-sub { margin: 0; color: #a7d8bf; animation: subIn .9s cubic-bezier(.16, 1, .3, 1) 2.55s both; }
+    .splash-loader { width: 120px; height: 3px; margin-top: 22px; border-radius: 99px; background: rgba(255,255,255,.12); overflow: hidden; }
+    .splash-loader::after { content: ""; display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #22c55e, #60a5fa); transform-origin: left; animation: load 3.4s cubic-bezier(.4, 0, .2, 1) .1s both; }
+
+    .welcome { width: min(100%, 360px); margin-top: 22px; padding: 16px; border-radius: 22px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); animation: fadeUp .6s cubic-bezier(.16, 1, .3, 1) both; }
+    .welcome p { color: #cfe9dc; margin-top: 0; }
     .welcome .skip { background: none; border: 0; color: #a7d8bf; text-decoration: underline; display: block; margin: 12px auto 0; text-align: center; }
-    .splash.welcome-mode .splash-logo { width: min(34vw, 130px); }
+    .splash.welcome-mode .splash-stage { width: min(34vw, 130px); }
+    .splash.welcome-mode .splash-loader { display: none; }
+    .splash.welcome-mode .splash-title { margin-top: 20px; font-size: 32px; }
     body.no-scroll { overflow: hidden; }
 
     /* ---------- Ro‘yxatdan o‘tish ---------- */
@@ -397,22 +441,44 @@
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
 </svg>
 <div id="splash" class="splash" aria-label="Vaxshivor">
-  <span class="star" style="left:14%;top:18%;animation-delay:.2s"></span>
-  <span class="star" style="left:82%;top:24%;animation-delay:.9s"></span>
-  <span class="star" style="left:24%;top:72%;animation-delay:1.3s"></span>
-  <span class="star" style="left:76%;top:66%;animation-delay:.6s"></span>
-  <span class="star" style="left:50%;top:10%;animation-delay:1.6s"></span>
-  <div class="splash-logo">
-    <img class="piece p-left" src="icons/icon-512.png" alt="">
-    <img class="piece p-mount" src="icons/icon-512.png" alt="">
-    <img class="piece p-book" src="icons/icon-512.png" alt="">
-    <img class="piece p-build" src="icons/icon-512.png" alt="">
-    <img class="whole" src="icons/icon-512.png" alt="">
-    <div class="ring"></div>
-    <div class="shine-box"></div>
+  <div class="blob a"></div>
+  <div class="blob b"></div>
+  <span class="dot" style="left:74%;width:5px;height:5px;animation-duration:6.0s;animation-delay:3.3s"></span>
+  <span class="dot" style="left:19%;width:4px;height:4px;animation-duration:7.8s;animation-delay:2.5s"></span>
+  <span class="dot" style="left:78%;width:6px;height:6px;animation-duration:7.8s;animation-delay:2.3s"></span>
+  <span class="dot" style="left:54%;width:3px;height:3px;animation-duration:4.7s;animation-delay:0.9s"></span>
+  <span class="dot" style="left:75%;width:3px;height:3px;animation-duration:7.5s;animation-delay:1.2s"></span>
+  <span class="dot" style="left:22%;width:3px;height:3px;animation-duration:6.4s;animation-delay:2.3s"></span>
+  <span class="dot" style="left:75%;width:5px;height:5px;animation-duration:7.4s;animation-delay:0.7s"></span>
+  <span class="dot" style="left:78%;width:3px;height:3px;animation-duration:6.5s;animation-delay:0.8s"></span>
+  <span class="dot" style="left:16%;width:4px;height:4px;animation-duration:6.4s;animation-delay:0.3s"></span>
+  <span class="dot" style="left:11%;width:3px;height:3px;animation-duration:6.7s;animation-delay:2.0s"></span>
+  <span class="dot" style="left:72%;width:3px;height:3px;animation-duration:6.0s;animation-delay:1.3s"></span>
+  <span class="dot" style="left:78%;width:6px;height:6px;animation-duration:7.7s;animation-delay:1.4s"></span>
+  <span class="dot" style="left:35%;width:6px;height:6px;animation-duration:7.3s;animation-delay:2.8s"></span>
+  <span class="dot" style="left:35%;width:3px;height:3px;animation-duration:4.8s;animation-delay:1.2s"></span>
+  <span class="dot" style="left:67%;width:4px;height:4px;animation-duration:7.6s;animation-delay:2.9s"></span>
+  <span class="dot" style="left:40%;width:3px;height:3px;animation-duration:6.6s;animation-delay:0.3s"></span>
+  <div class="splash-stage">
+    <div class="splash-logo">
+      <div class="aura"></div>
+      <img class="piece p1" src="icons/icon-512.png" alt="">
+      <img class="piece p2" src="icons/icon-512.png" alt="">
+      <img class="piece p3" src="icons/icon-512.png" alt="">
+      <img class="piece p4" src="icons/icon-512.png" alt="">
+      <img class="piece p5" src="icons/icon-512.png" alt="">
+      <img class="piece p6" src="icons/icon-512.png" alt="">
+      <img class="piece p7" src="icons/icon-512.png" alt="">
+      <img class="piece p8" src="icons/icon-512.png" alt="">
+      <img class="whole" src="icons/icon-512.png" alt="">
+      <div class="ripple"></div>
+      <div class="ripple r2"></div>
+      <div class="shine-box"></div>
+    </div>
   </div>
-  <h1 class="splash-title"><span style="animation-delay:1.85s">V</span><span style="animation-delay:1.91s">a</span><span style="animation-delay:1.97s">x</span><span style="animation-delay:2.03s">s</span><span style="animation-delay:2.09s">h</span><span style="animation-delay:2.15s">i</span><span style="animation-delay:2.21s">v</span><span style="animation-delay:2.27s">o</span><span style="animation-delay:2.33s">r</span></h1>
+  <h1 class="splash-title"><span style="animation-delay:1.95s">V</span><span style="animation-delay:2.00s">a</span><span style="animation-delay:2.06s">x</span><span style="animation-delay:2.11s">s</span><span style="animation-delay:2.17s">h</span><span style="animation-delay:2.23s">i</span><span style="animation-delay:2.28s">v</span><span style="animation-delay:2.33s">o</span><span style="animation-delay:2.39s">r</span></h1>
   <p class="splash-sub">Qishloq portali · Hammasi bir joyda</p>
+  <div class="splash-loader"></div>
   <div id="welcomeBox" class="welcome hidden">
     <p>Xush kelibsiz! Davom etish uchun Google hisobingiz bilan kiring.</p>
     <button type="button" class="google-btn" onclick="signInWithGoogle()">
@@ -1598,7 +1664,7 @@
       const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
       // Animatsiya tugashini kutamiz; ekranga bosilsa, o‘tkazib yuboriladi.
       await new Promise(resolve => {
-        setTimeout(resolve, reduce ? 500 : 3300);
+        setTimeout(resolve, reduce ? 500 : 3700);
         splash.addEventListener("click", resolve, { once: true });
       });
     }
