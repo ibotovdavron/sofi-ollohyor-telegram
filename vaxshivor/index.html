@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#070b14">
+  <meta name="description" content="Vaxshivor qishlog‘i portali: do‘kon, ustalar, taksi, e’lonlar va ish o‘rinlari.">
+  <title>Vaxshivor — Qishloq portali</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070b14;
+      --card: #111c2e;
+      --card2: #1b2b43;
+      --border: #30415b;
+      --text: #f5f7ff;
+      --muted: #a9b7cd;
+      --blue: #60a5fa;
+      --green: #22c55e;
+      --amber: #fbbf24;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at top, #142743, var(--bg) 70%) fixed;
+      color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 76px;
+    }
+
+    main { width: min(100% - 28px, 640px); margin: auto; padding: 22px 0; }
+
+    header { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; cursor: pointer; }
+    .logo {
+      width: 60px; height: 60px; flex-shrink: 0; display: grid; place-items: center;
+      border: 1px solid #526986; border-radius: 20px;
+      background: linear-gradient(145deg, #203b5c, #111c2e); font-size: 30px;
+    }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    h2 { font-size: 20px; margin: 18px 0 12px; }
+    h3 { margin: 0 0 6px; font-size: 17px; }
+    p { color: var(--muted); line-height: 1.5; margin: 6px 0; }
+    .subtitle { margin: 0; }
+
+    .card {
+      background: rgba(17, 28, 46, .95); border: 1px solid var(--border);
+      border-radius: 18px; padding: 16px; margin: 12px 0;
+    }
+    .hero { background: linear-gradient(145deg, #1d3a5f, #111c2e); }
+    .hero h2 { margin-top: 4px; }
+
+    nav.tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
+    nav.tiles button { display: flex; flex-direction: column; gap: 6px; padding: 16px 14px; }
+    nav.tiles .ico { font-size: 26px; }
+    nav.tiles small { color: var(--muted); font-size: 13px; }
+
+    button, .btn {
+      font: inherit; color: var(--text); background: var(--card2);
+      border: 1px solid #344965; border-radius: 14px; padding: 12px 14px;
+      cursor: pointer; text-align: left; text-decoration: none; display: inline-block;
+    }
+    button:active, .btn:active { transform: scale(.98); }
+    .primary { background: #245ba6; border-color: #3b74c4; }
+    .success { background: #166534; border-color: var(--green); }
+    .danger { background: #7f1d1d; border-color: #ef4444; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .back { margin-bottom: 4px; }
+
+    input, select, textarea {
+      display: block; width: 100%; margin: 6px 0 12px; padding: 12px;
+      border-radius: 12px; border: 1px solid var(--border);
+      background: #0b1321; color: var(--text); font: inherit;
+    }
+    textarea { min-height: 90px; resize: vertical; }
+    label { display: block; color: var(--muted); font-size: 14px; }
+
+    .hidden { display: none !important; }
+
+    .notice {
+      padding: 14px; background: #18263b; border-radius: 14px;
+      color: var(--muted); overflow-wrap: anywhere; margin: 10px 0;
+    }
+    .demo { border: 1px dashed var(--amber); color: var(--amber); }
+
+    .toolbar { display: flex; gap: 8px; margin: 6px 0 4px; }
+    .toolbar input { margin: 0; }
+    .chips { display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; scrollbar-width: none; }
+    .chips::-webkit-scrollbar { display: none; }
+    .chip {
+      flex-shrink: 0; padding: 8px 14px; border-radius: 999px; font-size: 14px;
+      background: var(--card2); border: 1px solid #344965;
+    }
+    .chip.active { background: #245ba6; border-color: #3b74c4; }
+
+    .item { display: flex; gap: 12px; align-items: flex-start; }
+    .thumb {
+      width: 72px; height: 72px; flex-shrink: 0; border-radius: 14px; overflow: hidden;
+      background: #26364e; display: grid; place-items: center; font-size: 30px;
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .grow { flex: 1; min-width: 0; }
+    .grow h3 { overflow-wrap: anywhere; }
+    .meta { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+    .tag {
+      font-size: 12px; padding: 4px 9px; border-radius: 999px;
+      background: #1e3150; color: #bcd4f5;
+    }
+    .price { color: var(--green); font-weight: 700; }
+    .desc { white-space: pre-line; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .actions .btn, .actions button { padding: 9px 13px; font-size: 14px; }
+    .time { font-size: 12px; color: #8291a8; }
+
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+    .stat { background: rgba(7, 11, 20, .45); border-radius: 12px; padding: 10px; text-align: center; }
+    .stat strong { display: block; font-size: 20px; }
+    .stat span { font-size: 12px; color: var(--muted); }
+
+    .tabbar {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      background: rgba(10, 16, 28, .97); border-top: 1px solid var(--border);
+      padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+    }
+    .tabbar button {
+      background: none; border: 0; padding: 4px 0; text-align: center;
+      font-size: 11px; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    .tabbar button span { font-size: 20px; }
+    .tabbar button.active { color: var(--blue); }
+
+    .fab {
+      position: fixed; right: max(16px, calc(50% - 304px)); bottom: 86px; z-index: 11;
+      border-radius: 999px; padding: 13px 18px; box-shadow: 0 8px 24px rgba(0,0,0,.45);
+    }
+
+    footer { text-align: center; margin: 30px 0 10px; font-size: 13px; color: #8291a8; }
+  </style>
+</head>
+
+<body>
+<main>
+  <header onclick="go('home')">
+    <div class="logo">🏡</div>
+    <div>
+      <h1>Vaxshivor</h1>
+      <p class="subtitle">Qishloq portali · Hammasi bir joyda</p>
+    </div>
+  </header>
+
+  <!-- 1. BOSH SAHIFA -->
+  <section id="home" data-page>
+    <div class="card hero">
+      <p>ASSALOMU ALAYKUM!</p>
+      <h2>Vaxshivor qishlog‘iga xush kelibsiz</h2>
+      <p>Do‘kondagi mahsulotlar, ishonchli ustalar, taksi qatnovlari, e’lonlar va ish o‘rinlari — barchasi shu yerda.</p>
+      <div class="stats">
+        <div class="stat"><strong id="statTotal">—</strong><span>e’lon</span></div>
+        <div class="stat"><strong id="statMasters">—</strong><span>usta</span></div>
+        <div class="stat"><strong id="statJobs">—</strong><span>ish o‘rni</span></div>
+      </div>
+    </div>
+
+    <nav class="tiles">
+      <button onclick="go('shop')"><span class="ico">🛒</span>Do‘kon<small>Mahsulot va narxlar</small></button>
+      <button onclick="go('master')"><span class="ico">🔧</span>Ustalar<small>Elektrik, santexnik...</small></button>
+      <button onclick="go('taxi')"><span class="ico">🚕</span>Taksi<small>Qatnovlar va haydovchilar</small></button>
+      <button onclick="go('ad')"><span class="ico">📢</span>E’lonlar<small>Sotish, ijara, xabarlar</small></button>
+      <button onclick="go('job')"><span class="ico">💼</span>Ish o‘rinlari<small>Ish beruvchi va izlovchi</small></button>
+      <button onclick="go('add')"><span class="ico">➕</span>E’lon qo‘shish<small>Bepul joylang</small></button>
+    </nav>
+
+    <h2>🆕 So‘nggi e’lonlar</h2>
+    <div id="latestList"></div>
+
+    <div class="card">
+      <h3>📞 Muhim raqamlar</h3>
+      <p>🚑 Tez yordam — <a class="price" href="tel:103">103</a><br>
+         🚒 Yong‘in xizmati — <a class="price" href="tel:101">101</a><br>
+         👮 Ichki ishlar — <a class="price" href="tel:102">102</a><br>
+         🔥 Gaz avariya — <a class="price" href="tel:104">104</a></p>
+    </div>
+  </section>
+
+  <!-- 2–6. RO‘YXAT BO‘LIMLARI (bitta shablon) -->
+  <section id="list" data-page class="hidden">
+    <button class="back" onclick="go('home')">← Bosh sahifa</button>
+    <h2 id="listTitle"></h2>
+    <p id="listIntro" class="subtitle"></p>
+    <div class="toolbar">
+      <input id="searchInput" type="search" placeholder="🔍 Qidirish..." autocomplete="off">
+    </div>
+    <div id="chips" class="chips"></div>
+    <div id="listItems"></div>
+  </section>
+
+  <!-- E’LON QO‘SHISH -->
+  <section id="add" data-page class="hidden">
+    <button class="back" onclick="go('home')">← Bosh sahifa</button>
+    <h2>➕ E’lon qo‘shish</h2>
+    <p class="subtitle">E’lon administrator tekshirgandan so‘ng saytda chiqadi.</p>
+
+    <form id="addForm" class="card">
+      <label for="fKind">Bo‘lim</label>
+      <select id="fKind" name="kind" required></select>
+
+      <label for="fCategory">Turi</label>
+      <select id="fCategory" name="category" required></select>
+
+      <label for="fTitle" id="lTitle">Sarlavha</label>
+      <input id="fTitle" name="title" required maxlength="100">
+
+      <label for="fDesc">Batafsil ma’lumot</label>
+      <textarea id="fDesc" name="description" maxlength="1500" placeholder="Qo‘shimcha ma’lumot"></textarea>
+
+      <div id="extraFields"></div>
+
+      <label for="fName">Ismingiz</label>
+      <input id="fName" name="contact_name" required maxlength="80" autocomplete="name">
+
+      <label for="fPhone">Telefon raqam</label>
+      <input id="fPhone" name="phone" type="tel" required maxlength="20" placeholder="+998 90 123 45 67" autocomplete="tel">
+
+      <label for="fTg">Telegram (ixtiyoriy)</label>
+      <input id="fTg" name="telegram" maxlength="40" placeholder="@username">
+
+      <label for="fPhoto">Rasm (ixtiyoriy, 3 MB gacha)</label>
+      <input id="fPhoto" name="photo" type="file" accept="image/*">
+
+      <button class="primary" type="submit">📤 Yuborish</button>
+      <p id="addStatus" role="status"></p>
+    </form>
+  </section>
+
+  <!-- ADMINISTRATOR -->
+  <section id="admin" data-page class="hidden">
+    <button class="back" onclick="go('home')">← Bosh sahifa</button>
+    <h2>🔐 Administrator</h2>
+
+    <form id="adminLogin" class="card">
+      <label for="aEmail">Email</label>
+      <input id="aEmail" type="email" autocomplete="username" required>
+      <label for="aPass">Parol</label>
+      <input id="aPass" type="password" autocomplete="current-password" required>
+      <button class="primary" type="submit">Kirish</button>
+      <p id="adminStatus" role="status"></p>
+    </form>
+
+    <div id="adminPanel" class="hidden">
+      <div class="card">
+        <p id="adminWho"></p>
+        <button type="button" onclick="adminLogout()">Chiqish</button>
+      </div>
+      <h2>⏳ Tasdiq kutayotgan e’lonlar</h2>
+      <div id="pendingList"></div>
+    </div>
+  </section>
+
+  <footer>
+    Vaxshivor qishloq portali<br>
+    Hamjihatlik · Mehnat · Farovonlik<br>
+    <a href="#admin" style="color:#8291a8">Administrator</a>
+  </footer>
+</main>
+
+<button class="fab primary" id="fab" onclick="go('add')">➕ E’lon</button>
+
+<div class="tabbar">
+  <button data-tab="home" onclick="go('home')"><span>🏠</span>Bosh</button>
+  <button data-tab="shop" onclick="go('shop')"><span>🛒</span>Do‘kon</button>
+  <button data-tab="master" onclick="go('master')"><span>🔧</span>Usta</button>
+  <button data-tab="taxi" onclick="go('taxi')"><span>🚕</span>Taksi</button>
+  <button data-tab="ad" onclick="go('ad')"><span>📢</span>E’lon</button>
+  <button data-tab="job" onclick="go('job')"><span>💼</span>Ish</button>
+</div>
+
+<script>
+  const tg = window.Telegram?.WebApp;
+  tg?.ready();
+  tg?.expand();
+
+  // Supabase sozlamalari (Project URL va Publishable key).
+  const SUPABASE_URL = "https://oteokizwakceztwrocol.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_grAALEVaJmy54E6kqLiNyg_QOaq4GOg";
+  const PHOTO_BUCKET = "listing-photos";
+
+  const db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+  // ---------- Bo‘limlar sozlamasi ----------
+  const KINDS = {
+    shop: {
+      title: "🛒 Do‘kon", icon: "🛒",
+      intro: "Qishloq do‘konlaridagi mahsulotlar va narxlar.",
+      titleLabel: "Mahsulot nomi",
+      categories: ["Oziq-ovqat", "Maishiy", "Kiyim", "Qurilish mollari", "Texnika", "Boshqa"],
+      extra: [
+        { key: "price", label: "Narxi (so‘m)", type: "number" },
+        { key: "location", label: "Do‘kon nomi / manzili" }
+      ]
+    },
+    master: {
+      title: "🔧 Ustalar", icon: "🔧",
+      intro: "Ishonchli ustalar — bir qo‘ng‘iroq bilan chaqiring.",
+      titleLabel: "Usta ismi",
+      categories: ["Elektrik", "Santexnik", "Quruvchi", "Payvandchi", "Mebelchi", "Avtousta", "Tikuvchi", "Boshqa"],
+      extra: [
+        { key: "experience", label: "Tajribasi (yil)", type: "number" },
+        { key: "location", label: "Qayerda ishlaydi" }
+      ]
+    },
+    taxi: {
+      title: "🚕 Taksi", icon: "🚕",
+      intro: "Qatnovlar, haydovchilar va bo‘sh joylar.",
+      titleLabel: "Yo‘nalish (masalan: Vaxshivor → Tuman markazi)",
+      categories: ["Tuman markaziga", "Viloyat markaziga", "Toshkentga", "Qishloq ichida", "Yuk tashish"],
+      extra: [
+        { key: "car", label: "Mashina (rusumi, rangi)" },
+        { key: "departure", label: "Jo‘nash vaqti", placeholder: "Har kuni 07:00" },
+        { key: "seats", label: "Bo‘sh joylar", type: "number" },
+        { key: "price", label: "Narxi (so‘m)", type: "number" }
+      ]
+    },
+    ad: {
+      title: "📢 E’lonlar", icon: "📢",
+      intro: "Sotish, sotib olish, ijara va qishloq xabarlari.",
+      titleLabel: "E’lon sarlavhasi",
+      categories: ["Sotiladi", "Sotib olinadi", "Ijara", "Chorva", "Yo‘qolgan / topilgan", "Xabar", "Tadbir"],
+      extra: [
+        { key: "price", label: "Narxi (so‘m, ixtiyoriy)", type: "number" },
+        { key: "location", label: "Manzil (ixtiyoriy)" }
+      ]
+    },
+    job: {
+      title: "💼 Ish o‘rinlari", icon: "💼",
+      intro: "Bo‘sh ish o‘rinlari va ish qidirayotganlar.",
+      titleLabel: "Lavozim / ish turi",
+      categories: ["Ish beriladi", "Ish qidiryapman", "Mavsumiy ish", "Kunlik ish"],
+      extra: [
+        { key: "salary", label: "Maosh", placeholder: "Masalan: 3 000 000 so‘m / oy" },
+        { key: "employer", label: "Ish beruvchi" },
+        { key: "location", label: "Ish joyi" }
+      ]
+    }
+  };
+
+  const EXTRA_LABELS = {
+    price: "💰", location: "📍", experience: "🛠", car: "🚗",
+    departure: "🕒", seats: "💺", salary: "💵", employer: "🏢"
+  };
+
+  // Baza hali sozlanmagan bo‘lsa ko‘rsatiladigan namuna ma’lumotlar.
+  const now = Date.now();
+  const h = n => new Date(now - n * 3600e3).toISOString();
+  const DEMO = [
+    { id: "d1", kind: "shop", category: "Oziq-ovqat", title: "Un, 1-nav (50 kg)", description: "Yangi tushgan, yetkazib berish bor.", extra: { price: 420000, location: "Markaziy do‘kon" }, contact_name: "Namuna do‘kon", phone: "+998900000000", created_at: h(2) },
+    { id: "d2", kind: "shop", category: "Qurilish mollari", title: "Sement M400", description: "Qopi 50 kg.", extra: { price: 65000, location: "Qurilish do‘koni" }, contact_name: "Namuna", phone: "+998900000000", created_at: h(20) },
+    { id: "d3", kind: "master", category: "Elektrik", title: "Elektrik usta", description: "Uy simlarini almashtirish, hisoblagich o‘rnatish.", extra: { experience: 8, location: "Butun qishloq" }, contact_name: "Namuna usta", phone: "+998900000000", created_at: h(5) },
+    { id: "d4", kind: "master", category: "Santexnik", title: "Santexnik", description: "Quvur, kran, isitish tizimi.", extra: { experience: 5 }, contact_name: "Namuna usta", phone: "+998900000000", created_at: h(30) },
+    { id: "d5", kind: "taxi", category: "Tuman markaziga", title: "Vaxshivor → Tuman markazi", description: "Har kuni ertalab va kechqurun.", extra: { car: "Cobalt, oq", departure: "Har kuni 07:00 va 17:00", seats: 3, price: 15000 }, contact_name: "Namuna haydovchi", phone: "+998900000000", created_at: h(1) },
+    { id: "d6", kind: "ad", category: "Chorva", title: "Sigir sotiladi", description: "Sog‘ib turgan, 4 yoshli.", extra: { price: 12000000, location: "Vaxshivor" }, contact_name: "Namuna", phone: "+998900000000", created_at: h(3) },
+    { id: "d7", kind: "ad", category: "Xabar", title: "Shanba kuni hashar", description: "Ko‘chalarni obodonlashtirish. Barchani taklif qilamiz!", extra: {}, contact_name: "Mahalla", phone: "+998900000000", created_at: h(8) },
+    { id: "d8", kind: "job", category: "Ish beriladi", title: "Sotuvchi kerak", description: "Do‘konga mas’uliyatli sotuvchi.", extra: { salary: "2 500 000 so‘m / oy", employer: "Namuna do‘kon", location: "Markaz" }, contact_name: "Namuna", phone: "+998900000000", created_at: h(6) }
+  ];
+
+  let demoMode = false;
+  let cache = null;
+  let currentKind = null;
+  let currentCategory = "Hammasi";
+
+  // ---------- Yordamchi funksiyalar ----------
+  function el(tag, props = {}, ...children) {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(props)) {
+      if (v == null || v === false) continue;
+      if (k === "class") node.className = v;
+      else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
+      else node.setAttribute(k, v);
+    }
+    for (const c of children.flat()) {
+      if (c == null || c === false) continue;
+      node.append(c instanceof Node ? c : document.createTextNode(String(c)));
+    }
+    return node;
+  }
+
+  const money = v => Number(v).toLocaleString("ru-RU").replace(/,/g, " ") + " so‘m";
+
+  function timeAgo(iso) {
+    const s = (Date.now() - new Date(iso)) / 1000;
+    if (s < 60) return "hozirgina";
+    if (s < 3600) return `${Math.floor(s / 60)} daqiqa oldin`;
+    if (s < 86400) return `${Math.floor(s / 3600)} soat oldin`;
+    if (s < 86400 * 30) return `${Math.floor(s / 86400)} kun oldin`;
+    return new Date(iso).toLocaleDateString("uz-UZ");
+  }
+
+  const cleanPhone = p => String(p || "").replace(/[^\d+]/g, "");
+  const tgHandle = t => String(t || "").trim().replace(/^@/, "").replace(/^https?:\/\/t\.me\//, "").replace(/[^\w]/g, "");
+
+  // ---------- Ma’lumotlarni yuklash ----------
+  async function loadAll(force = false) {
+    if (cache && !force) return cache;
+    if (!db) { demoMode = true; return (cache = DEMO); }
+
+    const { data, error } = await db
+      .from("listings")
+      .select("id, kind, category, title, description, extra, contact_name, phone, telegram, photo_url, created_at")
+      .eq("is_approved", true)
+      .order("created_at", { ascending: false })
+      .limit(500);
+
+    if (error) {
+      console.warn("listings jadvali topilmadi, namuna ko‘rsatiladi:", error.message);
+      demoMode = true;
+      return (cache = DEMO);
+    }
+    demoMode = false;
+    return (cache = data || []);
+  }
+
+  function itemCard(item, { admin = false } = {}) {
+    const kind = KINDS[item.kind] || { icon: "📌" };
+    const extra = item.extra || {};
+
+    const thumb = el("div", { class: "thumb" });
+    if (item.photo_url) {
+      const img = el("img", { src: item.photo_url, alt: "", loading: "lazy", referrerpolicy: "no-referrer" });
+      img.onerror = () => { thumb.replaceChildren(kind.icon); };
+      thumb.append(img);
+    } else {
+      thumb.append(kind.icon);
+    }
+
+    const tags = el("div", { class: "meta" }, el("span", { class: "tag" }, item.category || "Boshqa"));
+    for (const [key, val] of Object.entries(extra)) {
+      if (val === "" || val == null || key === "price") continue;
+      const label = { experience: `${val} yil tajriba`, seats: `${val} ta joy` }[key] || val;
+      tags.append(el("span", { class: "tag" }, `${EXTRA_LABELS[key] || "•"} ${label}`));
+    }
+
+    const phone = cleanPhone(item.phone);
+    const handle = tgHandle(item.telegram);
+    const actions = el("div", { class: "actions" },
+      phone && el("a", { class: "btn success", href: `tel:${phone}` }, "📞 Qo‘ng‘iroq"),
+      handle && el("a", { class: "btn", href: `https://t.me/${handle}`, target: "_blank", rel: "noopener" }, "✈️ Telegram"),
+      !admin && el("button", { type: "button", onclick: () => shareItem(item) }, "🔗 Ulashish")
+    );
+
+    if (admin) {
+      actions.append(
+        el("button", { type: "button", class: "primary", onclick: () => moderate(item.id, "approve") }, "✅ Tasdiqlash"),
+        el("button", { type: "button", class: "danger", onclick: () => moderate(item.id, "delete") }, "🗑 O‘chirish")
+      );
+    }
+
+    return el("div", { class: "card" },
+      el("div", { class: "item" },
+        thumb,
+        el("div", { class: "grow" },
+          el("h3", {}, item.title),
+          extra.price ? el("div", { class: "price" }, money(extra.price)) : null,
+          tags,
+          item.description ? el("p", { class: "desc" }, item.description) : null,
+          el("div", { class: "time" }, `👤 ${item.contact_name || "—"} · ${timeAgo(item.created_at)}`)
+        )
+      ),
+      actions
+    );
+  }
+
+  async function shareItem(item) {
+    const text = `${item.title}\n${item.phone || ""}\nVaxshivor portalida`;
+    const url = location.href.split("#")[0] + "#" + item.kind;
+    try {
+      if (navigator.share) await navigator.share({ title: item.title, text, url });
+      else { await navigator.clipboard.writeText(`${text}\n${url}`); alert("Nusxa olindi!"); }
+    } catch (e) {}
+  }
+
+  function demoNotice() {
+    return demoMode
+      ? el("div", { class: "notice demo" }, "⚠️ Bu namuna ma’lumotlar. Baza sozlangach haqiqiy e’lonlar chiqadi.")
+      : null;
+  }
+
+  // ---------- Bosh sahifa ----------
+  async function renderHome() {
+    const list = document.getElementById("latestList");
+    list.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
+    const items = await loadAll();
+
+    document.getElementById("statTotal").textContent = items.length;
+    document.getElementById("statMasters").textContent = items.filter(i => i.kind === "master").length;
+    document.getElementById("statJobs").textContent = items.filter(i => i.kind === "job" && i.category !== "Ish qidiryapman").length;
+
+    list.replaceChildren(demoNotice() || "");
+    const latest = items.slice(0, 5);
+    if (latest.length === 0) {
+      list.append(el("div", { class: "notice" }, "Hozircha e’lonlar yo‘q. Birinchi bo‘lib qo‘shing!"));
+      return;
+    }
+    latest.forEach(i => list.append(itemCard(i)));
+  }
+
+  // ---------- Bo‘lim ro‘yxati ----------
+  async function renderList(kind) {
+    const cfg = KINDS[kind];
+    if (currentKind !== kind) {
+      currentKind = kind;
+      currentCategory = "Hammasi";
+      document.getElementById("searchInput").value = "";
+    }
+    document.getElementById("listTitle").textContent = cfg.title;
+    document.getElementById("listIntro").textContent = cfg.intro;
+
+    const chips = document.getElementById("chips");
+    chips.replaceChildren(...["Hammasi", ...cfg.categories].map(c =>
+      el("button", {
+        type: "button",
+        class: "chip" + (c === currentCategory ? " active" : ""),
+        onclick: () => { currentCategory = c; renderList(kind); }
+      }, c)
+    ));
+
+    const out = document.getElementById("listItems");
+    out.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
+
+    const q = document.getElementById("searchInput").value.trim().toLowerCase();
+    const items = (await loadAll()).filter(i =>
+      i.kind === kind &&
+      (currentCategory === "Hammasi" || i.category === currentCategory) &&
+      (!q || [i.title, i.description, i.contact_name, ...Object.values(i.extra || {})]
+        .join(" ").toLowerCase().includes(q))
+    );
+
+    out.replaceChildren(demoNotice() || "");
+    if (items.length === 0) {
+      out.append(el("div", { class: "notice" },
+        "Hech narsa topilmadi. ",
+        el("a", { href: "#add", class: "price", onclick: () => { addPreset = kind; } }, "E’lon qo‘shing →")));
+      return;
+    }
+    items.forEach(i => out.append(itemCard(i)));
+  }
+
+  let searchTimer;
+  document.getElementById("searchInput").addEventListener("input", () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => currentKind && renderList(currentKind), 250);
+  });
+
+  // ---------- E’lon qo‘shish ----------
+  let addPreset = null;
+  const fKind = document.getElementById("fKind");
+  fKind.replaceChildren(...Object.entries(KINDS).map(([k, v]) => el("option", { value: k }, v.title)));
+
+  function syncAddForm() {
+    const cfg = KINDS[fKind.value];
+    document.getElementById("fCategory").replaceChildren(...cfg.categories.map(c => el("option", { value: c }, c)));
+    document.getElementById("lTitle").textContent = cfg.titleLabel;
+    document.getElementById("extraFields").replaceChildren(...cfg.extra.flatMap(f => [
+      el("label", { for: "x_" + f.key }, f.label),
+      el("input", {
+        id: "x_" + f.key, "data-extra": f.key, type: f.type || "text",
+        min: f.type === "number" ? "0" : null, maxlength: "120", placeholder: f.placeholder || null
+      })
+    ]));
+  }
+  fKind.addEventListener("change", syncAddForm);
+
+  async function uploadPhoto(file) {
+    if (!file) return null;
+    if (file.size > 3 * 1024 * 1024) throw new Error("Rasm 3 MB dan katta.");
+    if (!file.type.startsWith("image/")) throw new Error("Faqat rasm yuklash mumkin.");
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
+    const path = `${new Date().toISOString().slice(0, 10)}/${crypto.randomUUID()}.${ext}`;
+    const { error } = await db.storage.from(PHOTO_BUCKET).upload(path, file, { contentType: file.type });
+    if (error) throw new Error("Rasm yuklanmadi.");
+    return db.storage.from(PHOTO_BUCKET).getPublicUrl(path).data.publicUrl;
+  }
+
+  document.getElementById("addForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const status = document.getElementById("addStatus");
+    const button = form.querySelector("button[type=submit]");
+
+    if (!db) { status.textContent = "Bazaga ulanib bo‘lmadi. Internetni tekshiring."; return; }
+
+    const phone = cleanPhone(form.phone.value);
+    if (phone.replace("+", "").length < 9) { status.textContent = "Telefon raqamini to‘g‘ri kiriting."; return; }
+
+    const extra = {};
+    form.querySelectorAll("[data-extra]").forEach(input => {
+      const v = input.value.trim();
+      if (v) extra[input.dataset.extra] = input.type === "number" ? Number(v) : v;
+    });
+
+    button.disabled = true;
+    status.textContent = "Yuborilmoqda...";
+    try {
+      const photo_url = await uploadPhoto(form.photo.files[0]);
+      const { error } = await db.from("listings").insert({
+        kind: form.kind.value,
+        category: form.category.value,
+        title: form.title.value.trim(),
+        description: form.description.value.trim() || null,
+        extra,
+        contact_name: form.contact_name.value.trim(),
+        phone,
+        telegram: form.telegram.value.trim() || null,
+        photo_url
+      });
+      if (error) throw new Error(error.message);
+
+      status.textContent = "✅ Rahmat! E’loningiz tekshiruvdan so‘ng chiqadi.";
+      tg?.HapticFeedback?.notificationOccurred("success");
+      const keepKind = form.kind.value;
+      form.reset();
+      fKind.value = keepKind;
+      syncAddForm();
+    } catch (e) {
+      console.error(e);
+      status.textContent = e.message.startsWith("Rasm") || e.message.startsWith("Faqat")
+        ? e.message
+        : "Yuborilmadi. Birozdan so‘ng qayta urinib ko‘ring.";
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  // ---------- Administrator ----------
+  async function renderAdmin() {
+    if (!db) return;
+    const { data } = await db.auth.getSession();
+    const session = data?.session;
+    document.getElementById("adminLogin").classList.toggle("hidden", !!session);
+    document.getElementById("adminPanel").classList.toggle("hidden", !session);
+    if (!session) return;
+
+    document.getElementById("adminWho").textContent = `Kirgan: ${session.user.email}`;
+    const out = document.getElementById("pendingList");
+    out.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
+
+    const { data: rows, error } = await db
+      .from("listings")
+      .select("*")
+      .eq("is_approved", false)
+      .order("created_at", { ascending: true })
+      .limit(100);
+
+    if (error) {
+      out.replaceChildren(el("div", { class: "notice" }, "Ruxsat yo‘q. Emailingiz admins jadvalida borligini tekshiring."));
+      return;
+    }
+    out.replaceChildren();
+    if (!rows.length) { out.append(el("div", { class: "notice" }, "Yangi e’lonlar yo‘q. 👍")); return; }
+    rows.forEach(r => out.append(itemCard(r, { admin: true })));
+  }
+
+  async function moderate(id, action) {
+    if (action === "delete" && !confirm("E’lon o‘chirilsinmi?")) return;
+    const q = db.from("listings");
+    const { error } = action === "approve"
+      ? await q.update({ is_approved: true }).eq("id", id)
+      : await q.delete().eq("id", id);
+    if (error) { alert("Amal bajarilmadi: ruxsat yo‘q."); return; }
+    cache = null;
+    renderAdmin();
+  }
+
+  document.getElementById("adminLogin").addEventListener("submit", async event => {
+    event.preventDefault();
+    const status = document.getElementById("adminStatus");
+    if (!db) { status.textContent = "Bazaga ulanib bo‘lmadi."; return; }
+    status.textContent = "Tekshirilmoqda...";
+    const { error } = await db.auth.signInWithPassword({
+      email: document.getElementById("aEmail").value.trim(),
+      password: document.getElementById("aPass").value
+    });
+    if (error) { status.textContent = "Email yoki parol noto‘g‘ri."; return; }
+    status.textContent = "";
+    document.getElementById("aPass").value = "";
+    renderAdmin();
+  });
+
+  async function adminLogout() {
+    await db?.auth.signOut();
+    renderAdmin();
+  }
+
+  // ---------- Navigatsiya (#manzil orqali, "orqaga" tugmasi ishlaydi) ----------
+  function go(page) {
+    if (location.hash !== "#" + page) location.hash = page;
+    else route();
+  }
+
+  function route() {
+    const page = location.hash.slice(1) || "home";
+    const isKind = page in KINDS;
+    const sectionId = isKind ? "list" : (["home", "add", "admin"].includes(page) ? page : "home");
+
+    document.querySelectorAll("[data-page]").forEach(s => s.classList.toggle("hidden", s.id !== sectionId));
+    document.querySelectorAll(".tabbar button").forEach(b =>
+      b.classList.toggle("active", b.dataset.tab === (isKind ? page : sectionId)));
+    document.getElementById("fab").classList.toggle("hidden", sectionId !== "list");
+    window.scrollTo(0, 0);
+
+    if (sectionId === "home") renderHome();
+    if (isKind) renderList(page);
+    if (sectionId === "add") {
+      fKind.value = addPreset || currentKind || fKind.value;
+      addPreset = null;
+      syncAddForm();
+    }
+    if (sectionId === "admin") renderAdmin();
+  }
+
+  window.addEventListener("hashchange", route);
+  route();
+</script>
+</body>
+</html>
