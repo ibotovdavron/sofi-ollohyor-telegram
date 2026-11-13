@@ -6,6 +6,13 @@
   <meta name="theme-color" content="#070b14">
   <meta name="description" content="Vaxshivor qishlog‘i portali: do‘kon, ustalar, taksi, e’lonlar va ish o‘rinlari.">
   <title>Vaxshivor — Qishloq portali</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Vaxshivor">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
@@ -295,6 +302,16 @@
     .tabbar button span { font-size: 22px; height: 26px; display: grid; place-items: center; }
     .tabbar button.active .i { stroke-width: 2.4; }
 
+    .install-card { display: flex; align-items: center; gap: 12px; border-color: #3b74c4; background: linear-gradient(120deg, #17304f, #1d2f5f); animation: fadeUp .45s ease both; }
+    .install-card img { width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0; }
+    .install-card .grow p { margin: 2px 0 0; font-size: 13px; }
+    .install-card button { white-space: nowrap; padding: 10px 14px; }
+    .install-card .close { background: none; border: 0; color: var(--muted); padding: 4px 6px; }
+    .offline-bar { position: sticky; top: 0; z-index: 12; text-align: center; padding: 8px; font-size: 13px; background: #4a3a10; color: var(--amber); }
+
+    .logo { background: none; border: 0; overflow: hidden; box-shadow: 0 8px 22px -6px #22c55e; }
+    .logo img { width: 100%; height: 100%; display: block; }
+
     footer { text-align: center; margin: 30px 0 10px; font-size: 13px; color: #8291a8; }
   </style>
 </head>
@@ -313,9 +330,10 @@
   <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l8 5H4z"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
 </svg>
+<div id="offlineBar" class="offline-bar hidden">Internet yo‘q — oxirgi saqlangan sahifa ko‘rsatilmoqda</div>
 <main>
   <header onclick="go('home')">
-    <div class="logo"><svg class="i"><use href="#i-home"/></svg></div>
+    <div class="logo"><img src="icons/icon-192.png" alt="Vaxshivor logosi" width="60" height="60"></div>
     <div>
       <h1>Vaxshivor</h1>
       <p class="subtitle">Qishloq portali · Hammasi bir joyda</p>
@@ -334,6 +352,16 @@
         <div class="stat"><strong id="statMasters">—</strong><span>usta</span></div>
         <div class="stat"><strong id="statJobs">—</strong><span>ish o‘rni</span></div>
       </div>
+    </div>
+
+    <div id="installCard" class="card install-card hidden">
+      <img src="icons/icon-192.png" alt="">
+      <div class="grow">
+        <strong>Vaxshivor ilovasi</strong>
+        <p id="installHint">Telefonga o‘rnating</p>
+      </div>
+      <button id="installBtn" class="primary" type="button">O‘rnatish</button>
+      <button class="close" type="button" aria-label="Yopish" onclick="dismissInstall()">✕</button>
     </div>
 
     <button class="about-banner" onclick="go('about')">
@@ -1122,6 +1150,51 @@
     if (sectionId === "admin") renderAdmin();
     if (sectionId === "account") renderAccount();
   }
+
+  // ---------- Mobil ilova (telefonga o‘rnatish) ----------
+  if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+    navigator.serviceWorker.register("sw.js").catch(e => console.warn("SW:", e.message));
+  }
+
+  let installEvent = null;
+  const installCard = document.getElementById("installCard");
+  const isStandalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const installDismissed = () => { try { return localStorage.getItem("installDismissed") === "1"; } catch (e) { return false; } };
+
+  window.addEventListener("beforeinstallprompt", event => {
+    event.preventDefault();
+    installEvent = event;
+    if (!isStandalone && !installDismissed() && !inTelegram) installCard.classList.remove("hidden");
+  });
+
+  // iPhone'da avtomatik o‘rnatish oynasi yo‘q — yo‘riqnoma ko‘rsatamiz.
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if (isIos && !isStandalone && !installDismissed() && !inTelegram) {
+    document.getElementById("installHint").textContent = "Safari’da «Ulashish» → «Bosh ekranga qo‘shish»ni bosing.";
+    document.getElementById("installBtn").classList.add("hidden");
+    installCard.classList.remove("hidden");
+  }
+
+  document.getElementById("installBtn").addEventListener("click", async () => {
+    if (!installEvent) return;
+    installEvent.prompt();
+    await installEvent.userChoice;
+    installEvent = null;
+    installCard.classList.add("hidden");
+  });
+
+  window.addEventListener("appinstalled", () => installCard.classList.add("hidden"));
+
+  function dismissInstall() {
+    installCard.classList.add("hidden");
+    try { localStorage.setItem("installDismissed", "1"); } catch (e) {}
+  }
+
+  const offlineBar = document.getElementById("offlineBar");
+  const syncOnline = () => offlineBar.classList.toggle("hidden", navigator.onLine);
+  window.addEventListener("online", () => { syncOnline(); cache = null; route(); });
+  window.addEventListener("offline", syncOnline);
+  syncOnline();
 
   window.addEventListener("hashchange", route);
 
