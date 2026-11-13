@@ -540,6 +540,10 @@
       background: linear-gradient(145deg, #facc15, #ca8a04); border: 2px solid #fff; box-shadow: 0 6px 14px rgba(0,0,0,.45);
     }
     .taxi-pin span { transform: rotate(45deg); }
+    .taxi-map .leaflet-control-layers { background: rgba(17, 28, 46, .92) !important; color: var(--text); border: 1px solid var(--border) !important; border-radius: 12px !important; font-size: 13px; }
+    .taxi-map .leaflet-control-layers-expanded { padding: 6px 10px; }
+    .taxi-map .leaflet-control-layers label { color: var(--text); font-size: 13px; margin: 2px 0; }
+    .taxi-map .leaflet-control-layers input { display: inline; width: auto; margin: 0 6px 0 0; padding: 0; }
     .village-pin { width: 34px; height: 34px; display: grid; place-items: center; font-size: 18px; border-radius: 50%; background: #14532d; border: 2px solid #86efac; box-shadow: 0 4px 12px rgba(0,0,0,.45); }
     .leaflet-tooltip.village-label { background: #111c2e; color: #fff; border: 1px solid #86efac; border-radius: 999px; padding: 2px 10px; font-weight: 700; box-shadow: none; }
     .leaflet-tooltip.village-label::before { display: none; }
@@ -1910,9 +1914,22 @@
     if (ok && !taxiMap) {
       mapEl.textContent = "";
       taxiMap = L.map(mapEl, { attributionControl: true }).setView(MAP_CENTER, 10);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+// Sputnik tasviri (standart) va oddiy xarita — o‘ng yuqoridagi tugma bilan almashtiriladi.
+      const esri = "https://server.arcgisonline.com/ArcGIS/rest/services";
+      const satellite = L.layerGroup([
+        L.tileLayer(`${esri}/World_Imagery/MapServer/tile/{z}/{y}/{x}`, { maxZoom: 18, attribution: "Tasvir © Esri" }),
+        L.tileLayer(`${esri}/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}`, { maxZoom: 18 })
+      ]);
+      const streets = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18, attribution: "© OpenStreetMap"
-      }).addTo(taxiMap);
+      });
+      let wanted = "sat";
+      try { wanted = localStorage.getItem("mapStyle") || "sat"; } catch (e) {}
+      (wanted === "map" ? streets : satellite).addTo(taxiMap);
+      L.control.layers({ "🛰 Sputnik": satellite, "🗺 Xarita": streets }, null, { collapsed: false, position: "topright" }).addTo(taxiMap);
+      taxiMap.on("baselayerchange", e => {
+        try { localStorage.setItem("mapStyle", e.layer === streets ? "map" : "sat"); } catch (err) {}
+      });
     } else if (!ok) {
       mapEl.textContent = "Xaritani yuklab bo‘lmadi. Internetni tekshiring — ro‘yxat pastda.";
     }
