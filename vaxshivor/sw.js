@@ -1,6 +1,6 @@
 // Vaxshivor ilovasi: internet bo‘lmaganda ham sahifa ochilishi uchun.
-const CACHE = "vaxshivor-v10";
-const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png"];
+const CACHE = "vaxshivor-v11";
+const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-192.png", "./icons/icon-512.png", "./icons/sufi-ollohyor.png"];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
