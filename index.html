@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#070b14">
-  <title>So‘fi Ollohyor — O‘quv markazi</title>
+  <title>Vaxshivor — O‘quv markazi</title>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -117,6 +117,21 @@
       overflow-wrap: anywhere;
     }
 
+    .student-row { display: flex; align-items: center; gap: 12px; }
+    .student-row p { margin: 4px 0 0; }
+    .rank { min-width: 26px; }
+    .grow { flex: 1; min-width: 0; }
+    .avatar {
+      width: 48px; height: 48px; border-radius: 50%; overflow: hidden;
+      flex-shrink: 0; background: #26364e; display: grid; place-items: center;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    button.wide { display: block; width: 100%; margin: 8px 0; }
+    button.right { background: #166534; border-color: #22c55e; }
+    button.wrong { background: #7f1d1d; border-color: #ef4444; }
+    label { display: block; color: var(--muted); font-size: 14px; margin-top: 6px; }
+    .card p, .notice p { white-space: pre-line; }
+
     footer {
       text-align: center;
       margin: 32px 0 10px;
@@ -131,7 +146,7 @@
   <header>
     <div class="logo">✦</div>
     <div>
-      <h1>So‘fi Ollohyor</h1>
+      <h1>Vaxshivor</h1>
       <p class="subtitle">O‘quv markazi · Bilim sari qadam</p>
     </div>
   </header>
@@ -162,22 +177,21 @@
 
  
 <section id="stars" class="hidden">
-  <button onclick="showPage('home')">← Bosh sahifa</button>
-  <h2>⭐ Umumiy Top 10</h2>
-  <p class="subtitle">So‘fi Ollohyor o‘quvchilari reytingi</p>
-
-  <div id="starsList" class="notice">
-    Reyting yuklanmoqda...
-  </div>
-</section>
+    <button onclick="showPage('home')">← Bosh sahifa</button>
+    <h2>⭐ Mening yulduzlarim</h2>
+    <form id="starsSearchForm" class="card">
+      <label for="starsName">Ism va familiyangiz</label>
+      <input id="starsName" placeholder="Masalan: Aliyev Vali" required maxlength="120" autocomplete="name">
+      <button class="primary" type="submit">Qidirish</button>
+    </form>
+    <div id="starsList" class="notice">Ismingizni kiriting va yulduzlaringizni ko‘ring.</div>
+  </section>
 
 
   <section id="ranking" class="hidden">
     <button onclick="showPage('home')">← Bosh sahifa</button>
     <h2>🏆 O‘quvchilar reytingi</h2>
-    <div id="rankingList" class="notice">
-      Reyting hozircha mavjud emas.
-    </div>
+    <div id="rankingList" class="notice">Reyting yuklanmoqda...</div>
   </section>
 
   <section id="apply" class="hidden">
@@ -196,43 +210,32 @@
   <section id="tests" class="hidden">
     <button onclick="showPage('home')">← Bosh sahifa</button>
     <h2>📚 Testlar</h2>
-    <div class="notice">Testlar bo‘limi keyingi bosqichda mavjud testlar bazasiga ulanadi.</div>
+    <div id="testsArea" class="notice">Testlar yuklanmoqda...</div>
   </section>
 
   
 <section id="admin" class="hidden">
-  <button onclick="showPage('home')">← Bosh sahifa</button>
-  <h2>🔐 Administrator paneli</h2>
+    <button onclick="showPage('home')">← Bosh sahifa</button>
+    <h2>🔐 Administrator paneli</h2>
 
-  <form id="adminLoginForm" class="card">
-    <label for="adminEmail">Email manzil</label>
-    <input
-      id="adminEmail"
-      type="email"
-      value="ibotovdavron.ok@gmail.com"
-      autocomplete="username"
-      required
-    >
+    <form id="adminLoginForm" class="card">
+      <label for="adminEmail">Email manzil</label>
+      <input id="adminEmail" type="email" autocomplete="username" placeholder="admin@example.com" required>
+      <label for="adminPassword">Parol</label>
+      <input id="adminPassword" type="password" autocomplete="current-password" placeholder="Parolingiz" required>
+      <button class="primary" type="submit">🔐 Kirish</button>
+      <p id="adminLoginStatus" role="status"></p>
+    </form>
 
-    <label for="adminPassword">Parol</label>
-    <input
-      id="adminPassword"
-      type="password"
-      autocomplete="current-password"
-      placeholder="Supabase parolingiz"
-      required
-    >
-
-    <button class="primary" type="submit">🔐 Kirish</button>
-    <p id="adminLoginStatus" role="status"></p>
-  </form>
-
-  <div id="adminDashboard" class="card hidden">
-    <h3>✅ Administrator tasdiqlandi</h3>
-    <p>So‘fi Ollohyor boshqaruv paneliga xush kelibsiz!</p>
-    <button type="button" onclick="adminLogout()">Chiqish</button>
-  </div>
-</section>
+    <div id="adminDashboard" class="card hidden">
+      <h3>✅ Administrator tasdiqlandi</h3>
+      <p id="adminWho"></p>
+      <h3>📝 So‘nggi arizalar</h3>
+      <div id="adminApplications" class="notice">Yuklanmoqda...</div>
+      <p></p>
+      <button type="button" onclick="adminLogout()">Chiqish</button>
+    </div>
+  </section>
   
 
 
@@ -254,7 +257,7 @@
   </section>
 
   <footer>
-    So‘fi Ollohyor o‘quv markazi<br>
+    Vaxshivor o‘quv markazi<br>
     Bilim · Intizom · Natija
   </footer>
 </main>
@@ -289,148 +292,300 @@
     if (id === "schedule") loadSchedule();
     if (id === "stars") loadStars();
     if (id === "ranking") loadRanking();
+    if (id === "tests") loadTests();
+    if (id === "admin") showAdminState();
   }
   
-async function loadStars() {
-  const output = document.getElementById("starsList");
-
-  if (!db) {
-    output.textContent = "Supabase bilan ulanish sozlanmagan.";
-    return;
-  }
-
-  output.textContent = "Reyting yuklanmoqda...";
-
-  const { data, error } = await db
-    .from("student_star_ranking")
-    .select("student_id, full_name, class_name, avatar_url, total_stars")
-    .order("total_stars", { ascending: false })
-    .limit(10);
-
-  if (error) {
-    console.error("Reyting xatosi:", error.message);
-    output.textContent =
-      "Reyting yuklanmadi. Supabase ruxsatlarini tekshirish kerak.";
-    return;
-  }
-
-  if (!data || data.length === 0) {
-    output.textContent = "Hozircha reytingda o‘quvchilar yo‘q.";
-    return;
-  }
-
-  output.replaceChildren();
-
-  data.forEach((student, index) => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    const row = document.createElement("div");
-    row.style.display = "flex";
-    row.style.alignItems = "center";
-    row.style.gap = "12px";
-    row.style.marginBottom = "12px";
-
-    const rank = document.createElement("strong");
-    rank.textContent = `${index + 1}.`;
-    rank.style.minWidth = "24px";
-
+  function avatarEl(url) {
     const avatar = document.createElement("div");
-    avatar.style.width = "48px";
-    avatar.style.height = "48px";
-    avatar.style.borderRadius = "50%";
-    avatar.style.overflow = "hidden";
-    avatar.style.flexShrink = "0";
-    avatar.style.background = "#26364e";
-    avatar.style.display = "grid";
-    avatar.style.placeItems = "center";
-
-    if (student.avatar_url) {
+    avatar.className = "avatar";
+    if (url) {
       const img = document.createElement("img");
-      img.src = student.avatar_url;
+      img.src = url;
       img.alt = "";
       img.loading = "lazy";
       img.referrerPolicy = "no-referrer";
-      img.style.width = "100%";
-      img.style.height = "100%";
-      img.style.objectFit = "cover";
-      img.onerror = () => {
-        avatar.replaceChildren();
-        avatar.textContent = "👤";
-      };
+      img.onerror = () => { avatar.replaceChildren(); avatar.textContent = "👤"; };
       avatar.appendChild(img);
     } else {
       avatar.textContent = "👤";
     }
+    return avatar;
+  }
+
+  function studentRow(student, rankNumber) {
+    const card = document.createElement("div");
+    card.className = "card student-row";
+
+    const rank = document.createElement("strong");
+    rank.className = "rank";
+    rank.textContent = rankNumber ? `${rankNumber}.` : "";
 
     const details = document.createElement("div");
-    details.style.flex = "1";
-    details.style.minWidth = "0";
-
+    details.className = "grow";
     const name = document.createElement("strong");
     name.textContent = student.full_name || "O‘quvchi";
-
-    const className = document.createElement("p");
-    className.textContent = student.class_name || "Sinf belgilanmagan";
-    className.style.margin = "4px 0 0";
+    const cls = document.createElement("p");
+    cls.textContent = student.class_name ? `Sinf: ${student.class_name}` : "Sinf belgilanmagan";
+    details.append(name, cls);
 
     const stars = document.createElement("strong");
     stars.textContent = `⭐ ${student.total_stars ?? 0}`;
 
-    details.append(name, className);
-    row.append(rank, avatar, details, stars);
-    card.appendChild(row);
-    output.appendChild(card);
-  });
-}
+    card.append(rank, avatarEl(student.avatar_url), details, stars);
+    return card;
+  }
 
+  const RANKING_COLUMNS = "student_id, full_name, class_name, avatar_url, total_stars";
+
+  // ⭐ Mening yulduzlarim — o‘quvchi ismi bo‘yicha qidirish.
+  async function loadStars() {
+    let saved = "";
+    try { saved = localStorage.getItem("myStudentName") || ""; } catch (e) {}
+    const input = document.getElementById("starsName");
+    if (saved && !input.value) {
+      input.value = saved;
+      searchMyStars(saved);
+    }
+  }
+
+  async function searchMyStars(query) {
+    const output = document.getElementById("starsList");
+    if (!db) { output.textContent = "Ma’lumotlar bazasiga ulanish sozlanmagan."; return; }
+
+    const text = query.trim().replace(/[%_,()]/g, " ").replace(/\s+/g, " ");
+    if (text.length < 2) { output.textContent = "Kamida 2 ta harf kiriting."; return; }
+
+    output.textContent = "Qidirilmoqda...";
+    const { data, error } = await db
+      .from("student_star_ranking")
+      .select(RANKING_COLUMNS)
+      .ilike("full_name", `%${text}%`)
+      .order("total_stars", { ascending: false })
+      .limit(5);
+
+    if (error) {
+      console.error("Yulduzlar xatosi:", error.message);
+      output.textContent = "Ma’lumot yuklanmadi. Keyinroq urinib ko‘ring.";
+      return;
+    }
+    if (!data || data.length === 0) {
+      output.textContent = "Bunday o‘quvchi topilmadi. Ismni tekshirib qayta kiriting.";
+      return;
+    }
+
+    try { localStorage.setItem("myStudentName", text); } catch (e) {}
+    output.replaceChildren();
+
+    for (const student of data) {
+      // O‘rinni hisoblash: yulduzi ko‘proq bo‘lgan o‘quvchilar soni + 1.
+      const { count } = await db
+        .from("student_star_ranking")
+        .select("student_id", { count: "exact", head: true })
+        .gt("total_stars", student.total_stars ?? 0);
+      output.appendChild(studentRow(student, count != null ? count + 1 : null));
+    }
+    const hint = document.createElement("p");
+    hint.textContent = "Raqam — umumiy reytingdagi o‘rningiz.";
+    output.appendChild(hint);
+  }
+
+  document.getElementById("starsSearchForm").addEventListener("submit", event => {
+    event.preventDefault();
+    searchMyStars(document.getElementById("starsName").value);
+  });
+
+  // 🏆 Umumiy reyting.
   async function loadRanking() {
-  const output = document.getElementById("rankingList");
+    const output = document.getElementById("rankingList");
+    if (!db) { output.textContent = "Ma’lumotlar bazasiga ulanish sozlanmagan."; return; }
 
-  if (!db) {
-    output.textContent = "Supabase bilan ulanish sozlanmagan.";
-    return;
+    output.textContent = "Reyting yuklanmoqda...";
+    const { data, error } = await db
+      .from("student_star_ranking")
+      .select(RANKING_COLUMNS)
+      .order("total_stars", { ascending: false })
+      .limit(50);
+
+    if (error) {
+      console.error("Reyting xatosi:", error.message);
+      output.textContent = "Reyting yuklanmadi. Keyinroq urinib ko‘ring.";
+      return;
+    }
+    if (!data || data.length === 0) {
+      output.textContent = "Hozircha reytingda o‘quvchilar yo‘q.";
+      return;
+    }
+
+    output.replaceChildren();
+    data.forEach((student, index) => output.appendChild(studentRow(student, index + 1)));
   }
 
-  output.textContent = "Reyting yuklanmoqda...";
+  // 📚 Testlar: "tests" jadvalidan savollar (supabase/schema.sql ga qarang).
+  let testState = null;
 
-  const { data, error } = await db
-    .from("student_star_ranking")
-    .select("student_id, full_name, class_name, avatar_url, total_stars")
-    .order("total_stars", { ascending: false })
-    .limit(10);
+  async function loadTests() {
+    const area = document.getElementById("testsArea");
+    if (!db) { area.textContent = "Ma’lumotlar bazasiga ulanish sozlanmagan."; return; }
 
-  if (error) {
-    console.error("Reyting xatosi:", error.message);
-    output.textContent = "Reyting yuklanmadi. Supabase ruxsatlarini tekshiring.";
-    return;
+    area.textContent = "Testlar yuklanmoqda...";
+    const { data, error } = await db
+      .from("tests")
+      .select("id, subject, question, options, correct_index")
+      .eq("is_active", true)
+      .order("subject")
+      .limit(500);
+
+    if (error) {
+      console.error("Testlar xatosi:", error.message);
+      area.textContent = "Testlar hozircha mavjud emas.";
+      return;
+    }
+    const questions = (data || []).filter(q => Array.isArray(q.options) && q.options.length >= 2);
+    if (questions.length === 0) {
+      area.textContent = "Hozircha testlar qo‘shilmagan.";
+      return;
+    }
+
+    const subjects = [...new Set(questions.map(q => q.subject || "Umumiy"))];
+    area.replaceChildren();
+    const p = document.createElement("p");
+    p.textContent = "Fanni tanlang:";
+    area.appendChild(p);
+    subjects.forEach(subject => {
+      const btn = document.createElement("button");
+      btn.className = "wide";
+      const list = questions.filter(q => (q.subject || "Umumiy") === subject);
+      btn.textContent = `📘 ${subject} (${list.length} ta savol)`;
+      btn.onclick = () => startTest(subject, list);
+      area.appendChild(btn);
+    });
   }
 
-  if (!data || data.length === 0) {
-    output.textContent = "Hozircha reytingda o‘quvchilar yo‘q.";
-    return;
+  function startTest(subject, list) {
+    const shuffled = [...list].sort(() => Math.random() - 0.5).slice(0, 20);
+    testState = { subject, questions: shuffled, index: 0, score: 0 };
+    renderQuestion();
   }
 
-  output.replaceChildren();
+  function renderQuestion() {
+    const area = document.getElementById("testsArea");
+    const { subject, questions, index, score } = testState;
+    area.replaceChildren();
 
-  data.forEach((student, index) => {
-    const card = document.createElement("div");
-    card.className = "notice";
+    if (index >= questions.length) {
+      const h = document.createElement("h3");
+      h.textContent = `Natija: ${score} / ${questions.length}`;
+      const p = document.createElement("p");
+      const pct = Math.round(score / questions.length * 100);
+      p.textContent = pct >= 80 ? "Ajoyib natija! 🎉" : pct >= 50 ? "Yaxshi, yana mashq qiling! 💪" : "Mavzuni takrorlab, qayta urinib ko‘ring. 📖";
+      const again = document.createElement("button");
+      again.className = "wide primary";
+      again.textContent = "Boshqa test tanlash";
+      again.onclick = loadTests;
+      area.append(h, p, again);
+      return;
+    }
 
-    const name = document.createElement("strong");
-    name.textContent = `${index + 1}. ${student.full_name || "Noma’lum o‘quvchi"}`;
+    const q = questions[index];
+    const meta = document.createElement("p");
+    meta.textContent = `${subject} · ${index + 1} / ${questions.length}`;
+    const title = document.createElement("h3");
+    title.textContent = q.question;
+    area.append(meta, title);
 
-    const stars = document.createElement("p");
-    stars.textContent = `⭐ ${student.total_stars ?? 0} ta yulduz`;
+    q.options.forEach((option, i) => {
+      const btn = document.createElement("button");
+      btn.className = "wide";
+      btn.textContent = String(option);
+      btn.onclick = () => {
+        const buttons = area.querySelectorAll("button.wide");
+        buttons.forEach(b => (b.disabled = true));
+        const correct = i === q.correct_index;
+        if (correct) testState.score++;
+        btn.classList.add(correct ? "right" : "wrong");
+        buttons[q.correct_index]?.classList.add("right");
+        tg?.HapticFeedback?.notificationOccurred(correct ? "success" : "error");
+        setTimeout(() => { testState.index++; renderQuestion(); }, 900);
+      };
+      area.appendChild(btn);
+    });
+  }
 
-    const classInfo = document.createElement("p");
-    classInfo.textContent = student.class_name
-      ? `Sinf: ${student.class_name}`
-      : "Sinf ko‘rsatilmagan";
+  // 🔐 Administrator.
+  async function showAdminState() {
+    if (!db) return;
+    const { data } = await db.auth.getSession();
+    const session = data?.session;
+    document.getElementById("adminLoginForm").classList.toggle("hidden", !!session);
+    document.getElementById("adminDashboard").classList.toggle("hidden", !session);
+    if (session) {
+      document.getElementById("adminWho").textContent = `Kirgan: ${session.user.email}`;
+      loadApplications();
+    }
+  }
 
-    card.append(name, stars, classInfo);
-    output.appendChild(card);
+  async function loadApplications() {
+    const output = document.getElementById("adminApplications");
+    output.textContent = "Yuklanmoqda...";
+    const { data, error } = await db
+      .from("applications")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (error) {
+      console.error("Arizalar xatosi:", error.message);
+      output.textContent = "Arizalarni ko‘rish uchun ruxsat yo‘q (supabase/schema.sql dagi SELECT siyosatini qo‘shing).";
+      return;
+    }
+    if (!data || data.length === 0) { output.textContent = "Hozircha arizalar yo‘q."; return; }
+
+    output.replaceChildren();
+    data.forEach(a => {
+      const card = document.createElement("div");
+      card.className = "card";
+      const name = document.createElement("strong");
+      name.textContent = a.full_name || "—";
+      const info = document.createElement("p");
+      info.textContent = [
+        a.phone ? "📞 " + a.phone : "",
+        a.course ? "📘 " + a.course : "",
+        a.message ? "💬 " + a.message : "",
+        a.created_at ? "🕒 " + new Date(a.created_at).toLocaleString("uz-UZ") : ""
+      ].filter(Boolean).join("\n");
+      card.append(name, info);
+      output.appendChild(card);
+    });
+  }
+
+  document.getElementById("adminLoginForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const status = document.getElementById("adminLoginStatus");
+    if (!db) { status.textContent = "Ma’lumotlar bazasiga ulanish sozlanmagan."; return; }
+
+    const email = document.getElementById("adminEmail").value.trim();
+    const password = document.getElementById("adminPassword").value;
+    const button = event.currentTarget.querySelector("button[type=submit]");
+
+    button.disabled = true;
+    status.textContent = "Tekshirilmoqda...";
+    const { error } = await db.auth.signInWithPassword({ email, password });
+    button.disabled = false;
+
+    if (error) {
+      console.error("Kirish xatosi:", error.message);
+      status.textContent = "Email yoki parol noto‘g‘ri.";
+      return;
+    }
+    status.textContent = "";
+    document.getElementById("adminPassword").value = "";
+    showAdminState();
   });
+
+  async function adminLogout() {
+    if (db) await db.auth.signOut();
+    showAdminState();
   }
 
   async function loadSchedule() {
@@ -491,37 +646,47 @@ async function loadStars() {
       return;
     }
 
-    const form = new FormData(event.currentTarget);
+    const formEl = event.currentTarget;
+    const form = new FormData(formEl);
     const record = {
       full_name: String(form.get("full_name") || "").trim(),
-      phone: String(form.get("phone") || "").trim()
+      phone: String(form.get("phone") || "").trim(),
+      course: String(form.get("course") || "").trim(),
+      message: String(form.get("message") || "").trim() || null
     };
 
-    // applications jadvaliga faqat uning haqiqiy ustunlari ma’lum
-    // bo‘lgani uchun hozircha kurs va izoh bazaga yozilmaydi.
-    if (!record.full_name || !record.phone) {
-      status.textContent = "Ism va telefon raqamini kiriting.";
+    if (!record.full_name || !record.phone || !record.course) {
+      status.textContent = "Ism, telefon raqami va kurs nomini kiriting.";
       return;
     }
 
     status.textContent = "Ariza yuborilmoqda...";
 
-    const { error } = await db.from("applications").insert(record);
+    let { error } = await db.from("applications").insert(record);
+
+    // Agar jadvalda "course"/"message" ustunlari hali bo‘lmasa,
+    // asosiy ma’lumotlar bilan qayta yuboramiz.
+    if (error && /column|schema cache/i.test(error.message)) {
+      console.warn("applications jadvalida course/message ustunlari yo‘q:", error.message);
+      ({ error } = await db.from("applications").insert({
+        full_name: record.full_name,
+        phone: record.phone
+      }));
+    }
 
     if (error) {
-      status.textContent =
-        "Ariza yuborilmadi. Jadval ustunlari va INSERT siyosatini tekshirish kerak.";
+      status.textContent = "Ariza yuborilmadi. Iltimos, keyinroq qayta urinib ko‘ring.";
       console.error(error.message);
       return;
     }
 
-    status.textContent = "Arizangiz yuborildi!";
-    event.currentTarget.reset();
+    status.textContent = "Arizangiz yuborildi! Tez orada siz bilan bog‘lanamiz.";
+    formEl.reset();
   });
 
   document.getElementById("connection").textContent = db
-    ? "Supabase sozlangan. Bo‘limlar ma’lumotlar bazasiga ulanmoqda."
-    : "Supabase URL va Publishable key hali kiritilmagan.";
+    ? "✅ Ma’lumotlar bazasiga ulangan."
+    : "⚠️ Ma’lumotlar bazasiga ulanib bo‘lmadi. Internetni tekshiring.";
 
 
   // Supabase parol tiklash havolasi bilan kelganda yangi parol oynasini ko‘rsatish.
