@@ -142,6 +142,18 @@
       border-radius: 999px; padding: 13px 18px; box-shadow: 0 8px 24px rgba(0,0,0,.45);
     }
 
+    .account-btn { margin-left: auto; padding: 8px 12px; font-size: 14px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .account-btn img, .profile img { border-radius: 50%; object-fit: cover; }
+    .google-btn {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: #fff; color: #1f1f1f; border-color: #dadce0; font-weight: 600; margin-top: 8px;
+    }
+    .google-btn svg { width: 20px; height: 20px; }
+    .profile { display: flex; align-items: center; gap: 12px; }
+    .status-pending { background: #4a3a10; color: var(--amber); }
+    .status-ok { background: #123d24; color: #86efac; }
+    details summary { cursor: pointer; color: var(--muted); margin: 12px 0 6px; }
+
     footer { text-align: center; margin: 30px 0 10px; font-size: 13px; color: #8291a8; }
   </style>
 </head>
@@ -154,6 +166,7 @@
       <h1>Vaxshivor</h1>
       <p class="subtitle">Qishloq portali · Hammasi bir joyda</p>
     </div>
+    <button id="accountBtn" class="account-btn" type="button" onclick="event.stopPropagation(); go('account')">👤 Kirish</button>
   </header>
 
   <!-- 1. BOSH SAHIFA -->
@@ -208,6 +221,16 @@
     <h2>➕ E’lon qo‘shish</h2>
     <p class="subtitle">E’lon administrator tekshirgandan so‘ng saytda chiqadi.</p>
 
+    <div id="addLogin" class="card hidden">
+      <h3>🔑 Avval ro‘yxatdan o‘ting</h3>
+      <p>E’lon joylash uchun Google hisobingiz bilan kiring. Bu bir necha soniya oladi va bepul.</p>
+      <button type="button" class="google-btn" onclick="signInWithGoogle()">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Google orqali kirish
+      </button>
+      <p class="auth-status" role="status"></p>
+    </div>
+
     <form id="addForm" class="card">
       <label for="fKind">Bo‘lim</label>
       <select id="fKind" name="kind" required></select>
@@ -240,27 +263,74 @@
     </form>
   </section>
 
+  <!-- MENING HISOBIM -->
+  <section id="account" data-page class="hidden">
+    <button class="back" onclick="go('home')">← Bosh sahifa</button>
+    <h2>👤 Mening hisobim</h2>
+
+    <div id="accountLogin" class="card">
+      <h3>Ro‘yxatdan o‘tish / kirish</h3>
+      <p>Google hisobingiz bilan kiring: e’lon joylashingiz va o‘z e’lonlaringizni boshqarishingiz mumkin bo‘ladi.</p>
+      <button type="button" class="google-btn" onclick="signInWithGoogle()">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Google orqali kirish
+      </button>
+      <p class="auth-status" role="status"></p>
+    </div>
+
+    <div id="accountPanel" class="hidden">
+      <div class="card">
+        <div class="profile">
+          <div class="thumb" id="profileAvatar" style="width:56px;height:56px;border-radius:50%">👤</div>
+          <div class="grow">
+            <h3 id="profileName"></h3>
+            <p id="profileEmail" style="margin:0"></p>
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" class="primary" onclick="go('add')">➕ E’lon qo‘shish</button>
+          <button type="button" onclick="signOut()">Chiqish</button>
+        </div>
+      </div>
+      <h2>📋 Mening e’lonlarim</h2>
+      <div id="myListings"></div>
+    </div>
+  </section>
+
   <!-- ADMINISTRATOR -->
   <section id="admin" data-page class="hidden">
     <button class="back" onclick="go('home')">← Bosh sahifa</button>
     <h2>🔐 Administrator</h2>
 
-    <form id="adminLogin" class="card">
-      <label for="aEmail">Email</label>
-      <input id="aEmail" type="email" autocomplete="username" required>
-      <label for="aPass">Parol</label>
-      <input id="aPass" type="password" autocomplete="current-password" required>
-      <button class="primary" type="submit">Kirish</button>
-      <p id="adminStatus" role="status"></p>
-    </form>
+    <div id="adminLogin" class="card">
+      <p>Administrator Google hisobi yoki email va parol bilan kiradi.</p>
+      <button type="button" class="google-btn" onclick="signInWithGoogle()">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Google orqali kirish
+      </button>
+      <p class="auth-status" role="status"></p>
+      <details>
+        <summary>Email va parol bilan kirish</summary>
+        <form id="adminEmailForm">
+          <label for="aEmail">Email</label>
+          <input id="aEmail" type="email" autocomplete="username" required>
+          <label for="aPass">Parol</label>
+          <input id="aPass" type="password" autocomplete="current-password" required>
+          <button class="primary" type="submit">Kirish</button>
+          <p id="adminStatus" role="status"></p>
+        </form>
+      </details>
+    </div>
 
     <div id="adminPanel" class="hidden">
       <div class="card">
         <p id="adminWho"></p>
-        <button type="button" onclick="adminLogout()">Chiqish</button>
+        <button type="button" onclick="signOut()">Chiqish</button>
       </div>
-      <h2>⏳ Tasdiq kutayotgan e’lonlar</h2>
-      <div id="pendingList"></div>
+      <div id="adminBody">
+        <h2>⏳ Tasdiq kutayotgan e’lonlar</h2>
+        <div id="pendingList"></div>
+      </div>
     </div>
   </section>
 
@@ -292,7 +362,12 @@
   const SUPABASE_KEY = "sb_publishable_eeLmq9haeF2faY1_WBskWA_lSx7SM6i";
   const PHOTO_BUCKET = "listing-photos";
 
-  const db = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+  const db = window.supabase
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+        auth: { flowType: "pkce", detectSessionInUrl: true, persistSession: true }
+      })
+    : null;
+  let currentUser = null;
 
   // ---------- Bo‘limlar sozlamasi ----------
   const KINDS = {
@@ -426,7 +501,7 @@
     return (cache = data || []);
   }
 
-  function itemCard(item, { admin = false } = {}) {
+  function itemCard(item, { admin = false, own = false } = {}) {
     const kind = KINDS[item.kind] || { icon: "📌" };
     const extra = item.extra || {};
 
@@ -451,7 +526,8 @@
     const actions = el("div", { class: "actions" },
       phone && el("a", { class: "btn success", href: `tel:${phone}` }, "📞 Qo‘ng‘iroq"),
       handle && el("a", { class: "btn", href: `https://t.me/${handle}`, target: "_blank", rel: "noopener" }, "✈️ Telegram"),
-      !admin && el("button", { type: "button", onclick: () => shareItem(item) }, "🔗 Ulashish")
+      !admin && !own && el("button", { type: "button", onclick: () => shareItem(item) }, "🔗 Ulashish"),
+      own && el("button", { type: "button", class: "danger", onclick: () => deleteOwn(item.id) }, "🗑 O‘chirish")
     );
 
     if (admin) {
@@ -594,6 +670,7 @@
     const button = form.querySelector("button[type=submit]");
 
     if (!db) { status.textContent = "Bazaga ulanib bo‘lmadi. Internetni tekshiring."; return; }
+    if (!currentUser) { updateAuthUI(); return; }
 
     const phone = cleanPhone(form.phone.value);
     if (phone.replace("+", "").length < 9) { status.textContent = "Telefon raqamini to‘g‘ri kiriting."; return; }
@@ -621,11 +698,12 @@
       });
       if (error) throw new Error(error.message);
 
-      status.textContent = "✅ Rahmat! E’loningiz tekshiruvdan so‘ng chiqadi.";
+      status.textContent = "✅ Rahmat! E’loningiz tekshiruvdan so‘ng chiqadi. Holatini «Mening hisobim»da ko‘rasiz.";
       tg?.HapticFeedback?.notificationOccurred("success");
       const keepKind = form.kind.value;
       form.reset();
       fKind.value = keepKind;
+      updateAuthUI();
       syncAddForm();
     } catch (e) {
       console.error(e);
@@ -637,19 +715,123 @@
     }
   });
 
+  // ---------- Ro‘yxatdan o‘tish (Google) ----------
+  const inTelegram = !!tg?.initData;
+
+  function setAuthStatus(text) {
+    document.querySelectorAll(".auth-status").forEach(p => (p.textContent = text));
+  }
+
+  async function signInWithGoogle() {
+    if (!db) { setAuthStatus("Bazaga ulanib bo‘lmadi. Internetni tekshiring."); return; }
+
+    // Google Telegram ichidagi oynada kirishga ruxsat bermaydi — saytni brauzerda ochamiz.
+    if (inTelegram) {
+      setAuthStatus("Google orqali kirish uchun sayt brauzerda ochiladi.");
+      tg.openLink(location.href);
+      return;
+    }
+
+    setAuthStatus("Google sahifasiga o‘tilmoqda...");
+    const page = location.hash && location.hash !== "#add" ? location.hash : "#add";
+    const { error } = await db.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: location.origin + location.pathname + page }
+    });
+    if (error) {
+      console.error("Google xatosi:", error.message);
+      setAuthStatus("Google orqali kirish hozircha sozlanmagan. Keyinroq urinib ko‘ring.");
+    }
+  }
+
+  async function signOut() {
+    await db?.auth.signOut();
+    currentUser = null;
+    updateAuthUI();
+    route();
+  }
+
+  const userName = u => u?.user_metadata?.full_name || u?.user_metadata?.name || u?.email || "Foydalanuvchi";
+  const userAvatar = u => u?.user_metadata?.avatar_url || u?.user_metadata?.picture || null;
+
+  function updateAuthUI() {
+    const btn = document.getElementById("accountBtn");
+    btn.replaceChildren();
+    if (currentUser) {
+      const pic = userAvatar(currentUser);
+      if (pic) btn.append(el("img", { src: pic, alt: "", width: "22", height: "22", referrerpolicy: "no-referrer" }));
+      else btn.append("👤 ");
+      btn.append(userName(currentUser).split(" ")[0]);
+    } else {
+      btn.append("👤 Kirish");
+    }
+
+    document.getElementById("addLogin").classList.toggle("hidden", !!currentUser);
+    document.getElementById("addForm").classList.toggle("hidden", !currentUser);
+    const nameInput = document.getElementById("fName");
+    if (currentUser && !nameInput.value) nameInput.value = userName(currentUser);
+  }
+
+  // ---------- Mening hisobim ----------
+  async function renderAccount() {
+    document.getElementById("accountLogin").classList.toggle("hidden", !!currentUser);
+    document.getElementById("accountPanel").classList.toggle("hidden", !currentUser);
+    if (!currentUser) return;
+
+    document.getElementById("profileName").textContent = userName(currentUser);
+    document.getElementById("profileEmail").textContent = currentUser.email || "";
+    const av = document.getElementById("profileAvatar");
+    const pic = userAvatar(currentUser);
+    av.replaceChildren(pic ? el("img", { src: pic, alt: "", referrerpolicy: "no-referrer" }) : "👤");
+
+    const out = document.getElementById("myListings");
+    out.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
+    const { data, error } = await db
+      .from("listings")
+      .select("*")
+      .eq("user_id", currentUser.id)
+      .order("created_at", { ascending: false });
+
+    if (error) { out.replaceChildren(el("div", { class: "notice" }, "E’lonlaringiz yuklanmadi.")); return; }
+    out.replaceChildren();
+    if (!data.length) {
+      out.append(el("div", { class: "notice" }, "Sizda hali e’lon yo‘q."));
+      return;
+    }
+    data.forEach(item => {
+      const card = itemCard(item, { own: true });
+      card.querySelector(".meta").prepend(el("span", {
+        class: "tag " + (item.is_approved ? "status-ok" : "status-pending")
+      }, item.is_approved ? "✅ Saytda" : "⏳ Tekshiruvda"));
+      out.append(card);
+    });
+  }
+
+  async function deleteOwn(id) {
+    if (!confirm("E’lon o‘chirilsinmi?")) return;
+    const { error } = await db.from("listings").delete().eq("id", id);
+    if (error) { alert("O‘chirib bo‘lmadi."); return; }
+    cache = null;
+    renderAccount();
+  }
+
   // ---------- Administrator ----------
   async function renderAdmin() {
     if (!db) return;
-    const { data } = await db.auth.getSession();
-    const session = data?.session;
-    document.getElementById("adminLogin").classList.toggle("hidden", !!session);
-    document.getElementById("adminPanel").classList.toggle("hidden", !session);
-    if (!session) return;
+    document.getElementById("adminLogin").classList.toggle("hidden", !!currentUser);
+    document.getElementById("adminPanel").classList.toggle("hidden", !currentUser);
+    if (!currentUser) return;
 
-    document.getElementById("adminWho").textContent = `Kirgan: ${session.user.email}`;
+    document.getElementById("adminWho").textContent = `Kirgan: ${currentUser.email}`;
+    const body = document.getElementById("adminBody");
+    const { data: isAdmin } = await db.rpc("is_admin");
+    if (!isAdmin) {
+      body.replaceChildren(el("div", { class: "notice" }, "Bu hisobda administrator huquqi yo‘q."));
+      return;
+    }
+
     const out = document.getElementById("pendingList");
     out.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
-
     const { data: rows, error } = await db
       .from("listings")
       .select("*")
@@ -657,10 +839,7 @@
       .order("created_at", { ascending: true })
       .limit(100);
 
-    if (error) {
-      out.replaceChildren(el("div", { class: "notice" }, "Ruxsat yo‘q. Emailingiz admins jadvalida borligini tekshiring."));
-      return;
-    }
+    if (error) { out.replaceChildren(el("div", { class: "notice" }, "E’lonlar yuklanmadi.")); return; }
     out.replaceChildren();
     if (!rows.length) { out.append(el("div", { class: "notice" }, "Yangi e’lonlar yo‘q. 👍")); return; }
     rows.forEach(r => out.append(itemCard(r, { admin: true })));
@@ -677,7 +856,7 @@
     renderAdmin();
   }
 
-  document.getElementById("adminLogin").addEventListener("submit", async event => {
+  document.getElementById("adminEmailForm").addEventListener("submit", async event => {
     event.preventDefault();
     const status = document.getElementById("adminStatus");
     if (!db) { status.textContent = "Bazaga ulanib bo‘lmadi."; return; }
@@ -689,13 +868,7 @@
     if (error) { status.textContent = "Email yoki parol noto‘g‘ri."; return; }
     status.textContent = "";
     document.getElementById("aPass").value = "";
-    renderAdmin();
   });
-
-  async function adminLogout() {
-    await db?.auth.signOut();
-    renderAdmin();
-  }
 
   // ---------- Navigatsiya (#manzil orqali, "orqaga" tugmasi ishlaydi) ----------
   function go(page) {
@@ -706,7 +879,7 @@
   function route() {
     const page = location.hash.slice(1) || "home";
     const isKind = page in KINDS;
-    const sectionId = isKind ? "list" : (["home", "add", "admin"].includes(page) ? page : "home");
+    const sectionId = isKind ? "list" : (["home", "add", "admin", "account"].includes(page) ? page : "home");
 
     document.querySelectorAll("[data-page]").forEach(s => s.classList.toggle("hidden", s.id !== sectionId));
     document.querySelectorAll(".tabbar button").forEach(b =>
@@ -722,10 +895,31 @@
       syncAddForm();
     }
     if (sectionId === "admin") renderAdmin();
+    if (sectionId === "account") renderAccount();
   }
 
   window.addEventListener("hashchange", route);
-  route();
+
+  // Kirish holatini kuzatish (Google'dan qaytganda ham).
+  async function initAuth() {
+    if (db) {
+      const { data } = await db.auth.getSession();
+      currentUser = data?.session?.user || null;
+      db.auth.onAuthStateChange((event, session) => {
+        const was = currentUser?.id;
+        currentUser = session?.user || null;
+        updateAuthUI();
+        if (was !== currentUser?.id) route();
+      });
+      // Google qaytargan ?code=... ni manzildan tozalaymiz.
+      if (new URLSearchParams(location.search).has("code")) {
+        history.replaceState(null, "", location.pathname + location.hash);
+      }
+    }
+    updateAuthUI();
+    route();
+  }
+  initAuth();
 </script>
 </body>
 </html>
