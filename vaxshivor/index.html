@@ -154,14 +154,168 @@
     .status-ok { background: #123d24; color: #86efac; }
     details summary { cursor: pointer; color: var(--muted); margin: 12px 0 6px; }
 
+    /* ---------- Zamonaviy menyu va animatsiyalar ---------- */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    @keyframes pop { 0% { transform: scale(.6); } 60% { transform: scale(1.18); } 100% { transform: scale(1); } }
+    @keyframes drift { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+    @keyframes floaty { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @keyframes glow { 0%, 100% { opacity: .35; transform: scale(1); } 50% { opacity: .6; transform: scale(1.15); } }
+
+    [data-page]:not(.hidden) { animation: fadeUp .35s ease both; }
+    #listItems > .card, #latestList > .card, #myListings > .card, #pendingList > .card { animation: fadeUp .4s ease both; }
+    #listItems > .card:nth-child(2), #latestList > .card:nth-child(2) { animation-delay: .05s; }
+    #listItems > .card:nth-child(3), #latestList > .card:nth-child(3) { animation-delay: .1s; }
+    #listItems > .card:nth-child(4), #latestList > .card:nth-child(4) { animation-delay: .15s; }
+    #listItems > .card:nth-child(n+5), #latestList > .card:nth-child(n+5) { animation-delay: .2s; }
+
+    .logo { animation: floaty 4s ease-in-out infinite; }
+
+    .hero {
+      position: relative; overflow: hidden; border-color: #3d5f8f;
+      background: linear-gradient(120deg, #1d3a5f, #17304f, #24406b, #123152);
+      background-size: 300% 300%; animation: drift 12s ease-in-out infinite alternate;
+    }
+    .hero::before {
+      content: ""; position: absolute; width: 220px; height: 220px; right: -70px; top: -90px;
+      border-radius: 50%; background: radial-gradient(circle, rgba(96,165,250,.55), transparent 65%);
+      animation: glow 6s ease-in-out infinite; pointer-events: none;
+    }
+    .hero > * { position: relative; }
+
+    nav.tiles { gap: 12px; }
+    nav.tiles button {
+      position: relative; overflow: hidden; gap: 4px; padding: 16px 14px 15px;
+      border-radius: 20px; border-color: rgba(255,255,255,.08); font-weight: 600;
+      background: linear-gradient(160deg, rgba(255,255,255,.07), rgba(255,255,255,.02)), var(--card);
+      box-shadow: 0 6px 18px rgba(0,0,0,.28);
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      animation: fadeUp .45s ease both;
+    }
+    nav.tiles button:nth-child(1) { animation-delay: .04s; }
+    nav.tiles button:nth-child(2) { animation-delay: .09s; }
+    nav.tiles button:nth-child(3) { animation-delay: .14s; }
+    nav.tiles button:nth-child(4) { animation-delay: .19s; }
+    nav.tiles button:nth-child(5) { animation-delay: .24s; }
+    nav.tiles button:nth-child(6) { animation-delay: .29s; }
+    nav.tiles button::after {
+      content: ""; position: absolute; right: -30px; bottom: -30px; width: 100px; height: 100px;
+      border-radius: 50%; background: var(--c); opacity: .16; filter: blur(6px);
+      transition: transform .35s ease, opacity .35s ease;
+    }
+    nav.tiles button:hover { transform: translateY(-3px); border-color: var(--c); box-shadow: 0 12px 26px rgba(0,0,0,.4); }
+    nav.tiles button:hover::after { transform: scale(1.5); opacity: .26; }
+    nav.tiles button:active { transform: scale(.96); }
+    nav.tiles .ico {
+      width: 48px; height: 48px; display: grid; place-items: center; font-size: 24px;
+      border-radius: 15px; margin-bottom: 8px;
+      background: linear-gradient(145deg, var(--c), var(--c2));
+      box-shadow: 0 6px 14px -4px var(--c);
+      transition: transform .25s ease;
+    }
+    nav.tiles button:hover .ico { transform: rotate(-6deg) scale(1.08); }
+    nav.tiles small { font-weight: 400; }
+    nav.tiles .arrow { position: absolute; right: 14px; top: 16px; color: var(--muted); transition: transform .2s ease, color .2s ease; }
+    nav.tiles button:hover .arrow { transform: translateX(3px); color: var(--text); }
+
+    .about-banner {
+      display: flex; align-items: center; gap: 14px; width: 100%; margin: 14px 0 0;
+      border-radius: 20px; padding: 14px 16px; border-color: #3d5f8f;
+      background: linear-gradient(120deg, #1a3a34, #17304f); font-weight: 600;
+      transition: transform .2s ease, box-shadow .2s ease; animation: fadeUp .45s ease both;
+    }
+    .about-banner:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+    .about-banner .ico { font-size: 34px; animation: floaty 5s ease-in-out infinite; }
+    .about-banner small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .about-banner .arrow { margin-left: auto; color: var(--muted); }
+
+    .tabbar { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); background: rgba(10, 16, 28, .82); }
+    .tabbar button { position: relative; transition: color .2s ease; border-radius: 14px; }
+    .tabbar button span { transition: transform .25s ease; }
+    .tabbar button::before {
+      content: ""; position: absolute; top: 0; left: 50%; width: 46px; height: 32px; border-radius: 12px;
+      background: rgba(96,165,250,.16); transform: translateX(-50%) scale(0); transition: transform .25s ease;
+    }
+    .tabbar button.active::before { transform: translateX(-50%) scale(1); }
+    .tabbar button.active span { animation: pop .35s ease; transform: translateY(-1px); }
+    .tabbar button > * { position: relative; }
+    .tabbar button:active span { transform: scale(.85); }
+
+    .chip { transition: background .2s ease, border-color .2s ease, transform .15s ease; }
+    .chip:active { transform: scale(.94); }
+    .fab { animation: fadeUp .4s ease both; transition: transform .2s ease, box-shadow .2s ease; }
+    .fab:hover { transform: translateY(-2px); }
+    .card { transition: border-color .2s ease; }
+
+    /* ---------- Qishloq haqida ---------- */
+    .about-hero { text-align: center; padding: 24px 16px; }
+    .about-hero .big { font-size: 46px; display: block; animation: floaty 5s ease-in-out infinite; }
+    .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 14px; text-align: left; }
+    .fact { background: rgba(7, 11, 20, .45); border-radius: 12px; padding: 10px 12px; }
+    .fact span { display: block; font-size: 12px; color: var(--muted); }
+    .fact strong { font-size: 14px; }
+    details.acc { padding: 0; overflow: hidden; }
+    details.acc summary {
+      list-style: none; display: flex; align-items: center; gap: 12px; margin: 0;
+      padding: 16px; color: var(--text); font-weight: 600; font-size: 17px;
+    }
+    details.acc summary::-webkit-details-marker { display: none; }
+    details.acc summary .ico {
+      width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; font-size: 20px;
+      background: linear-gradient(145deg, var(--c), var(--c2)); flex-shrink: 0;
+    }
+    details.acc summary::after { content: "⌄"; margin-left: auto; color: var(--muted); transition: transform .25s ease; }
+    details.acc[open] summary::after { transform: rotate(180deg); }
+    details.acc .body { padding: 0 16px 16px; animation: fadeUp .3s ease both; }
+    .timeline { list-style: none; margin: 10px 0 0; padding: 0 0 0 16px; border-left: 2px solid var(--border); }
+    .timeline li { position: relative; padding: 0 0 12px 12px; color: var(--muted); line-height: 1.45; }
+    .timeline li::before {
+      content: ""; position: absolute; left: -23px; top: 5px; width: 10px; height: 10px;
+      border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px rgba(96,165,250,.2);
+    }
+    .timeline strong { color: var(--text); }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    /* ---------- Chiziqli belgilar (SVG) ---------- */
+    .i { width: 1em; height: 1em; display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .logo { color: #fff; background: linear-gradient(145deg, #3b82f6, #1e3a8a); border-color: rgba(255,255,255,.18); box-shadow: 0 8px 20px -6px #3b82f6; }
+    nav.tiles .ico { color: #fff; border-radius: 16px; box-shadow: 0 8px 16px -6px var(--c), inset 0 1px 0 rgba(255,255,255,.35); }
+    .about-banner .ico {
+      width: 48px; height: 48px; display: grid; place-items: center; font-size: 24px; color: #fff; flex-shrink: 0;
+      border-radius: 16px; background: linear-gradient(145deg, #14b8a6, #0f766e);
+      box-shadow: 0 8px 16px -6px #14b8a6, inset 0 1px 0 rgba(255,255,255,.35);
+    }
+    .about-hero .big {
+      width: 76px; height: 76px; margin: 0 auto 8px; display: grid; place-items: center; font-size: 38px; color: #fff;
+      border-radius: 24px; background: linear-gradient(145deg, #14b8a6, #0f766e); box-shadow: 0 12px 26px -8px #14b8a6;
+    }
+    details.acc summary .ico { color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+    .tabbar button span { font-size: 22px; height: 26px; display: grid; place-items: center; }
+    .tabbar button.active .i { stroke-width: 2.4; }
+
     footer { text-align: center; margin: 30px 0 10px; font-size: 13px; color: #8291a8; }
   </style>
 </head>
 
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  <symbol id="i-shop" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></symbol>
+  <symbol id="i-master" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+  <symbol id="i-taxi" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
+  <symbol id="i-ad" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+  <symbol id="i-job" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+  <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l8 5H4z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+</svg>
 <main>
   <header onclick="go('home')">
-    <div class="logo">🏡</div>
+    <div class="logo"><svg class="i"><use href="#i-home"/></svg></div>
     <div>
       <h1>Vaxshivor</h1>
       <p class="subtitle">Qishloq portali · Hammasi bir joyda</p>
@@ -182,13 +336,19 @@
       </div>
     </div>
 
+    <button class="about-banner" onclick="go('about')">
+      <span class="ico"><svg class="i"><use href="#i-mountain"/></svg></span>
+      <span>Vaxshivor haqida<small>Tarixi, So‘fi Olloyor, manzili</small></span>
+      <span class="arrow">→</span>
+    </button>
+
     <nav class="tiles">
-      <button onclick="go('shop')"><span class="ico">🛒</span>Do‘kon<small>Mahsulot va narxlar</small></button>
-      <button onclick="go('master')"><span class="ico">🔧</span>Ustalar<small>Elektrik, santexnik...</small></button>
-      <button onclick="go('taxi')"><span class="ico">🚕</span>Taksi<small>Qatnovlar va haydovchilar</small></button>
-      <button onclick="go('ad')"><span class="ico">📢</span>E’lonlar<small>Sotish, ijara, xabarlar</small></button>
-      <button onclick="go('job')"><span class="ico">💼</span>Ish o‘rinlari<small>Ish beruvchi va izlovchi</small></button>
-      <button onclick="go('add')"><span class="ico">➕</span>E’lon qo‘shish<small>Bepul joylang</small></button>
+      <button onclick="go('shop')" style="--c:#22c55e;--c2:#15803d"><span class="ico"><svg class="i"><use href="#i-shop"/></svg></span><span class="arrow">→</span>Do‘kon<small>Mahsulot va narxlar</small></button>
+      <button onclick="go('master')" style="--c:#f59e0b;--c2:#b45309"><span class="ico"><svg class="i"><use href="#i-master"/></svg></span><span class="arrow">→</span>Ustalar<small>Elektrik, santexnik...</small></button>
+      <button onclick="go('taxi')" style="--c:#facc15;--c2:#ca8a04"><span class="ico"><svg class="i"><use href="#i-taxi"/></svg></span><span class="arrow">→</span>Taksi<small>Qatnovlar va haydovchilar</small></button>
+      <button onclick="go('ad')" style="--c:#f43f5e;--c2:#be123c"><span class="ico"><svg class="i"><use href="#i-ad"/></svg></span><span class="arrow">→</span>E’lonlar<small>Sotish, ijara, xabarlar</small></button>
+      <button onclick="go('job')" style="--c:#8b5cf6;--c2:#6d28d9"><span class="ico"><svg class="i"><use href="#i-job"/></svg></span><span class="arrow">→</span>Ish o‘rinlari<small>Ish beruvchi va izlovchi</small></button>
+      <button onclick="go('add')" style="--c:#3b82f6;--c2:#1d4ed8"><span class="ico"><svg class="i"><use href="#i-plus"/></svg></span><span class="arrow">→</span>E’lon qo‘shish<small>Bepul joylang</small></button>
     </nav>
 
     <h2>🆕 So‘nggi e’lonlar</h2>
@@ -213,6 +373,59 @@
     </div>
     <div id="chips" class="chips"></div>
     <div id="listItems"></div>
+  </section>
+
+  <!-- QISHLOQ HAQIDA -->
+  <section id="about" data-page class="hidden">
+    <button class="back" onclick="go('home')">← Bosh sahifa</button>
+
+    <div class="card hero about-hero">
+      <span class="big"><svg class="i"><use href="#i-mountain"/></svg></span>
+      <h2>Vaxshivor qishlog‘i</h2>
+      <p>Hisor tog‘lari etagidagi qadimiy qishloq — buyuk shoir va mutafakkir So‘fi Olloyor abadiy qo‘nim topgan maskan.</p>
+      <div class="facts">
+        <div class="fact"><span>Viloyat</span><strong>Surxondaryo</strong></div>
+        <div class="fact"><span>Tuman</span><strong>Oltinsoy</strong></div>
+        <div class="fact"><span>Joylashuvi</span><strong>Hisor tog‘ etaklari</strong></div>
+        <div class="fact"><span>Mashhur ziyoratgoh</span><strong>So‘fi Olloyor maqbarasi</strong></div>
+      </div>
+    </div>
+
+    <details class="card acc" open style="--c:#3b82f6;--c2:#1d4ed8">
+      <summary><span class="ico"><svg class="i"><use href="#i-book"/></svg></span>Qishloq tarixi</summary>
+      <div class="body">
+        <p>Vaxshivor — Surxondaryo viloyati Oltinsoy tumanining tog‘ etagida joylashgan qadimiy qishloqlardan biri. Qishloq toza havosi, buloqlari, bog‘lari va mehmondo‘st xalqi bilan tanilgan.</p>
+        <p>Qishloqning nomi butun Markaziy Osiyoda So‘fi Olloyor nomi bilan bog‘liq holda mashhur: shoir umrining so‘nggi yillarini shu yerda o‘tkazgan va shu yerda dafn etilgan. Uning qabri ustidagi maqbara asrlar davomida ziyoratgoh bo‘lib kelgan, mustaqillik yillarida esa ziyoratgoh majmuasi obod qilingan.</p>
+        <p>Bugungi kunda Vaxshivor aholisi asosan bog‘dorchilik, chorvachilik va dehqonchilik bilan shug‘ullanadi; qishloqqa har yili ko‘plab ziyoratchi va sayyohlar keladi.</p>
+      </div>
+    </details>
+
+    <details class="card acc" style="--c:#f59e0b;--c2:#b45309">
+      <summary><span class="ico"><svg class="i"><use href="#i-landmark"/></svg></span>So‘fi Olloyor</summary>
+      <div class="body">
+        <p>So‘fi Olloyor (taxminan 1644–1721) — o‘zbek mumtoz adabiyotining yirik vakili, shoir va tasavvuf olimi. Uning asarlari asrlar davomida madrasalarda darslik sifatida o‘qitilgan.</p>
+        <ul class="timeline">
+          <li><strong>Taxminan 1644-yil</strong> — Kattaqo‘rg‘on yaqinidagi Minglar qishlog‘ida tug‘ilgan.</li>
+          <li><strong>Yoshligi</strong> — Buxoro madrasalarida tahsil olgan, so‘ng davlat xizmatida ishlagan.</li>
+          <li><strong>Keyinchalik</strong> — xizmatni tark etib, tasavvuf yo‘liga kirgan va ijod bilan shug‘ullangan.</li>
+          <li><strong>Asarlari</strong> — «Sabot ul-ojizin», «Maslak ul-muttaqin», «Murod ul-orifin», «Maxzan ul-mute’in».</li>
+          <li><strong>1721-yil</strong> (ayrim manbalarda 1724) — Vaxshivorda vafot etgan va shu yerda dafn qilingan.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="card acc" style="--c:#22c55e;--c2:#15803d">
+      <summary><span class="ico"><svg class="i"><use href="#i-pin"/></svg></span>Manzil va yo‘l</summary>
+      <div class="body">
+        <p><strong style="color:var(--text)">Manzil:</strong> O‘zbekiston, Surxondaryo viloyati, Oltinsoy tumani, Vaxshivor qishlog‘i.</p>
+        <p><strong style="color:var(--text)">Asosiy ziyoratgoh:</strong> So‘fi Olloyor maqbarasi va ziyoratgoh majmuasi — qishloqning o‘zida.</p>
+        <p><strong style="color:var(--text)">Qanday boriladi:</strong> Termiz yoki Denov tomondan Oltinsoy tumani orqali avtomobilda. Qatnovlarni «Taksi» bo‘limidan topasiz.</p>
+        <div class="actions">
+          <a class="btn primary" href="https://www.google.com/maps/search/?api=1&query=Vaxshivor%2C+Oltinsoy%2C+Surxondaryo" target="_blank" rel="noopener">🗺 Xaritada ochish</a>
+          <button type="button" onclick="go('taxi')">🚕 Taksi topish</button>
+        </div>
+      </div>
+    </details>
   </section>
 
   <!-- E’LON QO‘SHISH -->
@@ -344,12 +557,12 @@
 <button class="fab primary" id="fab" onclick="go('add')">➕ E’lon</button>
 
 <div class="tabbar">
-  <button data-tab="home" onclick="go('home')"><span>🏠</span>Bosh</button>
-  <button data-tab="shop" onclick="go('shop')"><span>🛒</span>Do‘kon</button>
-  <button data-tab="master" onclick="go('master')"><span>🔧</span>Usta</button>
-  <button data-tab="taxi" onclick="go('taxi')"><span>🚕</span>Taksi</button>
-  <button data-tab="ad" onclick="go('ad')"><span>📢</span>E’lon</button>
-  <button data-tab="job" onclick="go('job')"><span>💼</span>Ish</button>
+  <button data-tab="home" onclick="go('home')"><span><svg class="i"><use href="#i-home"/></svg></span>Bosh</button>
+  <button data-tab="shop" onclick="go('shop')"><span><svg class="i"><use href="#i-shop"/></svg></span>Do‘kon</button>
+  <button data-tab="master" onclick="go('master')"><span><svg class="i"><use href="#i-master"/></svg></span>Usta</button>
+  <button data-tab="taxi" onclick="go('taxi')"><span><svg class="i"><use href="#i-taxi"/></svg></span>Taksi</button>
+  <button data-tab="ad" onclick="go('ad')"><span><svg class="i"><use href="#i-ad"/></svg></span>E’lon</button>
+  <button data-tab="job" onclick="go('job')"><span><svg class="i"><use href="#i-job"/></svg></span>Ish</button>
 </div>
 
 <script>
@@ -568,14 +781,26 @@
   }
 
   // ---------- Bosh sahifa ----------
+  function countUp(id, target) {
+    const node = document.getElementById(id);
+    if (!target || matchMedia("(prefers-reduced-motion: reduce)").matches) { node.textContent = target; return; }
+    const start = performance.now(), dur = 600;
+    const tick = t => {
+      const k = Math.min(1, (t - start) / dur);
+      node.textContent = Math.round(target * (1 - Math.pow(1 - k, 3)));
+      if (k < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
   async function renderHome() {
     const list = document.getElementById("latestList");
     list.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
     const items = await loadAll();
 
-    document.getElementById("statTotal").textContent = items.length;
-    document.getElementById("statMasters").textContent = items.filter(i => i.kind === "master").length;
-    document.getElementById("statJobs").textContent = items.filter(i => i.kind === "job" && i.category !== "Ish qidiryapman").length;
+    countUp("statTotal", items.length);
+    countUp("statMasters", items.filter(i => i.kind === "master").length);
+    countUp("statJobs", items.filter(i => i.kind === "job" && i.category !== "Ish qidiryapman").length);
 
     list.replaceChildren(demoNotice() || "");
     const latest = items.slice(0, 5);
@@ -879,7 +1104,7 @@
   function route() {
     const page = location.hash.slice(1) || "home";
     const isKind = page in KINDS;
-    const sectionId = isKind ? "list" : (["home", "add", "admin", "account"].includes(page) ? page : "home");
+    const sectionId = isKind ? "list" : (["home", "add", "admin", "account", "about"].includes(page) ? page : "home");
 
     document.querySelectorAll("[data-page]").forEach(s => s.classList.toggle("hidden", s.id !== sectionId));
     document.querySelectorAll(".tabbar button").forEach(b =>
