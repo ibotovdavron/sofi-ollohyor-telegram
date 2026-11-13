@@ -155,3 +155,19 @@ create policy "taxi_live_update" on public.taxi_live
 drop policy if exists "taxi_live_delete" on public.taxi_live;
 create policy "taxi_live_delete" on public.taxi_live
   for delete to authenticated using (user_id = auth.uid() or public.is_admin());
+
+-- 7) Taksi bo'limi faqat "Taksi haydovchisi" sifatida ro'yxatdan o'tganlar uchun.
+-- Haydovchilarning identifikatorlari (shaxsiy ma'lumotsiz) — sayt taksi e'lonlarini shu bo'yicha saralaydi.
+create or replace function public.taxi_driver_ids()
+returns setof uuid language sql stable security definer set search_path = public as $$
+  select id from public.profiles where role = 'taxi';
+$$;
+
+-- Taksi e'lonini faqat taksi haydovchisi bera oladi.
+drop policy if exists "submit_pending" on public.listings;
+create policy "submit_pending" on public.listings
+  for insert to authenticated with check (
+    is_approved = false
+    and user_id = auth.uid()
+    and (kind <> 'taxi' or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'taxi'))
+  );

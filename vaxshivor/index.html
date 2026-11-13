@@ -540,6 +540,9 @@
       background: linear-gradient(145deg, #facc15, #ca8a04); border: 2px solid #fff; box-shadow: 0 6px 14px rgba(0,0,0,.45);
     }
     .taxi-pin span { transform: rotate(45deg); }
+    .village-pin { width: 34px; height: 34px; display: grid; place-items: center; font-size: 18px; border-radius: 50%; background: #14532d; border: 2px solid #86efac; box-shadow: 0 4px 12px rgba(0,0,0,.45); }
+    .leaflet-tooltip.village-label { background: #111c2e; color: #fff; border: 1px solid #86efac; border-radius: 999px; padding: 2px 10px; font-weight: 700; box-shadow: none; }
+    .leaflet-tooltip.village-label::before { display: none; }
     .taxi-pin.me { background: linear-gradient(145deg, #3b82f6, #1d4ed8); }
     .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #111c2e; color: var(--text); border: 1px solid var(--border); }
     .leaflet-popup-content { margin: 10px 12px; font-size: 14px; line-height: 1.45; }
@@ -1002,7 +1005,11 @@
       <label for="fPhoto">Rasm (ixtiyoriy, 3 MB gacha)</label>
       <input id="fPhoto" name="photo" type="file" accept="image/*">
 
-      <button class="primary" type="submit">📤 Yuborish</button>
+      <div id="taxiOnlyNote" class="notice demo hidden">
+        🚕 Taksi e’lonini faqat «Taksi haydovchisi» sifatida ro‘yxatdan o‘tganlar bera oladi.
+        <div class="actions"><button type="button" onclick="go('register')">✏️ Profilni o‘zgartirish</button></div>
+      </div>
+      <button class="primary" type="submit" id="addSubmit">📤 Yuborish</button>
       <p id="addStatus" role="status"></p>
     </form>
   </section>
@@ -1278,7 +1285,7 @@
 
     const { data, error } = await db
       .from("listings")
-      .select("id, kind, category, title, description, extra, contact_name, phone, telegram, photo_url, created_at")
+      .select("id, kind, category, title, description, extra, contact_name, phone, telegram, photo_url, created_at, user_id")
       .eq("is_approved", true)
       .order("created_at", { ascending: false })
       .limit(500);
@@ -1289,7 +1296,15 @@
       return (cache = DEMO);
     }
     demoMode = false;
-    return (cache = data || []);
+
+    // Taksi bo‘limida faqat "Taksi haydovchisi" sifatida ro‘yxatdan o‘tganlarning e’lonlari ko‘rinadi.
+    let rows = data || [];
+    const drivers = await db.rpc("taxi_driver_ids");
+    if (!drivers.error && Array.isArray(drivers.data)) {
+      const ids = new Set(drivers.data);
+      rows = rows.filter(i => i.kind !== "taxi" || ids.has(i.user_id));
+    }
+    return (cache = rows);
   }
 
   function itemCard(item, { admin = false, own = false } = {}) {
@@ -1817,7 +1832,48 @@
 
   // ---------- Onlayn taksilar (jonli xarita) ----------
   const TAXI_FRESH_MS = 3 * 60 * 1000;      // 3 daqiqa yangilanmagan haydovchi oflayn hisoblanadi
-  const MAP_CENTER = [38.3, 67.9];          // Oltinsoy tumani atrofi
+  const MAP_CENTER = [38.3, 67.9];          // Oltinsoy tumani atrofi (qishloq topilmaguncha)
+  let villagePos = null;
+
+  // Vaxshivor qishlog‘ining koordinatasi OpenStreetMap’dan olinadi va telefonda saqlab qo‘yiladi.
+  async function findVillage() {
+    try {
+      const saved = JSON.parse(localStorage.getItem("villagePos") || "null");
+      if (Array.isArray(saved) && saved.length === 2) return saved;
+    } catch (e) {}
+    for (const name of ["Vaxshivor", "Вахшивар", "Vakhshivar", "Vaxshivar"]) {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&countrycodes=uz&q=${encodeURIComponent(name)}`);
+        if (!res.ok) continue;
+        // Faqat Surxondaryo hududiga tushgan natijani qabul qilamiz.
+        const hit = (await res.json()).find(h => +h.lat > 37 && +h.lat < 39 && +h.lon > 66.5 && +h.lon < 68.5);
+        if (hit) {
+          const pos = [Number(hit.lat), Number(hit.lon)];
+          try { localStorage.setItem("villagePos", JSON.stringify(pos)); } catch (e) {}
+          return pos;
+        }
+      } catch (e) { /* internet yo‘q yoki xizmat javob bermadi */ }
+    }
+    return null;
+  }
+
+  async function showVillage() {
+    if (!taxiMap || villagePos) return;
+    const pos = await findVillage();
+    if (!pos || !taxiMap || villagePos) return;
+    villagePos = pos;
+    L.marker(pos, {
+      icon: L.divIcon({ className: "", iconSize: [34, 34], iconAnchor: [17, 17], html: '<div class="village-pin">🏡</div>' }),
+      interactive: false, keyboard: false
+    }).addTo(taxiMap).bindTooltip("Vaxshivor", { permanent: true, direction: "bottom", offset: [0, 14], className: "village-label" });
+    if (!taxiMarkers.size) taxiMap.setView(pos, 13, { animate: false });
+    else fitTaxiMap([...taxiMarkers.values()].map(m => m.getLatLng()));
+  }
+
+  function fitTaxiMap(points) {
+    const all = villagePos ? [...points, villagePos] : points;
+    if (all.length) taxiMap.fitBounds(L.latLngBounds(all).pad(0.25), { maxZoom: 14, animate: false });
+  }
   let taxiMap = null;
   let taxiMarkers = new Map();
   let taxiPoll = null;
@@ -1861,6 +1917,7 @@
       mapEl.textContent = "Xaritani yuklab bo‘lmadi. Internetni tekshiring — ro‘yxat pastda.";
     }
     if (taxiMap) setTimeout(() => taxiMap.invalidateSize(), 120);
+    showVillage();
 
     await refreshOnline();
     clearInterval(taxiPoll);
@@ -1926,7 +1983,7 @@
       }
       if (drivers.length && !taxiFitted) {
         taxiFitted = true;
-        taxiMap.fitBounds(L.latLngBounds(drivers.map(d => [d.lat, d.lng])).pad(0.3), { maxZoom: 14 });
+        fitTaxiMap(drivers.map(d => [d.lat, d.lng]));
       }
     }
 
@@ -2087,6 +2144,9 @@
     if (car && profile?.role === "taxi" && profile.details?.car) {
       car.value = [profile.details.car, profile.details.car_color].filter(Boolean).join(", ");
     }
+    const taxiBlocked = fKind.value === "taxi" && profileState !== "unavailable" && profile?.role !== "taxi";
+    document.getElementById("taxiOnlyNote").classList.toggle("hidden", !taxiBlocked);
+    document.getElementById("addSubmit").disabled = taxiBlocked;
   }
   fKind.addEventListener("change", syncAddForm);
 
@@ -2109,6 +2169,7 @@
 
     if (!db) { status.textContent = "Bazaga ulanib bo‘lmadi. Internetni tekshiring."; return; }
     if (!currentUser) { updateAuthUI(); return; }
+    if (document.getElementById("addSubmit").disabled) return;
 
     const phone = cleanPhone(form.phone.value);
     if (phone.replace("+", "").length < 9) { status.textContent = "Telefon raqamini to‘g‘ri kiriting."; return; }
