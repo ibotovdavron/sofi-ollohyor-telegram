@@ -395,6 +395,62 @@
     .splash.welcome-mode .splash-title { margin-top: 20px; font-size: 32px; }
     body.no-scroll { overflow: hidden; }
 
+    /* ---------- Do‘kon: mahsulotlar vitrinasi ---------- */
+    .shop-tools { display: flex; gap: 8px; align-items: center; margin: 8px 0 2px; }
+    .shop-tools select { margin: 0; flex: 1; padding: 10px 12px; border-radius: 999px; font-size: 14px; }
+    .icon-btn { width: 44px; height: 44px; padding: 0; display: grid; place-items: center; border-radius: 50%; font-size: 20px; flex-shrink: 0; }
+    .icon-btn.on { color: #f43f5e; border-color: #f43f5e; background: rgba(244, 63, 94, .12); }
+    .icon-btn.on .i { fill: currentColor; }
+    .toolbar input[type=search] { border-radius: 999px; padding-left: 16px; }
+
+    .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 10px; padding-bottom: 64px; }
+    .grid2 > .notice { grid-column: 1 / -1; margin: 0; }
+    .pcard {
+      display: flex; flex-direction: column; background: rgba(17, 28, 46, .95); border: 1px solid var(--border);
+      border-radius: 18px; overflow: hidden; cursor: pointer; animation: fadeUp .4s ease both;
+      transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+    .pcard:nth-child(2) { animation-delay: .04s; } .pcard:nth-child(3) { animation-delay: .08s; }
+    .pcard:nth-child(4) { animation-delay: .12s; } .pcard:nth-child(n+5) { animation-delay: .16s; }
+    .pcard:hover { transform: translateY(-3px); border-color: #4b6a94; box-shadow: 0 12px 26px rgba(0,0,0,.4); }
+    .pcard:active { transform: scale(.98); }
+    .pimg { position: relative; aspect-ratio: 1; background: linear-gradient(145deg, #22344f, #16233a); display: grid; place-items: center; font-size: 46px; color: #5b7396; }
+    .pimg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .pbadges { position: absolute; left: 8px; bottom: 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+    .pbadge { font-size: 10px; font-weight: 700; letter-spacing: .4px; padding: 4px 7px; border-radius: 7px; color: #fff; background: #2563eb; text-transform: uppercase; }
+    .pbadge.sale { background: #e11d48; }
+    .pbadge.new { background: #16a34a; }
+    .pfav {
+      position: absolute; right: 6px; top: 6px; width: 34px; height: 34px; padding: 0; display: grid; place-items: center;
+      border-radius: 50%; border: 0; background: rgba(7, 11, 20, .55); color: #fff; font-size: 17px; backdrop-filter: blur(6px);
+    }
+    .pfav.on { color: #f43f5e; } .pfav.on .i { fill: currentColor; }
+    .pfav:active { transform: scale(.85); }
+    .pbody { padding: 10px 11px 11px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+    .pprice { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+    .pprice strong { font-size: 16px; letter-spacing: .2px; }
+    .pprice .off { color: #fb7185; font-weight: 700; font-size: 13px; }
+    .pold { color: #8291a8; text-decoration: line-through; font-size: 12px; }
+    .ptitle { font-size: 14px; line-height: 1.35; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.7em; margin-top: 2px; }
+    .pseller { margin-top: auto; padding-top: 6px; font-size: 12px; color: #8291a8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pbuy { margin-top: auto; display: block; text-align: center; padding: 10px 6px; border-radius: 12px; font-size: 14px; font-weight: 600; background: rgba(59, 130, 246, .16); border-color: transparent; color: #93c5fd; }
+    .pbody .pbuy { margin-top: 8px; }
+
+    @keyframes sheetUp { from { transform: translateY(100%); } to { transform: none; } }
+    .sheet-wrap { position: fixed; inset: 0; z-index: 50; display: flex; align-items: flex-end; justify-content: center; background: rgba(3, 7, 14, .65); backdrop-filter: blur(4px); animation: wholeIn .25s ease both; }
+    .sheet {
+      width: min(100%, 640px); max-height: 92vh; overflow-y: auto; background: #0f1a2c; border: 1px solid var(--border); border-bottom: 0;
+      border-radius: 24px 24px 0 0; padding: 0 0 calc(18px + env(safe-area-inset-bottom)); animation: sheetUp .35s cubic-bezier(.16, 1, .3, 1) both;
+    }
+    .sheet .pimg { aspect-ratio: 4 / 3; font-size: 70px; }
+    .sheet .pfav { left: 10px; right: auto; top: 10px; width: 38px; height: 38px; }
+    .sheet .pimg img { object-fit: contain; background: #0b1321; }
+    .sheet-body { padding: 14px 16px 0; }
+    .sheet-body h3 { font-size: 19px; margin: 8px 0; }
+    .sheet-body .pprice strong { font-size: 26px; }
+    .sheet-close { position: absolute; right: 10px; top: 10px; width: 38px; height: 38px; padding: 0; border-radius: 50%; border: 0; background: rgba(7, 11, 20, .6); font-size: 18px; text-align: center; z-index: 2; }
+    .sheet .actions .btn, .sheet .actions button { flex: 1; text-align: center; padding: 13px 10px; font-size: 15px; }
+
     /* ---------- Ro‘yxatdan o‘tish ---------- */
     body.reg .tabbar, body.reg .account-btn { display: none; }
     .steps { display: flex; gap: 8px; margin: 14px 0 4px; }
@@ -428,6 +484,7 @@
   <symbol id="i-job" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
   <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
   <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
@@ -551,6 +608,15 @@
       <input id="searchInput" type="search" placeholder="🔍 Qidirish..." autocomplete="off">
     </div>
     <div id="chips" class="chips"></div>
+    <div id="shopTools" class="shop-tools hidden">
+      <select id="shopSort" aria-label="Saralash">
+        <option value="new">Avval yangilari</option>
+        <option value="cheap">Avval arzonlari</option>
+        <option value="dear">Avval qimmatlari</option>
+        <option value="sale">Chegirmadagilar</option>
+      </select>
+      <button type="button" id="favFilter" class="icon-btn" aria-label="Saralanganlar" title="Saralanganlar"><svg class="i"><use href="#i-heart"/></svg></button>
+    </div>
     <div id="listItems"></div>
   </section>
 
@@ -772,6 +838,8 @@
   </footer>
 </main>
 
+<div id="sheet" class="sheet-wrap hidden" role="dialog" aria-modal="true"></div>
+
 <button class="fab primary" id="fab" onclick="go('add')">➕ E’lon</button>
 
 <div class="tabbar">
@@ -811,6 +879,7 @@
       categories: ["Oziq-ovqat", "Maishiy", "Kiyim", "Qurilish mollari", "Texnika", "Boshqa"],
       extra: [
         { key: "price", label: "Narxi (so‘m)", type: "number" },
+        { key: "old_price", label: "Eski narxi (chegirma bo‘lsa, ixtiyoriy)", type: "number" },
         { key: "location", label: "Do‘kon nomi / manzili" }
       ]
     },
@@ -868,8 +937,10 @@
   const now = Date.now();
   const h = n => new Date(now - n * 3600e3).toISOString();
   const DEMO = [
-    { id: "d1", kind: "shop", category: "Oziq-ovqat", title: "Un, 1-nav (50 kg)", description: "Yangi tushgan, yetkazib berish bor.", extra: { price: 420000, location: "Markaziy do‘kon" }, contact_name: "Namuna do‘kon", phone: "+998900000000", created_at: h(2) },
+    { id: "d1", kind: "shop", category: "Oziq-ovqat", title: "Un, 1-nav (50 kg)", description: "Yangi tushgan, yetkazib berish bor.", extra: { price: 420000, old_price: 460000, location: "Markaziy do‘kon" }, contact_name: "Namuna do‘kon", phone: "+998900000000", created_at: h(2) },
     { id: "d2", kind: "shop", category: "Qurilish mollari", title: "Sement M400", description: "Qopi 50 kg.", extra: { price: 65000, location: "Qurilish do‘koni" }, contact_name: "Namuna", phone: "+998900000000", created_at: h(20) },
+    { id: "d9", kind: "shop", category: "Oziq-ovqat", title: "Guruch «Lazer», 1 kg", description: "Osh uchun.", extra: { price: 18000, location: "Markaziy do‘kon" }, contact_name: "Namuna do‘kon", phone: "+998900000000", created_at: h(90) },
+    { id: "d10", kind: "shop", category: "Kiyim", title: "Erkaklar kurtkasi, qishki", description: "O‘lchamlar: 46–54.", extra: { price: 280000, old_price: 400000, location: "Kiyim do‘koni" }, contact_name: "Namuna", phone: "+998900000000", created_at: h(120) },
     { id: "d3", kind: "master", category: "Elektrik", title: "Elektrik usta", description: "Uy simlarini almashtirish, hisoblagich o‘rnatish.", extra: { experience: 8, location: "Butun qishloq" }, contact_name: "Namuna usta", phone: "+998900000000", created_at: h(5) },
     { id: "d4", kind: "master", category: "Santexnik", title: "Santexnik", description: "Quvur, kran, isitish tizimi.", extra: { experience: 5 }, contact_name: "Namuna usta", phone: "+998900000000", created_at: h(30) },
     { id: "d5", kind: "taxi", category: "Tuman markaziga", title: "Vaxshivor → Tuman markazi", description: "Har kuni ertalab va kechqurun.", extra: { car: "Cobalt, oq", departure: "Har kuni 07:00 va 17:00", seats: 3, price: 15000 }, contact_name: "Namuna haydovchi", phone: "+998900000000", created_at: h(1) },
@@ -949,7 +1020,7 @@
 
     const tags = el("div", { class: "meta" }, el("span", { class: "tag" }, item.category || "Boshqa"));
     for (const [key, val] of Object.entries(extra)) {
-      if (val === "" || val == null || key === "price") continue;
+      if (val === "" || val == null || key === "price" || key === "old_price") continue;
       const label = { experience: `${val} yil tajriba`, seats: `${val} ta joy` }[key] || val;
       tags.append(el("span", { class: "tag" }, `${EXTRA_LABELS[key] || "•"} ${label}`));
     }
@@ -1051,26 +1122,176 @@
       }, c)
     ));
 
+    const isShop = kind === "shop";
+    document.getElementById("shopTools").classList.toggle("hidden", !isShop);
+    document.getElementById("searchInput").placeholder = isShop ? "🔍 Mahsulotlarni qidirish" : "🔍 Qidirish...";
+
     const out = document.getElementById("listItems");
+    out.className = isShop ? "grid2" : "";
     out.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
 
     const q = document.getElementById("searchInput").value.trim().toLowerCase();
-    const items = (await loadAll()).filter(i =>
+    let items = (await loadAll()).filter(i =>
       i.kind === kind &&
       (currentCategory === "Hammasi" || i.category === currentCategory) &&
       (!q || [i.title, i.description, i.contact_name, ...Object.values(i.extra || {})]
         .join(" ").toLowerCase().includes(q))
     );
 
+    if (isShop) {
+      if (favOnly) items = items.filter(i => favs.has(String(i.id)));
+      items = sortProducts(items);
+    }
+
     out.replaceChildren(demoNotice() || "");
     if (items.length === 0) {
       out.append(el("div", { class: "notice" },
-        "Hech narsa topilmadi. ",
+        isShop && favOnly ? "Saralangan mahsulotlar yo‘q. " : "Hech narsa topilmadi. ",
         el("a", { href: "#add", class: "price", onclick: () => { addPreset = kind; } }, "E’lon qo‘shing →")));
       return;
     }
-    items.forEach(i => out.append(itemCard(i)));
+    items.forEach(i => out.append(isShop ? productCard(i) : itemCard(i)));
   }
+
+  // ---------- Do‘kon vitrinasi ----------
+  let favs = new Set();
+  try { favs = new Set(JSON.parse(localStorage.getItem("favs") || "[]")); } catch (e) {}
+  let favOnly = false;
+
+  const useIcon = name => {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "i");
+    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttribute("href", "#i-" + name);
+    svg.append(use);
+    return svg;
+  };
+
+  const discountOf = item => {
+    const { price, old_price } = item.extra || {};
+    return price && old_price > price ? Math.round((1 - price / old_price) * 100) : 0;
+  };
+  const isNew = item => Date.now() - new Date(item.created_at) < 3 * 86400e3;
+
+  function toggleFav(item, button) {
+    const key = String(item.id);
+    favs.has(key) ? favs.delete(key) : favs.add(key);
+    try { localStorage.setItem("favs", JSON.stringify([...favs])); } catch (e) {}
+    button.classList.toggle("on", favs.has(key));
+    tg?.HapticFeedback?.selectionChanged?.();
+    if (favOnly && currentKind === "shop") renderList("shop");
+  }
+
+  function favButton(item) {
+    const btn = el("button", {
+      type: "button", class: "pfav" + (favs.has(String(item.id)) ? " on" : ""), "aria-label": "Saralanganlarga qo‘shish",
+      onclick: event => { event.stopPropagation(); toggleFav(item, event.currentTarget); }
+    });
+    btn.append(useIcon("heart"));
+    return btn;
+  }
+
+  function productImage(item) {
+    const box = el("div", { class: "pimg" });
+    if (item.photo_url) {
+      const img = el("img", { src: item.photo_url, alt: "", loading: "lazy", referrerpolicy: "no-referrer" });
+      img.onerror = () => { img.remove(); box.prepend(useIcon("shop")); };
+      box.append(img);
+    } else {
+      box.append(useIcon("shop"));
+    }
+    return box;
+  }
+
+  function priceBlock(item) {
+    const extra = item.extra || {};
+    const off = discountOf(item);
+    return [
+      el("div", { class: "pprice" },
+        el("strong", {}, extra.price ? money(extra.price) : "Narxi kelishiladi"),
+        off ? el("span", { class: "off" }, `↓${off}%`) : null),
+      off ? el("div", { class: "pold" }, money(extra.old_price)) : null
+    ];
+  }
+
+  function productCard(item) {
+    const off = discountOf(item);
+    const image = productImage(item);
+    image.append(
+      favButton(item),
+      el("div", { class: "pbadges" },
+        off ? el("span", { class: "pbadge sale" }, "Chegirma") : null,
+        isNew(item) ? el("span", { class: "pbadge new" }, "Yangi") : null)
+    );
+    const phone = cleanPhone(item.phone);
+    return el("article", { class: "pcard", onclick: () => openProduct(item) },
+      image,
+      el("div", { class: "pbody" },
+        ...priceBlock(item),
+        el("div", { class: "ptitle" }, item.title),
+        el("div", { class: "pseller" }, `🏪 ${(item.extra || {}).location || item.contact_name || "Do‘kon"}`),
+        phone
+          ? el("a", { class: "btn pbuy", href: `tel:${phone}`, onclick: event => event.stopPropagation() }, "📞 Bog‘lanish")
+          : el("button", { type: "button", class: "pbuy" }, "Batafsil")
+      )
+    );
+  }
+
+  function closeSheet() {
+    document.getElementById("sheet").classList.add("hidden");
+    document.body.classList.remove("no-scroll");
+  }
+
+  function openProduct(item) {
+    const wrap = document.getElementById("sheet");
+    const extra = item.extra || {};
+    const phone = cleanPhone(item.phone);
+    const handle = tgHandle(item.telegram);
+    const image = productImage(item);
+    image.append(favButton(item));
+
+    const sheet = el("div", { class: "sheet", onclick: event => event.stopPropagation() },
+      el("div", { style: "position:relative" },
+        image,
+        el("button", { type: "button", class: "sheet-close", "aria-label": "Yopish", onclick: closeSheet }, "✕")),
+      el("div", { class: "sheet-body" },
+        ...priceBlock(item),
+        el("h3", {}, item.title),
+        el("div", { class: "meta" },
+          el("span", { class: "tag" }, item.category || "Boshqa"),
+          extra.location ? el("span", { class: "tag" }, `📍 ${extra.location}`) : null,
+          isNew(item) ? el("span", { class: "tag status-ok" }, "Yangi") : null),
+        item.description ? el("p", { class: "desc" }, item.description) : null,
+        el("div", { class: "time" }, `👤 ${item.contact_name || "—"} · ${timeAgo(item.created_at)}`),
+        el("div", { class: "actions" },
+          phone && el("a", { class: "btn success", href: `tel:${phone}` }, "📞 Qo‘ng‘iroq qilish"),
+          handle && el("a", { class: "btn", href: `https://t.me/${handle}`, target: "_blank", rel: "noopener" }, "✈️ Telegram"),
+          el("button", { type: "button", onclick: () => shareItem(item) }, "🔗 Ulashish"))
+      )
+    );
+    wrap.replaceChildren(sheet);
+    wrap.onclick = closeSheet;
+    wrap.classList.remove("hidden");
+    document.body.classList.add("no-scroll");
+  }
+
+  function sortProducts(items) {
+    const mode = document.getElementById("shopSort").value;
+    const price = i => (i.extra || {}).price ?? Infinity;
+    const list = [...items];
+    if (mode === "cheap") list.sort((a, b) => price(a) - price(b));
+    if (mode === "dear") list.sort((a, b) => (price(b) === Infinity ? -1 : price(b)) - (price(a) === Infinity ? -1 : price(a)));
+    if (mode === "sale") return list.filter(discountOf).sort((a, b) => discountOf(b) - discountOf(a));
+    return list;
+  }
+
+  document.getElementById("shopSort").addEventListener("change", () => renderList("shop"));
+  document.getElementById("favFilter").addEventListener("click", event => {
+    favOnly = !favOnly;
+    event.currentTarget.classList.toggle("on", favOnly);
+    renderList("shop");
+  });
+  window.addEventListener("hashchange", closeSheet);
 
   let searchTimer;
   document.getElementById("searchInput").addEventListener("input", () => {
