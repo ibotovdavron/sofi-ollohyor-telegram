@@ -314,7 +314,7 @@
 
     /* ---------- Animatsiyali kirish ---------- */
     @keyframes wholeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes auraIn { from { opacity: 0; transform: scale(.6) rotate(0deg); } to { opacity: .6; transform: scale(1) rotate(120deg); } }
+    @keyframes auraIn { from { opacity: 0; transform: scale(.6) rotate(0deg); } to { opacity: .32; transform: scale(1) rotate(120deg); } }
     @keyframes auraSpin { from { transform: rotate(120deg); } to { transform: rotate(480deg); } }
     @keyframes floatTilt {
       0%, 100% { transform: rotateX(0) rotateY(0) translateY(0); }
@@ -322,7 +322,7 @@
       75% { transform: rotateX(-4deg) rotateY(6deg) translateY(3px); }
     }
     @keyframes settle { 0% { transform: scale(1); } 35% { transform: scale(1.09); } 70% { transform: scale(.98); } 100% { transform: scale(1); } }
-    @keyframes ripple { from { opacity: .8; transform: scale(.75); } to { opacity: 0; transform: scale(2.3); } }
+    @keyframes ripple { from { opacity: .45; transform: scale(.75); } to { opacity: 0; transform: scale(2.3); } }
     @keyframes shine { from { transform: translateX(-160%) skewX(-22deg); } to { transform: translateX(320%) skewX(-22deg); } }
     @keyframes letterIn {
       from { opacity: 0; transform: translateY(26px) rotateX(-80deg) scale(.7); filter: blur(8px); }
@@ -347,7 +347,7 @@
     .splash.instant { transition: none; }
     .splash > * { position: relative; }
 
-    .splash .blob { position: absolute; width: 90vmax; height: 90vmax; border-radius: 50%; filter: blur(70px); opacity: .55; pointer-events: none; }
+    .splash .blob { position: absolute; width: 90vmax; height: 90vmax; border-radius: 50%; filter: blur(70px); opacity: .38; pointer-events: none; }
     .splash .blob.a { left: -35vmax; top: -40vmax; background: radial-gradient(circle, #15803d, transparent 65%); animation: blobA 7s ease-in-out infinite alternate; }
     .splash .blob.b { right: -40vmax; bottom: -45vmax; background: radial-gradient(circle, #1d4ed8, transparent 65%); animation: blobB 8s ease-in-out infinite alternate; }
     .splash .dot { position: absolute; bottom: -12px; border-radius: 50%; background: #bbf7d0; box-shadow: 0 0 12px 2px rgba(74, 222, 128, .8); opacity: 0; animation: rise linear infinite; pointer-events: none; }
@@ -365,7 +365,7 @@
     @keyframes flash { 0% { opacity: 0; transform: scale(.3); } 30% { opacity: 1; } 100% { opacity: 0; transform: scale(1.7); } }
     .splash .flash {
       position: absolute; inset: -45%; border-radius: 50%; opacity: 0; pointer-events: none;
-      background: radial-gradient(circle, rgba(255,255,255,.95), rgba(134,239,172,.55) 28%, transparent 62%);
+      background: radial-gradient(circle, rgba(255,255,255,.4), rgba(134,239,172,.25) 28%, transparent 62%);
       animation: flash .9s ease-out 2s forwards;
     }
     .splash .whole { animation: wholeIn .55s ease 2s both; }
@@ -374,7 +374,7 @@
     .splash .shine-box { position: absolute; inset: 0; border-radius: 23%; overflow: hidden; pointer-events: none; }
     .splash .shine-box::after {
       content: ""; position: absolute; top: -10%; bottom: -10%; left: 0; width: 34%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
       animation: shine 1s cubic-bezier(.4, 0, .2, 1) 2.55s both;
     }
 
@@ -719,6 +719,7 @@
         <div class="actions">
           <button type="button" class="primary" onclick="go('add')">➕ E’lon qo‘shish</button>
           <button type="button" id="editProfileBtn" onclick="go('register')">✏️ Profilni tahrirlash</button>
+          <button type="button" id="soundToggle" onclick="toggleIntroSound()"></button>
           <button type="button" onclick="signOut()">Chiqish</button>
         </div>
       </div>
@@ -1410,6 +1411,17 @@
     go(wasNew ? "home" : "account");
   });
 
+  // ---------- Kirish ovozini yoqish/o‘chirish ----------
+  function syncSoundToggle() {
+    const off = stored(localStorage, "introSound") === "off";
+    document.getElementById("soundToggle").textContent = off ? "🔇 Kirish ovozi: o‘chiq" : "🔊 Kirish ovozi: yoniq";
+  }
+  function toggleIntroSound() {
+    const off = stored(localStorage, "introSound") === "off";
+    try { localStorage.setItem("introSound", off ? "on" : "off"); } catch (e) {}
+    syncSoundToggle();
+  }
+
   // ---------- Mening hisobim ----------
   async function renderAccount() {
     document.getElementById("accountLogin").classList.toggle("hidden", !!currentUser);
@@ -1422,6 +1434,7 @@
     const pic = userAvatar(currentUser);
     av.replaceChildren(pic ? el("img", { src: pic, alt: "", referrerpolicy: "no-referrer" }) : "👤");
 
+    syncSoundToggle();
     const info = document.getElementById("profileInfo");
     info.replaceChildren();
     document.getElementById("editProfileBtn").classList.toggle("hidden", profileState === "unavailable");
@@ -1643,6 +1656,84 @@
     document.body.classList.remove("no-scroll");
   }
 
+  // Kirish ovozi: fayl emas, brauzerning o‘zida yaratiladi (mayin shovqin + qo‘ng‘iroq).
+  let introAudio = null;
+  function playIntroSound() {
+    if (stored(localStorage, "introSound") === "off") return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    try {
+      const ac = new AC();
+      introAudio = ac;
+
+      const build = () => {
+        const t = ac.currentTime + 0.05;
+        const master = ac.createGain();
+        master.gain.value = 0.5;
+        master.connect(ac.destination);
+
+        // 1) Nurlar yig‘ilayotgandagi mayin "shuv" — filtrlangan shovqin.
+        const len = Math.floor(ac.sampleRate * 2.6);
+        const buf = ac.createBuffer(1, len, ac.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+        const noise = ac.createBufferSource();
+        noise.buffer = buf;
+        const band = ac.createBiquadFilter();
+        band.type = "bandpass";
+        band.Q.value = 1.2;
+        band.frequency.setValueAtTime(250, t);
+        band.frequency.exponentialRampToValueAtTime(2600, t + 2.0);
+        const ng = ac.createGain();
+        ng.gain.setValueAtTime(0.0001, t);
+        ng.gain.exponentialRampToValueAtTime(0.11, t + 1.7);
+        ng.gain.exponentialRampToValueAtTime(0.0001, t + 2.4);
+        noise.connect(band).connect(ng).connect(master);
+        noise.start(t);
+        noise.stop(t + 2.6);
+
+        const tone = (freq, at, dur, peak, type = "sine") => {
+          const osc = ac.createOscillator();
+          const g = ac.createGain();
+          osc.type = type;
+          osc.frequency.value = freq;
+          g.gain.setValueAtTime(0.0001, at);
+          g.gain.exponentialRampToValueAtTime(peak, at + 0.02);
+          g.gain.exponentialRampToValueAtTime(0.0001, at + dur);
+          osc.connect(g).connect(master);
+          osc.start(at);
+          osc.stop(at + dur + 0.05);
+        };
+
+        // 2) Uchqunlar — mayda jarangdor tovushlar.
+        const sparks = [1175, 1319, 1568, 1760, 2093, 2349];
+        for (let i = 0; i < 9; i++) {
+          tone(sparks[Math.floor(Math.random() * sparks.length)], t + 0.35 + i * 0.17 + Math.random() * 0.08, 0.35, 0.025);
+        }
+
+        // 3) Logo yig‘ilganda — yumshoq qo‘ng‘iroq akkordi.
+        const hit = t + 2.05;
+        [[587.33, 0.16], [880, 0.11], [1174.66, 0.09], [1479.98, 0.05]].forEach(([f, v], i) => {
+          tone(f, hit + i * 0.045, 2.2, v);
+          tone(f * 2, hit + i * 0.045, 1.1, v * 0.25, "triangle");
+        });
+        tone(146.83, hit, 1.6, 0.12);   // past, iliq asos
+
+        setTimeout(() => ac.close().catch(() => {}), 5200);
+      };
+
+      // Brauzer ovozga ruxsat bermasa (foydalanuvchi hali ekranga tegmagan), jim o‘tamiz.
+      if (ac.state === "running") build();
+      else {
+        ac.resume().catch(() => {});
+        setTimeout(() => {
+          if (ac.state === "running") build();
+          else ac.close().catch(() => {});
+        }, 120);
+      }
+    } catch (e) { /* ovoz bo‘lmasa ham animatsiya ishlayveradi */ }
+  }
+
   // Logo har tomondan kelayotgan yog‘du zarralaridan yig‘iladi.
   function playLightIntro() {
     const canvas = document.getElementById("introCanvas");
@@ -1694,7 +1785,7 @@
         }
       }
       // Sof yorug‘lik nurlari — markazga urilib so‘nadi.
-      for (let n = 0; n < 110; n++) {
+      for (let n = 0; n < 45; n++) {
         const col = ["#ffffff", "#bbf7d0", "#86efac", "#93c5fd", "#fde68a"][n % 5];
         add(cx + (Math.random() - 0.5) * box.width * 0.7, cy + (Math.random() - 0.5) * box.height * 0.7, col, true);
       }
@@ -1706,7 +1797,7 @@
         const t = now - t0;
         // Iz qoldirish: oldingi kadr asta so‘nadi.
         ctx.globalCompositeOperation = "destination-out";
-        ctx.fillStyle = "rgba(0,0,0,.2)";
+        ctx.fillStyle = "rgba(0,0,0,.3)";
         ctx.fillRect(0, 0, W, H);
 
         ctx.globalCompositeOperation = "lighter";
@@ -1722,8 +1813,8 @@
           const y = p.sy + dy * e + (dx / len) * curve;
           if (p.lx !== null) {
             ctx.strokeStyle = p.color;
-            ctx.globalAlpha = p.beam ? 0.9 * (1 - e) + 0.1 : 0.55 + 0.45 * e;
-            ctx.lineWidth = p.beam ? 2.2 : cell * (1 + (1 - e) * 1.2);
+            ctx.globalAlpha = p.beam ? 0.4 * (1 - e) + 0.05 : 0.22 + 0.5 * e;
+            ctx.lineWidth = p.beam ? 1.4 : cell * (0.85 + (1 - e) * 0.5);
             ctx.beginPath();
             ctx.moveTo(p.lx, p.ly);
             ctx.lineTo(x, y);
@@ -1754,11 +1845,15 @@
       document.body.classList.add("no-scroll");
       splash.classList.add("hold");
       playLightIntro();
+      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) playIntroSound();
       const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
       // Animatsiya tugashini kutamiz; ekranga bosilsa, o‘tkazib yuboriladi.
       await new Promise(resolve => {
         setTimeout(resolve, reduce ? 500 : 4200);
-        splash.addEventListener("click", resolve, { once: true });
+        splash.addEventListener("click", () => {
+          if (introAudio && introAudio.state !== "closed") introAudio.close().catch(() => {});
+          resolve();
+        }, { once: true });
       });
     }
     await authReadyPromise;
