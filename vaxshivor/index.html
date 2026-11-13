@@ -313,48 +313,86 @@
     .logo img { width: 100%; height: 100%; display: block; }
 
     /* ---------- Animatsiyali kirish ---------- */
-    @keyframes pieceIn { from { opacity: 0; transform: var(--from); } 55% { opacity: 1; } to { opacity: 1; transform: none; } }
     @keyframes wholeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes logoPulse { 0% { transform: scale(1); } 40% { transform: scale(1.07); } 100% { transform: scale(1); } }
-    @keyframes ringOut { from { opacity: .9; transform: scale(.7); } to { opacity: 0; transform: scale(1.9); } }
-    @keyframes shine { from { transform: translateX(-140%) skewX(-20deg); } to { transform: translateX(260%) skewX(-20deg); } }
-    @keyframes letterIn { from { opacity: 0; transform: translateY(18px) scale(.8); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+    @keyframes auraIn { from { opacity: 0; transform: scale(.6) rotate(0deg); } to { opacity: .6; transform: scale(1) rotate(120deg); } }
+    @keyframes auraSpin { from { transform: rotate(120deg); } to { transform: rotate(480deg); } }
+    @keyframes floatTilt {
+      0%, 100% { transform: rotateX(0) rotateY(0) translateY(0); }
+      25% { transform: rotateX(5deg) rotateY(-7deg) translateY(-5px); }
+      75% { transform: rotateX(-4deg) rotateY(6deg) translateY(3px); }
+    }
+    @keyframes settle { 0% { transform: scale(1); } 35% { transform: scale(1.09); } 70% { transform: scale(.98); } 100% { transform: scale(1); } }
+    @keyframes ripple { from { opacity: .8; transform: scale(.75); } to { opacity: 0; transform: scale(2.3); } }
+    @keyframes shine { from { transform: translateX(-160%) skewX(-22deg); } to { transform: translateX(320%) skewX(-22deg); } }
+    @keyframes letterIn {
+      from { opacity: 0; transform: translateY(26px) rotateX(-80deg) scale(.7); filter: blur(8px); }
+      to { opacity: 1; transform: none; filter: none; }
+    }
+    @keyframes subIn { from { opacity: 0; letter-spacing: 8px; filter: blur(6px); } to { opacity: 1; letter-spacing: .5px; filter: none; } }
+    @keyframes rise { 0% { opacity: 0; transform: translateY(0) scale(.5); } 15% { opacity: .9; } 100% { opacity: 0; transform: translateY(-105vh) scale(1.1); } }
+    @keyframes blobA { from { transform: translate(-10%, -8%) scale(1); } to { transform: translate(14%, 10%) scale(1.25); } }
+    @keyframes blobB { from { transform: translate(8%, 6%) scale(1.1); } to { transform: translate(-12%, -10%) scale(.9); } }
+    @keyframes load { from { transform: scaleX(0); } to { transform: scaleX(1); } }
     @keyframes splashAuto { to { opacity: 0; visibility: hidden; pointer-events: none; } }
-    @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } }
 
     .splash {
       position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column;
       align-items: center; justify-content: center; padding: 24px; text-align: center; overflow: hidden;
-      background: radial-gradient(ellipse at 50% 35%, #10402e, #04110c 70%);
-      transition: opacity .55s ease, visibility .55s ease;
+      background: #030d0a;
+      transition: opacity .6s ease, visibility .6s ease, transform .6s cubic-bezier(.16, 1, .3, 1), filter .6s ease;
       animation: splashAuto .01s 9s forwards; /* skript ishlamasa ham o‘zi yopiladi */
     }
     .splash.hold { animation: none; }
-    .splash.out { opacity: 0; visibility: hidden; pointer-events: none; }
+    .splash.out { opacity: 0; visibility: hidden; pointer-events: none; transform: scale(1.12); filter: blur(8px); }
     .splash.instant { transition: none; }
-    .splash-logo { position: relative; width: min(54vw, 210px); aspect-ratio: 1; animation: logoPulse .7s ease 1.65s both; transition: width .45s ease; }
-    .splash .piece, .splash .whole { position: absolute; inset: 0; width: 100%; height: 100%; }
-    .splash .piece { animation: pieceIn 1s cubic-bezier(.2, .9, .25, 1.12) both; }
-    .splash .p-left  { clip-path: polygon(0 0, 53% 0, 53% 7%, 19% 7%, 19% 30%, 15% 40%, 15% 73%, 0 73%); --from: translate(-130%, -80%) rotate(-28deg); animation-delay: .1s; }
-    .splash .p-mount { clip-path: polygon(53% 0, 100% 0, 100% 73%, 73% 73%, 73% 33%, 53% 28%); --from: translate(130%, -80%) rotate(28deg); animation-delay: .3s; }
-    .splash .p-book  { clip-path: polygon(0 73%, 100% 73%, 100% 100%, 0 100%); --from: translate(0, 170%) rotate(8deg); animation-delay: .5s; }
-    .splash .p-build { clip-path: polygon(19% 7%, 53% 7%, 53% 28%, 73% 33%, 73% 73%, 15% 73%, 15% 40%, 19% 30%); --from: translate(0, -160%) scale(1.5); animation-delay: .75s; }
-    .splash .whole { animation: wholeIn .3s ease 1.6s both; }
-    .splash .ring { position: absolute; inset: 0; border-radius: 22%; border: 3px solid #4ade80; animation: ringOut .9s ease-out 1.65s both; opacity: 0; }
-    .splash .shine-box { position: absolute; inset: 0; border-radius: 18.5%; overflow: hidden; pointer-events: none; }
-    .splash .shine-box::after {
-      content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
-      animation: shine .9s ease 1.9s both;
+    .splash > * { position: relative; }
+
+    .splash .blob { position: absolute; width: 90vmax; height: 90vmax; border-radius: 50%; filter: blur(70px); opacity: .55; pointer-events: none; }
+    .splash .blob.a { left: -35vmax; top: -40vmax; background: radial-gradient(circle, #15803d, transparent 65%); animation: blobA 7s ease-in-out infinite alternate; }
+    .splash .blob.b { right: -40vmax; bottom: -45vmax; background: radial-gradient(circle, #1d4ed8, transparent 65%); animation: blobB 8s ease-in-out infinite alternate; }
+    .splash .dot { position: absolute; bottom: -12px; border-radius: 50%; background: #bbf7d0; box-shadow: 0 0 12px 2px rgba(74, 222, 128, .8); opacity: 0; animation: rise linear infinite; pointer-events: none; }
+
+    .splash-stage { width: min(56vw, 220px); aspect-ratio: 1; perspective: 900px; transition: width .5s cubic-bezier(.16, 1, .3, 1); }
+    .splash-logo { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; animation: settle .8s cubic-bezier(.16, 1, .3, 1) 2.1s both, floatTilt 6s ease-in-out 3.1s infinite; }
+    .splash .aura {
+      position: absolute; inset: -22%; border-radius: 50%; opacity: 0; filter: blur(30px);
+      background: conic-gradient(from 0deg, #22c55e, #3b82f6, #14b8a6, #facc15, #22c55e);
+      animation: auraIn 1.1s ease 1.9s both, auraSpin 9s linear 3s infinite;
     }
-    .splash .star { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #bbf7d0; box-shadow: 0 0 10px #4ade80; opacity: 0; animation: twinkle 1.6s ease-in-out infinite; }
-    .splash-title { margin: 22px 0 4px; font-size: 34px; letter-spacing: 1px; color: #fff; }
-    .splash-title span { display: inline-block; animation: letterIn .5s ease both; }
-    .splash-sub { margin: 0; color: #a7d8bf; animation: letterIn .6s ease 2.45s both; }
-    .welcome { width: min(100%, 360px); margin-top: 22px; animation: fadeUp .5s ease both; }
-    .welcome p { color: #cfe9dc; }
+    .splash .whole { position: absolute; inset: 0; width: 100%; height: 100%; }
+    #introCanvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; transition: opacity .6s ease; }
+    #introCanvas.done { opacity: 0; }
+    @keyframes flash { 0% { opacity: 0; transform: scale(.3); } 30% { opacity: 1; } 100% { opacity: 0; transform: scale(1.7); } }
+    .splash .flash {
+      position: absolute; inset: -45%; border-radius: 50%; opacity: 0; pointer-events: none;
+      background: radial-gradient(circle, rgba(255,255,255,.95), rgba(134,239,172,.55) 28%, transparent 62%);
+      animation: flash .9s ease-out 2s forwards;
+    }
+    .splash .whole { animation: wholeIn .55s ease 2s both; }
+    .splash .ripple { position: absolute; inset: 0; border-radius: 23%; border: 2px solid #86efac; opacity: 0; animation: ripple 1.2s cubic-bezier(.16, 1, .3, 1) 2.2s forwards; }
+    .splash .ripple.r2 { animation-delay: 2.45s; border-color: #60a5fa; }
+    .splash .shine-box { position: absolute; inset: 0; border-radius: 23%; overflow: hidden; pointer-events: none; }
+    .splash .shine-box::after {
+      content: ""; position: absolute; top: -10%; bottom: -10%; left: 0; width: 34%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent);
+      animation: shine 1s cubic-bezier(.4, 0, .2, 1) 2.55s both;
+    }
+
+    .splash-title { margin: 30px 0 6px; font-size: 38px; font-weight: 800; letter-spacing: 1.5px; perspective: 600px; }
+    .splash-title span {
+      display: inline-block; animation: letterIn .7s cubic-bezier(.16, 1, .3, 1) both;
+      background: linear-gradient(180deg, #ffffff 30%, #86efac); -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .splash-sub { margin: 0; color: #a7d8bf; animation: subIn .9s cubic-bezier(.16, 1, .3, 1) 2.95s both; }
+    .splash-loader { width: 120px; height: 3px; margin-top: 22px; border-radius: 99px; background: rgba(255,255,255,.12); overflow: hidden; }
+    .splash-loader::after { content: ""; display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #22c55e, #60a5fa); transform-origin: left; animation: load 3.9s cubic-bezier(.4, 0, .2, 1) .1s both; }
+
+    .welcome { width: min(100%, 360px); margin-top: 22px; padding: 16px; border-radius: 22px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); animation: fadeUp .6s cubic-bezier(.16, 1, .3, 1) both; }
+    .welcome p { color: #cfe9dc; margin-top: 0; }
     .welcome .skip { background: none; border: 0; color: #a7d8bf; text-decoration: underline; display: block; margin: 12px auto 0; text-align: center; }
-    .splash.welcome-mode .splash-logo { width: min(34vw, 130px); }
+    .splash.welcome-mode .splash-stage { width: min(34vw, 130px); }
+    .splash.welcome-mode .splash-loader { display: none; }
+    .splash.welcome-mode .splash-title { margin-top: 20px; font-size: 32px; }
     body.no-scroll { overflow: hidden; }
 
     /* ---------- Ro‘yxatdan o‘tish ---------- */
@@ -397,22 +435,38 @@
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
 </svg>
 <div id="splash" class="splash" aria-label="Vaxshivor">
-  <span class="star" style="left:14%;top:18%;animation-delay:.2s"></span>
-  <span class="star" style="left:82%;top:24%;animation-delay:.9s"></span>
-  <span class="star" style="left:24%;top:72%;animation-delay:1.3s"></span>
-  <span class="star" style="left:76%;top:66%;animation-delay:.6s"></span>
-  <span class="star" style="left:50%;top:10%;animation-delay:1.6s"></span>
-  <div class="splash-logo">
-    <img class="piece p-left" src="icons/icon-512.png" alt="">
-    <img class="piece p-mount" src="icons/icon-512.png" alt="">
-    <img class="piece p-book" src="icons/icon-512.png" alt="">
-    <img class="piece p-build" src="icons/icon-512.png" alt="">
-    <img class="whole" src="icons/icon-512.png" alt="">
-    <div class="ring"></div>
-    <div class="shine-box"></div>
+  <div class="blob a"></div>
+  <div class="blob b"></div>
+  <canvas id="introCanvas"></canvas>
+  <span class="dot" style="left:74%;width:5px;height:5px;animation-duration:6.0s;animation-delay:3.3s"></span>
+  <span class="dot" style="left:19%;width:4px;height:4px;animation-duration:7.8s;animation-delay:2.5s"></span>
+  <span class="dot" style="left:78%;width:6px;height:6px;animation-duration:7.8s;animation-delay:2.3s"></span>
+  <span class="dot" style="left:54%;width:3px;height:3px;animation-duration:4.7s;animation-delay:0.9s"></span>
+  <span class="dot" style="left:75%;width:3px;height:3px;animation-duration:7.5s;animation-delay:1.2s"></span>
+  <span class="dot" style="left:22%;width:3px;height:3px;animation-duration:6.4s;animation-delay:2.3s"></span>
+  <span class="dot" style="left:75%;width:5px;height:5px;animation-duration:7.4s;animation-delay:0.7s"></span>
+  <span class="dot" style="left:78%;width:3px;height:3px;animation-duration:6.5s;animation-delay:0.8s"></span>
+  <span class="dot" style="left:16%;width:4px;height:4px;animation-duration:6.4s;animation-delay:0.3s"></span>
+  <span class="dot" style="left:11%;width:3px;height:3px;animation-duration:6.7s;animation-delay:2.0s"></span>
+  <span class="dot" style="left:72%;width:3px;height:3px;animation-duration:6.0s;animation-delay:1.3s"></span>
+  <span class="dot" style="left:78%;width:6px;height:6px;animation-duration:7.7s;animation-delay:1.4s"></span>
+  <span class="dot" style="left:35%;width:6px;height:6px;animation-duration:7.3s;animation-delay:2.8s"></span>
+  <span class="dot" style="left:35%;width:3px;height:3px;animation-duration:4.8s;animation-delay:1.2s"></span>
+  <span class="dot" style="left:67%;width:4px;height:4px;animation-duration:7.6s;animation-delay:2.9s"></span>
+  <span class="dot" style="left:40%;width:3px;height:3px;animation-duration:6.6s;animation-delay:0.3s"></span>
+  <div class="splash-stage">
+    <div class="splash-logo">
+      <div class="aura"></div>
+      <div class="flash"></div>
+      <img class="whole" src="icons/icon-512.png" alt="">
+      <div class="ripple"></div>
+      <div class="ripple r2"></div>
+      <div class="shine-box"></div>
+    </div>
   </div>
-  <h1 class="splash-title"><span style="animation-delay:1.85s">V</span><span style="animation-delay:1.91s">a</span><span style="animation-delay:1.97s">x</span><span style="animation-delay:2.03s">s</span><span style="animation-delay:2.09s">h</span><span style="animation-delay:2.15s">i</span><span style="animation-delay:2.21s">v</span><span style="animation-delay:2.27s">o</span><span style="animation-delay:2.33s">r</span></h1>
+  <h1 class="splash-title"><span style="animation-delay:2.35s">V</span><span style="animation-delay:2.41s">a</span><span style="animation-delay:2.46s">x</span><span style="animation-delay:2.52s">s</span><span style="animation-delay:2.57s">h</span><span style="animation-delay:2.62s">i</span><span style="animation-delay:2.68s">v</span><span style="animation-delay:2.74s">o</span><span style="animation-delay:2.79s">r</span></h1>
   <p class="splash-sub">Qishloq portali · Hammasi bir joyda</p>
+  <div class="splash-loader"></div>
   <div id="welcomeBox" class="welcome hidden">
     <p>Xush kelibsiz! Davom etish uchun Google hisobingiz bilan kiring.</p>
     <button type="button" class="google-btn" onclick="signInWithGoogle()">
@@ -1589,16 +1643,121 @@
     document.body.classList.remove("no-scroll");
   }
 
+  // Logo har tomondan kelayotgan yog‘du zarralaridan yig‘iladi.
+  function playLightIntro() {
+    const canvas = document.getElementById("introCanvas");
+    const stage = document.querySelector(".splash-stage");
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const img = new Image();
+    img.onload = () => {
+      const G = (navigator.hardwareConcurrency || 4) <= 4 ? 46 : 58;   // zarralar to‘ri
+      const off = document.createElement("canvas");
+      off.width = off.height = G;
+      const octx = off.getContext("2d", { willReadFrequently: true });
+      octx.drawImage(img, 0, 0, G, G);
+      let px;
+      try { px = octx.getImageData(0, 0, G, G).data; } catch (e) { return; }
+
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const W = innerWidth, H = innerHeight;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+      ctx.lineCap = "round";
+
+      const box = stage.getBoundingClientRect();
+      const cell = box.width / G;
+      const cx = box.left + box.width / 2, cy = box.top + box.height / 2;
+      const R = Math.hypot(W, H) / 2;
+      const parts = [];
+
+      const add = (tx, ty, color, beam) => {
+        const ang = Math.random() * Math.PI * 2;
+        const dist = R * (1.05 + Math.random() * 0.6);
+        parts.push({
+          tx, ty, color, beam,
+          sx: cx + Math.cos(ang) * dist, sy: cy + Math.sin(ang) * dist,
+          bend: (Math.random() - 0.5) * 320,
+          delay: Math.random() * (beam ? 1300 : 750),
+          dur: beam ? 700 + Math.random() * 400 : 1100 + Math.random() * 750,
+          lx: null, ly: null
+        });
+      };
+
+      for (let y = 0; y < G; y++) {
+        for (let x = 0; x < G; x++) {
+          const i = (y * G + x) * 4;
+          if (px[i + 3] < 120) continue;
+          add(box.left + x * cell, box.top + y * cell, `rgb(${px[i]},${px[i + 1]},${px[i + 2]})`, false);
+        }
+      }
+      // Sof yorug‘lik nurlari — markazga urilib so‘nadi.
+      for (let n = 0; n < 110; n++) {
+        const col = ["#ffffff", "#bbf7d0", "#86efac", "#93c5fd", "#fde68a"][n % 5];
+        add(cx + (Math.random() - 0.5) * box.width * 0.7, cy + (Math.random() - 0.5) * box.height * 0.7, col, true);
+      }
+
+      const ease = k => 1 - Math.pow(1 - k, 4);
+      const t0 = performance.now();
+
+      function frame(now) {
+        const t = now - t0;
+        // Iz qoldirish: oldingi kadr asta so‘nadi.
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.fillStyle = "rgba(0,0,0,.2)";
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.globalCompositeOperation = "lighter";
+        const arrived = [];
+        for (const p of parts) {
+          const k = (t - p.delay) / p.dur;
+          if (k <= 0) continue;
+          if (k >= 1) { if (!p.beam) arrived.push(p); continue; }
+          const e = ease(k);
+          const dx = p.tx - p.sx, dy = p.ty - p.sy, len = Math.hypot(dx, dy) || 1;
+          const curve = Math.sin(Math.PI * e) * p.bend * (1 - e);
+          const x = p.sx + dx * e - (dy / len) * curve;
+          const y = p.sy + dy * e + (dx / len) * curve;
+          if (p.lx !== null) {
+            ctx.strokeStyle = p.color;
+            ctx.globalAlpha = p.beam ? 0.9 * (1 - e) + 0.1 : 0.55 + 0.45 * e;
+            ctx.lineWidth = p.beam ? 2.2 : cell * (1 + (1 - e) * 1.2);
+            ctx.beginPath();
+            ctx.moveTo(p.lx, p.ly);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+          }
+          p.lx = x; p.ly = y;
+        }
+
+        ctx.globalCompositeOperation = "source-over";
+        ctx.globalAlpha = 1;
+        for (const p of arrived) {
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.tx, p.ty, cell + 0.6, cell + 0.6);
+        }
+
+        if (t < 2700 && !splash.classList.contains("out")) requestAnimationFrame(frame);
+        else canvas.classList.add("done");
+      }
+      requestAnimationFrame(frame);
+    };
+    img.src = "icons/icon-192.png";
+  }
+
   async function runIntro() {
     const alreadyPlayed = !!stored(sessionStorage, "introPlayed");
     if (!alreadyPlayed) {
       try { sessionStorage.setItem("introPlayed", "1"); } catch (e) {}
       document.body.classList.add("no-scroll");
       splash.classList.add("hold");
+      playLightIntro();
       const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
       // Animatsiya tugashini kutamiz; ekranga bosilsa, o‘tkazib yuboriladi.
       await new Promise(resolve => {
-        setTimeout(resolve, reduce ? 500 : 3300);
+        setTimeout(resolve, reduce ? 500 : 4200);
         splash.addEventListener("click", resolve, { once: true });
       });
     }
