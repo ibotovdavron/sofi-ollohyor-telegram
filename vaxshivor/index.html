@@ -312,6 +312,70 @@
     .logo { background: none; border: 0; overflow: hidden; box-shadow: 0 8px 22px -6px #22c55e; }
     .logo img { width: 100%; height: 100%; display: block; }
 
+    /* ---------- Animatsiyali kirish ---------- */
+    @keyframes pieceIn { from { opacity: 0; transform: var(--from); } 55% { opacity: 1; } to { opacity: 1; transform: none; } }
+    @keyframes wholeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes logoPulse { 0% { transform: scale(1); } 40% { transform: scale(1.07); } 100% { transform: scale(1); } }
+    @keyframes ringOut { from { opacity: .9; transform: scale(.7); } to { opacity: 0; transform: scale(1.9); } }
+    @keyframes shine { from { transform: translateX(-140%) skewX(-20deg); } to { transform: translateX(260%) skewX(-20deg); } }
+    @keyframes letterIn { from { opacity: 0; transform: translateY(18px) scale(.8); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+    @keyframes splashAuto { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+    @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1); } }
+
+    .splash {
+      position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 24px; text-align: center; overflow: hidden;
+      background: radial-gradient(ellipse at 50% 35%, #10402e, #04110c 70%);
+      transition: opacity .55s ease, visibility .55s ease;
+      animation: splashAuto .01s 9s forwards; /* skript ishlamasa ham o‘zi yopiladi */
+    }
+    .splash.hold { animation: none; }
+    .splash.out { opacity: 0; visibility: hidden; pointer-events: none; }
+    .splash.instant { transition: none; }
+    .splash-logo { position: relative; width: min(54vw, 210px); aspect-ratio: 1; animation: logoPulse .7s ease 1.65s both; transition: width .45s ease; }
+    .splash .piece, .splash .whole { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .splash .piece { animation: pieceIn 1s cubic-bezier(.2, .9, .25, 1.12) both; }
+    .splash .p-left  { clip-path: polygon(0 0, 53% 0, 53% 7%, 19% 7%, 19% 30%, 15% 40%, 15% 73%, 0 73%); --from: translate(-130%, -80%) rotate(-28deg); animation-delay: .1s; }
+    .splash .p-mount { clip-path: polygon(53% 0, 100% 0, 100% 73%, 73% 73%, 73% 33%, 53% 28%); --from: translate(130%, -80%) rotate(28deg); animation-delay: .3s; }
+    .splash .p-book  { clip-path: polygon(0 73%, 100% 73%, 100% 100%, 0 100%); --from: translate(0, 170%) rotate(8deg); animation-delay: .5s; }
+    .splash .p-build { clip-path: polygon(19% 7%, 53% 7%, 53% 28%, 73% 33%, 73% 73%, 15% 73%, 15% 40%, 19% 30%); --from: translate(0, -160%) scale(1.5); animation-delay: .75s; }
+    .splash .whole { animation: wholeIn .3s ease 1.6s both; }
+    .splash .ring { position: absolute; inset: 0; border-radius: 22%; border: 3px solid #4ade80; animation: ringOut .9s ease-out 1.65s both; opacity: 0; }
+    .splash .shine-box { position: absolute; inset: 0; border-radius: 18.5%; overflow: hidden; pointer-events: none; }
+    .splash .shine-box::after {
+      content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+      animation: shine .9s ease 1.9s both;
+    }
+    .splash .star { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #bbf7d0; box-shadow: 0 0 10px #4ade80; opacity: 0; animation: twinkle 1.6s ease-in-out infinite; }
+    .splash-title { margin: 22px 0 4px; font-size: 34px; letter-spacing: 1px; color: #fff; }
+    .splash-title span { display: inline-block; animation: letterIn .5s ease both; }
+    .splash-sub { margin: 0; color: #a7d8bf; animation: letterIn .6s ease 2.45s both; }
+    .welcome { width: min(100%, 360px); margin-top: 22px; animation: fadeUp .5s ease both; }
+    .welcome p { color: #cfe9dc; }
+    .welcome .skip { background: none; border: 0; color: #a7d8bf; text-decoration: underline; display: block; margin: 12px auto 0; text-align: center; }
+    .splash.welcome-mode .splash-logo { width: min(34vw, 130px); }
+    body.no-scroll { overflow: hidden; }
+
+    /* ---------- Ro‘yxatdan o‘tish ---------- */
+    body.reg .tabbar, body.reg .account-btn { display: none; }
+    .steps { display: flex; gap: 8px; margin: 14px 0 4px; }
+    .steps span { flex: 1; height: 5px; border-radius: 99px; background: var(--card2); transition: background .3s ease; }
+    .steps span.on { background: linear-gradient(90deg, #22c55e, #3b82f6); }
+    .step { animation: fadeUp .3s ease both; }
+    .roles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 10px 0 14px; }
+    .role {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px; border-radius: 18px; font-weight: 600;
+      transition: transform .15s ease, border-color .2s ease, background .2s ease;
+    }
+    .role .ico { width: 44px; height: 44px; display: grid; place-items: center; font-size: 22px; color: #fff; border-radius: 14px; background: linear-gradient(145deg, var(--c), var(--c2)); }
+    .role.on { border-color: var(--c); background: #1f3350; box-shadow: 0 0 0 2px var(--c) inset; }
+    .role:active { transform: scale(.96); }
+    .reg-actions { display: flex; gap: 8px; margin-top: 6px; }
+    .reg-actions .primary { flex: 1; text-align: center; }
+    .linkish { background: none; border: 0; color: var(--muted); text-decoration: underline; display: block; margin: 6px auto; }
+    .profile-info { margin-top: 12px; }
+
     footer { text-align: center; margin: 30px 0 10px; font-size: 13px; color: #8291a8; }
   </style>
 </head>
@@ -324,12 +388,45 @@
   <symbol id="i-taxi" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></symbol>
   <symbol id="i-ad" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
   <symbol id="i-job" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
   <symbol id="i-landmark" viewBox="0 0 24 24"><path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l8 5H4z"/></symbol>
   <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
 </svg>
+<div id="splash" class="splash" aria-label="Vaxshivor">
+  <span class="star" style="left:14%;top:18%;animation-delay:.2s"></span>
+  <span class="star" style="left:82%;top:24%;animation-delay:.9s"></span>
+  <span class="star" style="left:24%;top:72%;animation-delay:1.3s"></span>
+  <span class="star" style="left:76%;top:66%;animation-delay:.6s"></span>
+  <span class="star" style="left:50%;top:10%;animation-delay:1.6s"></span>
+  <div class="splash-logo">
+    <img class="piece p-left" src="icons/icon-512.png" alt="">
+    <img class="piece p-mount" src="icons/icon-512.png" alt="">
+    <img class="piece p-book" src="icons/icon-512.png" alt="">
+    <img class="piece p-build" src="icons/icon-512.png" alt="">
+    <img class="whole" src="icons/icon-512.png" alt="">
+    <div class="ring"></div>
+    <div class="shine-box"></div>
+  </div>
+  <h1 class="splash-title"><span style="animation-delay:1.85s">V</span><span style="animation-delay:1.91s">a</span><span style="animation-delay:1.97s">x</span><span style="animation-delay:2.03s">s</span><span style="animation-delay:2.09s">h</span><span style="animation-delay:2.15s">i</span><span style="animation-delay:2.21s">v</span><span style="animation-delay:2.27s">o</span><span style="animation-delay:2.33s">r</span></h1>
+  <p class="splash-sub">Qishloq portali · Hammasi bir joyda</p>
+  <div id="welcomeBox" class="welcome hidden">
+    <p>Xush kelibsiz! Davom etish uchun Google hisobingiz bilan kiring.</p>
+    <button type="button" class="google-btn" onclick="signInWithGoogle()">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        Google orqali kirish
+      </button>
+    <p class="auth-status" role="status"></p>
+    <button type="button" class="skip" onclick="closeSplash(true)">Hozircha kirmasdan ko‘rish</button>
+  </div>
+</div>
+<script>
+  // Shu seansda kirish animatsiyasi ko‘rsatilgan bo‘lsa, qayta ko‘rsatmaymiz.
+  try { if (sessionStorage.getItem("introPlayed")) document.getElementById("splash").classList.add("out", "instant"); } catch (e) {}
+</script>
 <div id="offlineBar" class="offline-bar hidden">Internet yo‘q — oxirgi saqlangan sahifa ko‘rsatilmoqda</div>
 <main>
   <header onclick="go('home')">
@@ -504,6 +601,42 @@
     </form>
   </section>
 
+  <!-- RO‘YXATDAN O‘TISH -->
+  <section id="register" data-page class="hidden">
+    <h2 id="regHeading">📝 Ro‘yxatdan o‘tish</h2>
+    <p class="subtitle">Bir daqiqa vaqt oladi. Ma’lumotlaringiz faqat sizga va administratorga ko‘rinadi.</p>
+    <div class="steps" id="regSteps"><span></span><span></span><span></span></div>
+
+    <form id="regForm" class="card" novalidate>
+      <div class="step" data-step="0">
+        <h3>1. O‘zingiz haqingizda</h3>
+        <label for="rName">Ism va familiya</label>
+        <input id="rName" required minlength="2" maxlength="80" autocomplete="name" placeholder="Masalan: Aliyev Vali">
+        <label for="rAge">Yoshingiz</label>
+        <input id="rAge" type="number" inputmode="numeric" required min="12" max="100" placeholder="Masalan: 28">
+        <label for="rPhone">Telefon raqam</label>
+        <input id="rPhone" type="tel" required minlength="9" maxlength="20" autocomplete="tel" placeholder="+998 90 123 45 67">
+      </div>
+
+      <div class="step hidden" data-step="1">
+        <h3>2. Nima ish qilasiz?</h3>
+        <div class="roles" id="roleCards"></div>
+      </div>
+
+      <div class="step hidden" data-step="2">
+        <h3 id="roleTitle"></h3>
+        <div id="roleFields"></div>
+      </div>
+
+      <div class="reg-actions">
+        <button type="button" id="regBack" class="hidden">← Orqaga</button>
+        <button type="submit" id="regNext" class="primary">Davom etish →</button>
+      </div>
+      <p id="regStatus" role="status"></p>
+    </form>
+    <button type="button" class="linkish" id="regCancel"></button>
+  </section>
+
   <!-- MENING HISOBIM -->
   <section id="account" data-page class="hidden">
     <button class="back" onclick="go('home')">← Bosh sahifa</button>
@@ -528,8 +661,10 @@
             <p id="profileEmail" style="margin:0"></p>
           </div>
         </div>
+        <div id="profileInfo" class="meta profile-info"></div>
         <div class="actions">
           <button type="button" class="primary" onclick="go('add')">➕ E’lon qo‘shish</button>
+          <button type="button" id="editProfileBtn" onclick="go('register')">✏️ Profilni tahrirlash</button>
           <button type="button" onclick="signOut()">Chiqish</button>
         </div>
       </div>
@@ -609,6 +744,8 @@
       })
     : null;
   let currentUser = null;
+  let profile = null;              // profiles jadvalidagi yozuv
+  let profileState = "unknown";    // unknown | ok | missing | unavailable
 
   // ---------- Bo‘limlar sozlamasi ----------
   const KINDS = {
@@ -902,6 +1039,11 @@
         min: f.type === "number" ? "0" : null, maxlength: "120", placeholder: f.placeholder || null
       })
     ]));
+    // Taksi haydovchisi uchun mashina ma’lumoti profildan olinadi.
+    const car = document.getElementById("x_car");
+    if (car && profile?.role === "taxi" && profile.details?.car) {
+      car.value = [profile.details.car, profile.details.car_color].filter(Boolean).join(", ");
+    }
   }
   fKind.addEventListener("change", syncAddForm);
 
@@ -986,7 +1128,8 @@
     }
 
     setAuthStatus("Google sahifasiga o‘tilmoqda...");
-    const page = location.hash && location.hash !== "#add" ? location.hash : "#add";
+    const page = location.hash === "#register" ? "" : location.hash;
+    try { localStorage.setItem("welcomed", "1"); } catch (e) {}
     const { error } = await db.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: location.origin + location.pathname + page }
@@ -1000,6 +1143,8 @@
   async function signOut() {
     await db?.auth.signOut();
     currentUser = null;
+    profile = null;
+    profileState = "unknown";
     updateAuthUI();
     route();
   }
@@ -1022,8 +1167,194 @@
     document.getElementById("addLogin").classList.toggle("hidden", !!currentUser);
     document.getElementById("addForm").classList.toggle("hidden", !currentUser);
     const nameInput = document.getElementById("fName");
-    if (currentUser && !nameInput.value) nameInput.value = userName(currentUser);
+    if (currentUser && !nameInput.value) nameInput.value = profile?.full_name || userName(currentUser);
+    const phoneInput = document.getElementById("fPhone");
+    if (profile?.phone && !phoneInput.value) phoneInput.value = profile.phone;
   }
+
+  // ---------- Profil va ro‘yxatdan o‘tish ----------
+  const ROLES = {
+    taxi: {
+      label: "Taksi haydovchisi", icon: "taxi", c: "#facc15", c2: "#ca8a04", title: "3. Mashinangiz haqida",
+      fields: [
+        { key: "car", label: "Mashina rusumi", placeholder: "Masalan: Cobalt", required: true },
+        { key: "car_color", label: "Rangi", placeholder: "Masalan: oq" },
+        { key: "car_condition", label: "Mashina holati", options: ["A’lo", "Yaxshi", "O‘rtacha"], required: true },
+        { key: "plate", label: "Davlat raqami", placeholder: "01 A 123 BC", required: true, upper: true, max: 12 },
+        { key: "route", label: "Asosiy yo‘nalish (ixtiyoriy)", placeholder: "Vaxshivor → Tuman markazi" }
+      ]
+    },
+    trader: {
+      label: "Savdogar", icon: "shop", c: "#22c55e", c2: "#15803d", title: "3. Savdongiz haqida",
+      fields: [
+        { key: "shop_name", label: "Do‘kon nomi", required: true },
+        { key: "goods", label: "Nima sotasiz?", placeholder: "Oziq-ovqat, kiyim...", required: true },
+        { key: "shop_address", label: "Do‘kon manzili (ixtiyoriy)" }
+      ]
+    },
+    master: {
+      label: "Usta", icon: "master", c: "#f59e0b", c2: "#b45309", title: "3. Hunaringiz haqida",
+      fields: [
+        { key: "specialty", label: "Mutaxassislik", options: KINDS.master.categories, required: true },
+        { key: "experience", label: "Tajriba (yil)", type: "number", required: true },
+        { key: "work_area", label: "Qayerda ishlaysiz? (ixtiyoriy)" }
+      ]
+    },
+    farmer: {
+      label: "Dehqon / chorvador", icon: "leaf", c: "#14b8a6", c2: "#0f766e", title: "3. Xo‘jaligingiz haqida",
+      fields: [{ key: "products", label: "Nima yetishtirasiz? (ixtiyoriy)", placeholder: "Meva, sabzavot, chorva..." }]
+    },
+    other: {
+      label: "Boshqa", icon: "user", c: "#8b5cf6", c2: "#6d28d9", title: "3. Kasbingiz",
+      fields: [{ key: "profession", label: "Kasbingiz (ixtiyoriy)", placeholder: "O‘qituvchi, talaba, shifokor..." }]
+    }
+  };
+  const DETAIL_LABELS = {
+    car: "🚗", car_color: "🎨", car_condition: "Holati:", plate: "🔢", route: "🛣",
+    shop_name: "🏪", goods: "📦", shop_address: "📍", specialty: "🛠", experience: "Tajriba (yil):",
+    work_area: "📍", products: "🌾", profession: "💼"
+  };
+
+  async function loadProfile() {
+    profile = null;
+    profileState = "unknown";
+    if (!db || !currentUser) return;
+    const { data, error } = await db.from("profiles").select("*").eq("id", currentUser.id).maybeSingle();
+    if (error) {
+      // Jadval hali o‘rnatilmagan bo‘lsa, sayt ro‘yxatdan o‘tishsiz ishlayveradi.
+      console.warn("profiles jadvali o‘qilmadi:", error.message);
+      profileState = "unavailable";
+      return;
+    }
+    profile = data;
+    profileState = data ? "ok" : "missing";
+  }
+
+  const icon = name => {
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "i");
+    const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttribute("href", "#i-" + name);
+    svg.append(use);
+    return svg;
+  };
+
+  let regStep = 0;
+  let regRole = null;
+
+  function renderRoleFields() {
+    const cfg = ROLES[regRole];
+    const saved = profile?.role === regRole ? profile.details || {} : {};
+    document.getElementById("roleTitle").textContent = cfg.title;
+    document.getElementById("roleFields").replaceChildren(...cfg.fields.flatMap(f => {
+      const id = "rf_" + f.key;
+      const input = f.options
+        ? el("select", { id, "data-detail": f.key, required: f.required || null },
+            ...f.options.map(o => el("option", { value: o, selected: saved[f.key] === o || null }, o)))
+        : el("input", {
+            id, "data-detail": f.key, type: f.type || "text", required: f.required || null,
+            maxlength: f.max || "120", min: f.type === "number" ? "0" : null, max: f.type === "number" ? "80" : null,
+            placeholder: f.placeholder || null, value: saved[f.key] ?? null,
+            style: f.upper ? "text-transform:uppercase" : null
+          });
+      return [el("label", { for: id }, f.label), input];
+    }));
+  }
+
+  function showRegStep(step) {
+    regStep = step;
+    document.querySelectorAll("#regForm .step").forEach(d => d.classList.toggle("hidden", Number(d.dataset.step) !== step));
+    document.querySelectorAll("#regSteps span").forEach((d, i) => d.classList.toggle("on", i <= step));
+    document.getElementById("regBack").classList.toggle("hidden", step === 0);
+    document.getElementById("regNext").textContent = step === 2 ? "✅ Saqlash" : "Davom etish →";
+    document.getElementById("regStatus").textContent = "";
+    if (step === 2) renderRoleFields();
+    window.scrollTo(0, 0);
+  }
+
+  function renderRegister() {
+    const editing = profileState === "ok";
+    document.getElementById("regHeading").textContent = editing ? "✏️ Profilni tahrirlash" : "📝 Ro‘yxatdan o‘tish";
+    const cancel = document.getElementById("regCancel");
+    cancel.textContent = editing ? "Bekor qilish" : "Boshqa hisob bilan kirish (chiqish)";
+    cancel.onclick = editing ? () => go("account") : signOut;
+
+    document.getElementById("rName").value = profile?.full_name || userName(currentUser);
+    document.getElementById("rAge").value = profile?.age ?? "";
+    document.getElementById("rPhone").value = profile?.phone || "";
+    regRole = profile?.role || null;
+
+    document.getElementById("roleCards").replaceChildren(...Object.entries(ROLES).map(([key, r]) =>
+      el("button", {
+        type: "button", class: "role" + (key === regRole ? " on" : ""), "data-role": key,
+        style: `--c:${r.c};--c2:${r.c2}`,
+        onclick: event => {
+          regRole = key;
+          document.querySelectorAll(".role").forEach(b => b.classList.toggle("on", b === event.currentTarget));
+          document.getElementById("regStatus").textContent = "";
+        }
+      }, el("span", { class: "ico" }, icon(r.icon)), r.label)
+    ));
+    showRegStep(0);
+  }
+
+  document.getElementById("regBack").addEventListener("click", () => showRegStep(regStep - 1));
+
+  document.getElementById("regForm").addEventListener("submit", async event => {
+    event.preventDefault();
+    const status = document.getElementById("regStatus");
+    const stepEl = document.querySelector(`#regForm .step[data-step="${regStep}"]`);
+    for (const input of stepEl.querySelectorAll("input, select")) {
+      if (!input.reportValidity()) return;
+    }
+
+    if (regStep === 0) {
+      if (cleanPhone(document.getElementById("rPhone").value).replace("+", "").length < 9) {
+        status.textContent = "Telefon raqamini to‘g‘ri kiriting.";
+        return;
+      }
+      return showRegStep(1);
+    }
+    if (regStep === 1) {
+      if (!regRole) { status.textContent = "Bittasini tanlang."; return; }
+      return showRegStep(2);
+    }
+
+    const details = {};
+    stepEl.querySelectorAll("[data-detail]").forEach(input => {
+      let v = input.value.trim();
+      if (!v) return;
+      if (input.style.textTransform === "uppercase") v = v.toUpperCase();
+      details[input.dataset.detail] = input.type === "number" ? Number(v) : v;
+    });
+
+    const button = document.getElementById("regNext");
+    button.disabled = true;
+    status.textContent = "Saqlanmoqda...";
+    const row = {
+      id: currentUser.id,
+      full_name: document.getElementById("rName").value.trim(),
+      age: Number(document.getElementById("rAge").value),
+      phone: cleanPhone(document.getElementById("rPhone").value),
+      role: regRole,
+      details,
+      updated_at: new Date().toISOString()
+    };
+    const { error } = await db.from("profiles").upsert(row);
+    button.disabled = false;
+
+    if (error) {
+      console.error("Profil xatosi:", error.message);
+      status.textContent = "Saqlanmadi. Birozdan so‘ng qayta urinib ko‘ring.";
+      return;
+    }
+    const wasNew = profileState !== "ok";
+    profile = row;
+    profileState = "ok";
+    tg?.HapticFeedback?.notificationOccurred("success");
+    updateAuthUI();
+    go(wasNew ? "home" : "account");
+  });
 
   // ---------- Mening hisobim ----------
   async function renderAccount() {
@@ -1036,6 +1367,19 @@
     const av = document.getElementById("profileAvatar");
     const pic = userAvatar(currentUser);
     av.replaceChildren(pic ? el("img", { src: pic, alt: "", referrerpolicy: "no-referrer" }) : "👤");
+
+    const info = document.getElementById("profileInfo");
+    info.replaceChildren();
+    document.getElementById("editProfileBtn").classList.toggle("hidden", profileState === "unavailable");
+    if (profile) {
+      document.getElementById("profileName").textContent = profile.full_name;
+      info.append(
+        el("span", { class: "tag status-ok" }, ROLES[profile.role]?.label || profile.role),
+        profile.age ? el("span", { class: "tag" }, `${profile.age} yosh`) : null,
+        profile.phone ? el("span", { class: "tag" }, `📞 ${profile.phone}`) : null,
+        ...Object.entries(profile.details || {}).map(([k, v]) => el("span", { class: "tag" }, `${DETAIL_LABELS[k] || "•"} ${v}`))
+      );
+    }
 
     const out = document.getElementById("myListings");
     out.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
@@ -1130,9 +1474,18 @@
   }
 
   function route() {
-    const page = location.hash.slice(1) || "home";
+    let page = location.hash.slice(1) || "home";
+
+    // Kirgan, lekin hali ro‘yxatdan o‘tmagan foydalanuvchi avval anketani to‘ldiradi.
+    if (currentUser && profileState === "missing" && page !== "register") { location.hash = "register"; return; }
+    if (page === "register" && (!currentUser || profileState === "unavailable" || profileState === "unknown")) {
+      location.hash = "home";
+      return;
+    }
+
     const isKind = page in KINDS;
-    const sectionId = isKind ? "list" : (["home", "add", "admin", "account", "about"].includes(page) ? page : "home");
+    const sectionId = isKind ? "list" : (["home", "add", "admin", "account", "about", "register"].includes(page) ? page : "home");
+    document.body.classList.toggle("reg", sectionId === "register");
 
     document.querySelectorAll("[data-page]").forEach(s => s.classList.toggle("hidden", s.id !== sectionId));
     document.querySelectorAll(".tabbar button").forEach(b =>
@@ -1149,6 +1502,7 @@
     }
     if (sectionId === "admin") renderAdmin();
     if (sectionId === "account") renderAccount();
+    if (sectionId === "register") renderRegister();
   }
 
   // ---------- Mobil ilova (telefonga o‘rnatish) ----------
@@ -1199,25 +1553,68 @@
   window.addEventListener("hashchange", route);
 
   // Kirish holatini kuzatish (Google'dan qaytganda ham).
+  let authReady;
+  const authReadyPromise = new Promise(resolve => (authReady = resolve));
+
   async function initAuth() {
     if (db) {
       const { data } = await db.auth.getSession();
       currentUser = data?.session?.user || null;
+      await loadProfile();
       db.auth.onAuthStateChange((event, session) => {
         const was = currentUser?.id;
         currentUser = session?.user || null;
-        updateAuthUI();
-        if (was !== currentUser?.id) route();
+        if (was === currentUser?.id) return;
+        // Supabase so‘rovlarini shu funksiya ichida kutib bo‘lmaydi — keyinga qoldiramiz.
+        setTimeout(async () => { await loadProfile(); updateAuthUI(); route(); }, 0);
       });
       // Google qaytargan ?code=... ni manzildan tozalaymiz.
       if (new URLSearchParams(location.search).has("code")) {
         history.replaceState(null, "", location.pathname + location.hash);
       }
     }
+    authReady();
     updateAuthUI();
     route();
   }
+
+  // ---------- Animatsiyali kirish ----------
+  const splash = document.getElementById("splash");
+  const stored = (store, key) => { try { return store.getItem(key); } catch (e) { return null; } };
+
+  function closeSplash(remember) {
+    if (remember) { try { localStorage.setItem("welcomed", "1"); } catch (e) {} }
+    splash.classList.remove("hold");
+    splash.classList.add("out");
+    document.body.classList.remove("no-scroll");
+  }
+
+  async function runIntro() {
+    const alreadyPlayed = !!stored(sessionStorage, "introPlayed");
+    if (!alreadyPlayed) {
+      try { sessionStorage.setItem("introPlayed", "1"); } catch (e) {}
+      document.body.classList.add("no-scroll");
+      splash.classList.add("hold");
+      const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      // Animatsiya tugashini kutamiz; ekranga bosilsa, o‘tkazib yuboriladi.
+      await new Promise(resolve => {
+        setTimeout(resolve, reduce ? 500 : 3300);
+        splash.addEventListener("click", resolve, { once: true });
+      });
+    }
+    await authReadyPromise;
+
+    if (currentUser) { try { localStorage.setItem("welcomed", "1"); } catch (e) {} }
+    const firstVisit = !currentUser && !stored(localStorage, "welcomed");
+    if (alreadyPlayed || !firstVisit) return closeSplash(false);
+
+    // Birinchi marta kelgan mehmon: Google orqali kirish taklifi.
+    splash.classList.add("welcome-mode");
+    document.getElementById("welcomeBox").classList.remove("hidden");
+  }
+
   initAuth();
+  runIntro();
 </script>
 </body>
 </html>

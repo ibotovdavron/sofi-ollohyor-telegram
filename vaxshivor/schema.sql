@@ -60,3 +60,27 @@ on conflict (id) do nothing;
 drop policy if exists "listing_photos_upload" on storage.objects;
 create policy "listing_photos_upload" on storage.objects
   for insert to authenticated with check (bucket_id = 'listing-photos');
+
+-- 4) Foydalanuvchi profillari (ro'yxatdan o'tish anketasi).
+create table if not exists public.profiles (
+  id uuid primary key references auth.users (id) on delete cascade,
+  full_name text not null check (char_length(full_name) between 2 and 80),
+  age int check (age between 12 and 100),
+  phone text check (char_length(phone) between 9 and 20),
+  role text not null check (role in ('taxi', 'trader', 'master', 'farmer', 'other')),
+  details jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+alter table public.profiles enable row level security;
+
+-- Profilni faqat egasi va administrator ko'radi.
+drop policy if exists "profile_read" on public.profiles;
+create policy "profile_read" on public.profiles
+  for select to authenticated using (id = auth.uid() or public.is_admin());
+drop policy if exists "profile_insert" on public.profiles;
+create policy "profile_insert" on public.profiles
+  for insert to authenticated with check (id = auth.uid());
+drop policy if exists "profile_update" on public.profiles;
+create policy "profile_update" on public.profiles
+  for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
