@@ -530,6 +530,74 @@
     .empty h3 { margin-bottom: 4px; }
     .empty .btn { margin-top: 12px; background: linear-gradient(145deg, var(--accent), var(--accent2)); border-color: transparent; color: #fff; font-weight: 600; }
 
+    /* ---------- Yangi bosh sahifa ---------- */
+    .home-hero { padding: 20px 18px 16px; border-radius: 26px; }
+    .home-hero .date { font-size: 13px; color: #b9cbe6; letter-spacing: .3px; text-transform: capitalize; margin: 0; }
+    .home-hero h2 { font-size: 26px; margin: 6px 0 4px; line-height: 1.2; }
+    .home-hero .loc { display: inline-flex; align-items: center; gap: 6px; margin: 6px 0 0; padding: 6px 12px; border-radius: 999px; font-size: 13px; color: #dbe7fb; background: rgba(7, 11, 20, .38); }
+    .home-hero .stats { margin-top: 16px; }
+    .stat { cursor: pointer; transition: transform .15s ease, background .2s ease; border: 1px solid rgba(255,255,255,.06); }
+    .stat:active { transform: scale(.95); }
+
+    .home-search { position: relative; margin: 14px 0 4px; }
+    .home-search input { margin: 0; border-radius: 999px; padding: 14px 16px 14px 46px; background: rgba(17, 28, 46, .9); }
+    .home-search .i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 19px; color: var(--muted); }
+
+    .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 26px 2px 12px; }
+    .sec-head h2 { margin: 0; font-size: 19px; }
+    .sec-head a { font-size: 14px; color: #93c5fd; text-decoration: none; white-space: nowrap; }
+
+    .village { padding: 14px; border-radius: 22px; }
+    .village .facts { margin-top: 0; }
+    .village p { margin: 12px 2px 0; }
+    .stories { display: flex; gap: 12px; overflow-x: auto; padding: 12px 2px 4px; margin: 0 -2px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .stories::-webkit-scrollbar { display: none; }
+    .story {
+      flex: 0 0 72%; max-width: 280px; scroll-snap-align: start; text-align: left; padding: 16px; border-radius: 20px;
+      background: linear-gradient(150deg, color-mix(in srgb, var(--c) 30%, #111c2e), #111c2e 75%); border-color: color-mix(in srgb, var(--c) 40%, transparent);
+      display: flex; flex-direction: column; gap: 6px; transition: transform .2s ease;
+    }
+    .story:active { transform: scale(.97); }
+    .story .ico { width: 42px; height: 42px; display: grid; place-items: center; font-size: 21px; color: #fff; border-radius: 13px; background: linear-gradient(145deg, var(--c), var(--c2)); margin-bottom: 4px; }
+    .story strong { font-size: 16px; }
+    .story small { color: var(--muted); font-size: 13px; line-height: 1.45; font-weight: 400; }
+    .story .more { margin-top: 4px; font-size: 13px; color: color-mix(in srgb, var(--c) 65%, #fff); font-weight: 600; }
+
+    .sos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .sos a {
+      display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 4px; border-radius: 18px; text-decoration: none;
+      color: var(--text); background: rgba(17, 28, 46, .95); border: 1px solid var(--border); transition: transform .15s ease;
+    }
+    .sos a:active { transform: scale(.94); }
+    .sos .emo { font-size: 24px; }
+    .sos b { font-size: 18px; color: color-mix(in srgb, var(--c) 70%, #fff); }
+    .sos small { font-size: 11px; color: var(--muted); text-align: center; }
+
+    .row-link { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 22px; padding: 14px 16px; border-radius: 20px; font-weight: 600; }
+    .row-link .ico { width: 42px; height: 42px; display: grid; place-items: center; font-size: 21px; color: #fff; border-radius: 13px; background: linear-gradient(145deg, #6366f1, #4338ca); flex-shrink: 0; }
+    .row-link small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
+    .row-link .arrow { margin-left: auto; color: var(--muted); }
+
+    /* ---------- Ilova haqida ---------- */
+    .app-hero { text-align: center; padding: 26px 18px 20px; border-radius: 26px; }
+    .app-hero img { width: 92px; height: 92px; border-radius: 22px; box-shadow: 0 14px 30px -10px #22c55e; animation: floaty 5s ease-in-out infinite; }
+    .app-hero h2 { margin: 14px 0 2px; font-size: 24px; }
+    .app-hero .ver { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; background: rgba(7, 11, 20, .4); color: #dbe7fb; }
+    .feat { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 10px; }
+    .feat li { display: flex; gap: 12px; align-items: flex-start; color: var(--muted); line-height: 1.45; }
+    .feat .ico { width: 34px; height: 34px; flex-shrink: 0; display: grid; place-items: center; font-size: 17px; color: #fff; border-radius: 11px; background: linear-gradient(145deg, var(--c, #3b82f6), var(--c2, #1d4ed8)); }
+    .feat b { display: block; color: var(--text); font-weight: 600; }
+    .person { display: flex; align-items: center; gap: 14px; }
+    .person .ava {
+      width: 68px; height: 68px; flex-shrink: 0; display: grid; place-items: center; border-radius: 50%; font-size: 26px; font-weight: 800; color: #fff;
+      background: linear-gradient(145deg, #6366f1, #06b6d4); box-shadow: 0 10px 22px -8px #6366f1; overflow: hidden;
+    }
+    .person .ava img { width: 100%; height: 100%; object-fit: cover; }
+    .person h3 { font-size: 19px; margin: 0 0 2px; }
+    .person p { margin: 0; font-size: 14px; }
+    .other-app { background: linear-gradient(150deg, #1e2a4f, #111c2e 70%); border-color: #3b4a86; }
+    .other-app .ico-lg { width: 56px; height: 56px; display: grid; place-items: center; font-size: 28px; color: #fff; border-radius: 17px; background: linear-gradient(145deg, #f59e0b, #b45309); flex-shrink: 0; }
+
     footer { text-align: center; margin: 30px 0 10px; font-size: 13px; color: #8291a8; }
   </style>
 </head>
@@ -548,6 +616,7 @@
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
   <symbol id="i-mountain" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
@@ -622,15 +691,21 @@
 
   <!-- 1. BOSH SAHIFA -->
   <section id="home" data-page>
-    <div class="card hero">
-      <p>ASSALOMU ALAYKUM!</p>
-      <h2>Vaxshivor qishlog‘iga xush kelibsiz</h2>
-      <p>Do‘kondagi mahsulotlar, ishonchli ustalar, taksi qatnovlari, e’lonlar va ish o‘rinlari — barchasi shu yerda.</p>
+    <div class="card hero home-hero">
+      <p class="date" id="homeDate"></p>
+      <h2 id="homeGreeting">Assalomu alaykum!</h2>
+      <p>Vaxshivor qishlog‘ining do‘koni, ustalari, taksisi, e’lonlari va ish o‘rinlari — bir joyda.</p>
+      <span class="loc">📍 Surxondaryo viloyati · Oltinsoy tumani</span>
       <div class="stats">
-        <div class="stat"><strong id="statTotal">—</strong><span>e’lon</span></div>
-        <div class="stat"><strong id="statMasters">—</strong><span>usta</span></div>
-        <div class="stat"><strong id="statJobs">—</strong><span>ish o‘rni</span></div>
+        <div class="stat" onclick="go('ad')"><strong id="statTotal">—</strong><span>e’lon</span></div>
+        <div class="stat" onclick="go('master')"><strong id="statMasters">—</strong><span>usta</span></div>
+        <div class="stat" onclick="go('job')"><strong id="statJobs">—</strong><span>ish o‘rni</span></div>
       </div>
+    </div>
+
+    <div class="home-search">
+      <svg class="i"><use href="#i-search"/></svg>
+      <input id="homeSearch" type="search" placeholder="Mahsulot, usta, taksi, ish qidirish..." autocomplete="off">
     </div>
 
     <div id="installCard" class="card install-card hidden">
@@ -643,12 +718,8 @@
       <button class="close" type="button" aria-label="Yopish" onclick="dismissInstall()">✕</button>
     </div>
 
-    <button class="about-banner" onclick="go('about')">
-      <span class="ico"><svg class="i"><use href="#i-mountain"/></svg></span>
-      <span>Vaxshivor haqida<small>Tarixi, So‘fi Olloyor, manzili</small></span>
-      <span class="arrow">→</span>
-    </button>
-
+    <div id="homeMain">
+      <div class="sec-head"><h2>Xizmatlar</h2></div>
     <nav class="tiles">
       <button onclick="go('shop')" style="--c:#22c55e;--c2:#15803d"><span class="ico"><svg class="i"><use href="#i-shop"/></svg></span><span class="arrow">→</span>Do‘kon<small>Mahsulot va narxlar</small></button>
       <button onclick="go('master')" style="--c:#f59e0b;--c2:#b45309"><span class="ico"><svg class="i"><use href="#i-master"/></svg></span><span class="arrow">→</span>Ustalar<small>Elektrik, santexnik...</small></button>
@@ -658,15 +729,49 @@
       <button onclick="go('add')" style="--c:#3b82f6;--c2:#1d4ed8"><span class="ico"><svg class="i"><use href="#i-plus"/></svg></span><span class="arrow">→</span>E’lon qo‘shish<small>Bepul joylang</small></button>
     </nav>
 
-    <h2>🆕 So‘nggi e’lonlar</h2>
+      <div class="sec-head"><h2>Qishloq haqida</h2><a href="#about">Batafsil →</a></div>
+      <div class="card village">
+        <div class="facts">
+          <div class="fact"><span>Viloyat</span><strong>Surxondaryo</strong></div>
+          <div class="fact"><span>Tuman</span><strong>Oltinsoy</strong></div>
+          <div class="fact"><span>Joylashuvi</span><strong>Hisor tog‘ etaklari</strong></div>
+          <div class="fact"><span>Ziyoratgoh</span><strong>So‘fi Olloyor maqbarasi</strong></div>
+        </div>
+        <p>Vaxshivor — tog‘ etagidagi qadimiy qishloq. Toza havosi, buloqlari va bog‘lari bilan tanilgan; buyuk shoir So‘fi Olloyor shu yerda dafn etilgan.</p>
+      </div>
+      <div class="stories">
+        <button class="story" style="--c:#3b82f6;--c2:#1d4ed8" onclick="openAbout(0)">
+          <span class="ico"><svg class="i"><use href="#i-book"/></svg></span><strong>Qishloq tarixi</strong>
+          <small>Qadimiy qishloqning o‘tmishi va bugungi hayoti.</small><span class="more">O‘qish →</span>
+        </button>
+        <button class="story" style="--c:#f59e0b;--c2:#b45309" onclick="openAbout(1)">
+          <span class="ico"><svg class="i"><use href="#i-landmark"/></svg></span><strong>So‘fi Olloyor</strong>
+          <small>Shoir va mutafakkirning hayoti, asarlari.</small><span class="more">O‘qish →</span>
+        </button>
+        <button class="story" style="--c:#22c55e;--c2:#15803d" onclick="openAbout(2)">
+          <span class="ico"><svg class="i"><use href="#i-pin"/></svg></span><strong>Manzil va yo‘l</strong>
+          <small>Qishloqqa qanday boriladi, xaritada ko‘rish.</small><span class="more">Ko‘rish →</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="sec-head"><h2 id="latestTitle">So‘nggi e’lonlar</h2></div>
     <div id="latestList"></div>
 
-    <div class="card">
-      <h3>📞 Muhim raqamlar</h3>
-      <p>🚑 Tez yordam — <a class="price" href="tel:103">103</a><br>
-         🚒 Yong‘in xizmati — <a class="price" href="tel:101">101</a><br>
-         👮 Ichki ishlar — <a class="price" href="tel:102">102</a><br>
-         🔥 Gaz avariya — <a class="price" href="tel:104">104</a></p>
+    <div id="homeExtra">
+      <div class="sec-head"><h2>Muhim raqamlar</h2></div>
+      <div class="sos">
+        <a href="tel:103" style="--c:#f43f5e"><span class="emo">🚑</span><b>103</b><small>Tez yordam</small></a>
+        <a href="tel:101" style="--c:#f59e0b"><span class="emo">🚒</span><b>101</b><small>Yong‘in</small></a>
+        <a href="tel:102" style="--c:#3b82f6"><span class="emo">👮</span><b>102</b><small>Ichki ishlar</small></a>
+        <a href="tel:104" style="--c:#eab308"><span class="emo">🔥</span><b>104</b><small>Gaz avariya</small></a>
+      </div>
+
+      <button class="row-link" onclick="go('app')">
+        <span class="ico"><svg class="i"><use href="#i-info"/></svg></span>
+        <span>Ilova haqida<small>Ilova, asoschi va boshqa loyihalar</small></span>
+        <span class="arrow">→</span>
+      </button>
     </div>
   </section>
 
@@ -742,6 +847,68 @@
         </div>
       </div>
     </details>
+  </section>
+
+  <!-- ILOVA HAQIDA -->
+  <section id="app" data-page class="hidden">
+    <div class="card hero app-hero">
+      <img src="icons/icon-192.png" alt="Vaxshivor logosi">
+      <h2>Vaxshivor</h2>
+      <span class="ver">Qishloq portali · 1.0 versiya</span>
+      <p>Vaxshivor qishlog‘i aholisi uchun yaratilgan bepul ilova: kundalik kerakli xizmatlar va ma’lumotlar bir joyda.</p>
+      <div class="actions" style="justify-content:center">
+        <button type="button" class="primary" id="appInstallBtn">📲 Telefonga o‘rnatish</button>
+        <button type="button" onclick="shareApp()">🔗 Ulashish</button>
+      </div>
+      <p id="appInstallHint" class="time" role="status"></p>
+    </div>
+
+    <div class="card">
+      <h3>Ilova nimalarni qila oladi?</h3>
+      <ul class="feat">
+        <li style="--c:#22c55e;--c2:#15803d"><span class="ico"><svg class="i"><use href="#i-shop"/></svg></span><span><b>Do‘kon</b>Mahsulotlar, narxlar, chegirmalar, baho va sharhlar.</span></li>
+        <li style="--c:#f59e0b;--c2:#b45309"><span class="ico"><svg class="i"><use href="#i-master"/></svg></span><span><b>Ustalar</b>Elektrik, santexnik, quruvchi — bir qo‘ng‘iroq bilan.</span></li>
+        <li style="--c:#eab308;--c2:#a16207"><span class="ico"><svg class="i"><use href="#i-taxi"/></svg></span><span><b>Taksi</b>Qatnovlar, haydovchilar va bo‘sh joylar.</span></li>
+        <li style="--c:#f43f5e;--c2:#be123c"><span class="ico"><svg class="i"><use href="#i-ad"/></svg></span><span><b>E’lonlar</b>Sotish, ijara, yo‘qolgan-topilgan va qishloq xabarlari.</span></li>
+        <li style="--c:#8b5cf6;--c2:#6d28d9"><span class="ico"><svg class="i"><use href="#i-job"/></svg></span><span><b>Ish o‘rinlari</b>Ish beruvchilar va ish qidirayotganlar.</span></li>
+        <li style="--c:#14b8a6;--c2:#0f766e"><span class="ico"><svg class="i"><use href="#i-mountain"/></svg></span><span><b>Qishloq haqida</b>Tarix, So‘fi Olloyor va manzil.</span></li>
+      </ul>
+    </div>
+
+    <div class="sec-head"><h2>Asoschi</h2></div>
+    <div class="card">
+      <div class="person">
+        <div class="ava" id="authorAva"></div>
+        <div class="grow">
+          <h3 id="authorName"></h3>
+          <p id="authorRole"></p>
+        </div>
+      </div>
+      <p id="authorBio" class="desc" style="margin-top:12px"></p>
+      <div class="meta" id="authorFacts"></div>
+      <div class="actions" id="authorLinks"></div>
+    </div>
+
+    <div class="sec-head"><h2>Boshqa ilovamiz</h2></div>
+    <div class="card other-app">
+      <div class="person">
+        <div class="ico-lg"><svg class="i"><use href="#i-book"/></svg></div>
+        <div class="grow">
+          <h3>So‘fi Ollohyor</h3>
+          <p>O‘quv markazi ilovasi</p>
+        </div>
+      </div>
+      <p style="margin-top:12px">So‘fi Ollohyor o‘quv markazi o‘quvchilari va ota-onalari uchun: o‘qish jarayoni, natijalar va bilim sinovlari bitta ilovada.</p>
+      <ul class="feat">
+        <li style="--c:#3b82f6;--c2:#1d4ed8"><span class="ico">📅</span><span><b>Dars jadvali</b>Sinflar bo‘yicha darslar va vaqtlari.</span></li>
+        <li style="--c:#f59e0b;--c2:#b45309"><span class="ico">⭐</span><span><b>Yulduzlar va reyting</b>O‘quvchilar yutuqlari va eng yaxshilar ro‘yxati.</span></li>
+        <li style="--c:#8b5cf6;--c2:#6d28d9"><span class="ico">📚</span><span><b>Testlar</b>Fanlar bo‘yicha bilimni sinash.</span></li>
+        <li style="--c:#22c55e;--c2:#15803d"><span class="ico">📝</span><span><b>O‘qishga ariza</b>Markazga onlayn ariza yuborish.</span></li>
+      </ul>
+      <div class="actions">
+        <a class="btn primary" href="https://sufiollohyor.uz" target="_blank" rel="noopener">🌐 sufiollohyor.uz</a>
+      </div>
+    </div>
   </section>
 
   <!-- E’LON QO‘SHISH -->
@@ -905,7 +1072,7 @@
   <footer>
     Vaxshivor qishloq portali<br>
     Hamjihatlik · Mehnat · Farovonlik<br>
-    <a href="#admin" style="color:#8291a8">Administrator</a>
+    <a href="#app" style="color:#8291a8">Ilova haqida</a> · <a href="#admin" style="color:#8291a8">Administrator</a>
   </footer>
 </main>
 
@@ -1158,24 +1325,95 @@
     requestAnimationFrame(tick);
   }
 
+  // Ilova asoschisi haqidagi ma’lumotlar — shu yerda tahrirlanadi.
+  const AUTHOR = {
+    name: "Davron Ibotov",
+    role: "Ilova asoschisi va dasturchisi",
+    bio: "Vaxshivor va So‘fi Ollohyor ilovalarini yaratgan.",
+    facts: [],            // masalan: ["Vaxshivor qishlog‘idan", "Dasturchi"]
+    telegram: "",         // masalan: "username"
+    phone: "",            // masalan: "+998901234567"
+    photo: ""             // rasm manzili (ixtiyoriy)
+  };
+
+  let aboutOpen = null;
+  function openAbout(index) { aboutOpen = index; go("about"); }
+
+  function renderApp() {
+    const ava = document.getElementById("authorAva");
+    if (AUTHOR.photo) ava.replaceChildren(el("img", { src: AUTHOR.photo, alt: "" }));
+    else ava.textContent = AUTHOR.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+    document.getElementById("authorName").textContent = AUTHOR.name;
+    document.getElementById("authorRole").textContent = AUTHOR.role;
+    document.getElementById("authorBio").textContent = AUTHOR.bio;
+    document.getElementById("authorFacts").replaceChildren(...AUTHOR.facts.map(f => el("span", { class: "tag" }, f)));
+    const handle = tgHandle(AUTHOR.telegram), phone = cleanPhone(AUTHOR.phone);
+    document.getElementById("authorLinks").replaceChildren(
+      handle ? el("a", { class: "btn primary", href: `https://t.me/${handle}`, target: "_blank", rel: "noopener" }, "✈️ Telegram") : "",
+      phone ? el("a", { class: "btn success", href: `tel:${phone}` }, "📞 Qo‘ng‘iroq") : "");
+    document.getElementById("appInstallBtn").classList.toggle("hidden", isStandalone);
+  }
+
+  async function shareApp() {
+    const url = location.origin + location.pathname;
+    const text = "Vaxshivor — qishloq portali: do‘kon, ustalar, taksi, e’lonlar va ish o‘rinlari.";
+    try {
+      if (navigator.share) await navigator.share({ title: "Vaxshivor", text, url });
+      else { await navigator.clipboard.writeText(`${text}\n${url}`); alert("Havola nusxalandi!"); }
+    } catch (e) {}
+  }
+
+  function renderGreeting() {
+    const hour = new Date().getHours();
+    const hello = hour < 5 ? "Xayrli tun" : hour < 11 ? "Xayrli tong" : hour < 17 ? "Xayrli kun" : hour < 22 ? "Xayrli kech" : "Xayrli tun";
+    const name = currentUser ? (profile?.full_name || userName(currentUser)).split(" ").pop() : "";
+    document.getElementById("homeGreeting").textContent = name && !name.includes("@") ? `${hello}, ${name}!` : `${hello}!`;
+    const months = ["yanvar", "fevral", "mart", "aprel", "may", "iyun", "iyul", "avgust", "sentabr", "oktabr", "noyabr", "dekabr"];
+    const days = ["yakshanba", "dushanba", "seshanba", "chorshanba", "payshanba", "juma", "shanba"];
+    const d = new Date();
+    document.getElementById("homeDate").textContent = `${days[d.getDay()]}, ${d.getDate()}-${months[d.getMonth()]}`;
+  }
+
   async function renderHome() {
+    renderGreeting();
     const list = document.getElementById("latestList");
-    list.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
+    const q = document.getElementById("homeSearch").value.trim().toLowerCase();
+    if (!list.children.length) list.replaceChildren(el("div", { class: "notice" }, "Yuklanmoqda..."));
     const items = await loadAll();
     await loadRatings();
 
-    countUp("statTotal", items.length);
-    countUp("statMasters", items.filter(i => i.kind === "master").length);
-    countUp("statJobs", items.filter(i => i.kind === "job" && i.category !== "Ish qidiryapman").length);
+    if (!q) {
+      countUp("statTotal", items.length);
+      countUp("statMasters", items.filter(i => i.kind === "master").length);
+      countUp("statJobs", items.filter(i => i.kind === "job" && i.category !== "Ish qidiryapman").length);
+    }
+
+    // Qidiruv paytida boshqa bloklar yashiriladi va natijalar ko‘rsatiladi.
+    document.getElementById("homeMain").classList.toggle("hidden", !!q);
+    document.getElementById("homeExtra").classList.toggle("hidden", !!q);
+    const found = q
+      ? items.filter(i => [i.title, i.description, i.category, i.contact_name, ...Object.values(i.extra || {})]
+          .join(" ").toLowerCase().includes(q))
+      : items.slice(0, 4);
+    document.getElementById("latestTitle").textContent = q ? `Topildi: ${found.length} ta` : "So‘nggi e’lonlar";
 
     list.replaceChildren(demoNotice() || "");
-    const latest = items.slice(0, 5);
-    if (latest.length === 0) {
-      list.append(el("div", { class: "notice" }, "Hozircha e’lonlar yo‘q. Birinchi bo‘lib qo‘shing!"));
+    if (found.length === 0) {
+      list.append(el("div", { class: "empty" },
+        el("div", { class: "ico" }, useIcon(q ? "search" : "ad")),
+        el("h3", {}, q ? "Hech narsa topilmadi" : "Hozircha e’lonlar yo‘q"),
+        el("p", {}, q ? "Boshqa so‘z bilan qidirib ko‘ring." : "Birinchi bo‘lib e’lon qo‘shing — bu bepul."),
+        q ? null : el("a", { href: "#add", class: "btn" }, "➕ E’lon qo‘shish")));
       return;
     }
-    latest.forEach(i => list.append(itemCard(i)));
+    found.slice(0, 30).forEach(i => list.append(itemCard(i)));
   }
+
+  let homeSearchTimer;
+  document.getElementById("homeSearch").addEventListener("input", () => {
+    clearTimeout(homeSearchTimer);
+    homeSearchTimer = setTimeout(renderHome, 250);
+  });
 
   // ---------- Bo‘lim ro‘yxati ----------
   async function renderList(kind) {
@@ -2013,6 +2251,7 @@
     add:      { title: "E’lon qo‘shish", sub: "Tekshiruvdan so‘ng saytda chiqadi", icon: "plus", c: "#3b82f6", c2: "#1d4ed8" },
     account:  { title: "Mening hisobim", sub: "Profil va e’lonlarim", icon: "user", c: "#06b6d4", c2: "#0e7490" },
     about:    { title: "Vaxshivor haqida", sub: "Tarixi, So‘fi Olloyor, manzili", icon: "mountain", c: "#14b8a6", c2: "#0f766e" },
+    app:      { title: "Ilova haqida", sub: "Ilova, asoschi va boshqa loyihalar", icon: "info", c: "#6366f1", c2: "#4338ca" },
     admin:    { title: "Administrator", sub: "E’lonlarni boshqarish", icon: "lock", c: "#64748b", c2: "#334155" },
     register: { title: "Ro‘yxatdan o‘tish", sub: "Bir daqiqa vaqt oladi", icon: "user", c: "#3b82f6", c2: "#1d4ed8" }
   };
@@ -2040,7 +2279,7 @@
     }
 
     const isKind = page in KINDS;
-    const sectionId = isKind ? "list" : (["home", "add", "admin", "account", "about", "register"].includes(page) ? page : "home");
+    const sectionId = isKind ? "list" : (["home", "add", "admin", "account", "about", "app", "register"].includes(page) ? page : "home");
     document.body.classList.toggle("reg", sectionId === "register");
 
     // Yuqori panel: har bir sahifaning o‘z nomi, belgisi va rangi bor.
@@ -2073,6 +2312,13 @@
     if (sectionId === "admin") renderAdmin();
     if (sectionId === "account") renderAccount();
     if (sectionId === "register") renderRegister();
+    if (sectionId === "app") renderApp();
+    if (sectionId === "about" && aboutOpen !== null) {
+      document.querySelectorAll("#about details.acc").forEach((d, i) => (d.open = i === aboutOpen));
+      const target = document.querySelectorAll("#about details.acc")[aboutOpen];
+      aboutOpen = null;
+      setTimeout(() => target?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    }
   }
 
   // ---------- Mobil ilova (telefonga o‘rnatish) ----------
@@ -2108,6 +2354,21 @@
   });
 
   window.addEventListener("appinstalled", () => installCard.classList.add("hidden"));
+
+  document.getElementById("appInstallBtn").addEventListener("click", async () => {
+    const hint = document.getElementById("appInstallHint");
+    if (installEvent) {
+      installEvent.prompt();
+      await installEvent.userChoice;
+      installEvent = null;
+    } else if (isIos) {
+      hint.textContent = "Safari’da «Ulashish» → «Bosh ekranga qo‘shish»ni bosing.";
+    } else if (inTelegram) {
+      hint.textContent = "O‘rnatish uchun saytni Chrome brauzerida oching.";
+    } else {
+      hint.textContent = "Brauzer menyusidan (⋮) «Ilovani o‘rnatish» yoki «Bosh ekranga qo‘shish»ni tanlang.";
+    }
+  });
 
   function dismissInstall() {
     installCard.classList.add("hidden");
