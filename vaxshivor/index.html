@@ -620,6 +620,56 @@
     .flag-pin { width: 34px; height: 34px; display: grid; place-items: center; font-size: 17px; border-radius: 12px; background: linear-gradient(145deg, #fb7185, #e11d48); border: 2px solid #fff; box-shadow: 0 6px 14px rgba(0,0,0,.45); }
     .pick-pin { width: 34px; height: 34px; display: grid; place-items: center; font-size: 17px; border-radius: 12px; background: linear-gradient(145deg, #fde047, #eab308); border: 2px solid #fff; box-shadow: 0 6px 14px rgba(0,0,0,.45); }
 
+    /* Taksi: ixcham ko‘rinish */
+    .ride .taxi-map { height: 44vh; min-height: 260px; }
+    .ride-sheet { padding: 6px 14px 12px; border-radius: 20px; margin-top: -18px; }
+    .ride-sheet .grab { margin-bottom: 2px; width: 36px; }
+    .ride-row { padding: 7px 2px; gap: 10px; }
+    .ride-row small { font-size: 11px; line-height: 1.2; }
+    .ride-row b, .ride-row input { font-size: 15px; }
+    .ride-row .pick { padding: 5px 10px; font-size: 12px; }
+    .ride-opts { margin-top: 8px; gap: 8px; }
+    .opt { padding: 5px 10px; border-radius: 12px; }
+    .opt small { font-size: 11px; }
+    .opt input { font-size: 15px; padding: 0; }
+    #ridePhoneBox { margin-top: 8px; }
+    .stepper { gap: 8px; margin-top: 0; }
+    .stepper button { width: 26px; height: 26px; font-size: 16px; }
+    .stepper b { font-size: 15px; }
+    .ride-info { margin-top: 8px; }
+    .ride-info .tag { font-size: 11px; padding: 3px 8px; }
+    .ride-cta { margin-top: 8px; padding: 12px; border-radius: 14px; font-size: 16px; }
+    #rideStatus:empty { display: none; }
+    .ride-pin .head { width: 40px; height: 40px; font-size: 19px; border-radius: 14px; }
+    .ride-pin .stem { height: 16px; }
+    .ride-pin .bubble { font-size: 11px; padding: 4px 9px; margin-bottom: 4px; }
+    .ride-fab { width: 42px; height: 42px; font-size: 18px; bottom: 28px; right: 12px; }
+    .ride-state { padding: 2px 0 0; }
+    .ride-state h3 { font-size: 17px; margin: 6px 0 2px; }
+    .ride-state p { margin: 2px 0; font-size: 14px; }
+    .ride-state .spinner { width: 34px; height: 34px; margin: 4px auto; border-width: 3px; }
+    .ride-state .big { font-size: 30px; line-height: 1.1; }
+    .ride-state .order-route { margin: 6px 0 !important; font-size: 14px; }
+    .ride-driver { margin: 8px 0; padding: 8px 10px; gap: 10px; }
+    .ride-driver .thumb { width: 44px !important; height: 44px !important; font-size: 22px !important; }
+    #taxiLive .sec-head { margin: 14px 2px 8px; }
+    #taxiLive .sec-head h2 { font-size: 16px; }
+    #taxiLive .card { padding: 11px 12px; margin: 8px 0; border-radius: 16px; }
+    #taxiLive .card h3 { font-size: 15px; margin-bottom: 4px; }
+    #taxiLive .card p { margin: 3px 0; font-size: 14px; }
+    #taxiLive .actions { margin-top: 8px; gap: 6px; }
+    #taxiLive .actions .btn, #taxiLive .actions button { padding: 7px 11px; font-size: 13px; border-radius: 12px; }
+    #taxiLive .live-card .thumb { width: 42px !important; height: 42px !important; font-size: 21px !important; }
+    #taxiLive .live-card .route { font-size: 15px; }
+    #taxiLive .notice { padding: 10px 12px; font-size: 14px; margin: 8px 0; }
+    .driver-panel .row3 input { padding: 9px 10px; margin: 3px 0 8px; }
+    .driver-panel label { font-size: 12px; }
+    .driver-panel .row3 { display: grid; grid-template-columns: 1fr 1fr 74px; gap: 8px; }
+    #driverToggle { padding: 10px; }
+    .order-route { font-size: 14px; }
+    body.taxi-page main { padding-top: 0; }
+    body.taxi-page #listItems > .card { padding: 12px; margin: 8px 0; }
+
     /* ---------- Yangi bosh sahifa ---------- */
     .home-hero { padding: 20px 18px 16px; border-radius: 26px; }
     .home-hero .date { font-size: 13px; color: #b9cbe6; letter-spacing: .3px; text-transform: capitalize; margin: 0; }
@@ -888,14 +938,13 @@
     <div id="taxiLive" class="hidden">
       <div id="driverPanel" class="card driver-panel hidden">
         <h3 id="driverTitle">🚕 Siz haydovchisiz</h3>
-        <p id="driverHint">Liniyaga chiqsangiz, yo‘lovchilar sizni xaritada ko‘radi va buyurtma beradi.</p>
+        <p id="driverHint">Liniyaga chiqing — buyurtmalar shu yerda chiqadi.</p>
         <div id="driverForm">
-          <div class="row2">
+          <div class="row3">
             <div><label for="tFrom">Qayerdan</label><input id="tFrom" list="taxiPlaces" maxlength="60" placeholder="Vaxshivor"></div>
             <div><label for="tTo">Qayerga</label><input id="tTo" list="taxiPlaces" maxlength="60" placeholder="Denov"></div>
+            <div><label for="tSeats">Joy</label><input id="tSeats" type="number" inputmode="numeric" min="0" max="20" value="4"></div>
           </div>
-          <label for="tSeats">Bo‘sh joylar</label>
-          <input id="tSeats" type="number" inputmode="numeric" min="0" max="20" value="4">
         </div>
         <datalist id="taxiPlaces">
           <option value="Vaxshivor"><option value="Qarluq (tuman markazi)"><option value="Denov"><option value="Sho‘rchi"><option value="Termiz"><option value="Toshkent">
@@ -936,7 +985,7 @@
                 <div class="stepper"><button type="button" id="seatMinus" aria-label="Kamaytirish">−</button><b id="seatCount">1</b><button type="button" id="seatPlus" aria-label="Ko‘paytirish">+</button></div>
               </div>
               <div class="opt grow">
-                <small>Taklif narxi (ixtiyoriy)</small>
+                <small>Taklif narxi</small>
                 <input id="ridePrice" type="number" inputmode="numeric" min="0" step="1000" placeholder="so‘m">
               </div>
             </div>
@@ -2161,8 +2210,8 @@
     document.getElementById("driverForm").classList.toggle("hidden", sharing);
     document.getElementById("driverTitle").textContent = sharing ? "🟢 Siz liniyadasiz" : "🚕 Siz haydovchisiz";
     document.getElementById("driverHint").textContent = sharing
-      ? `${document.getElementById("tFrom").value} → ${document.getElementById("tTo").value}. Buyurtmalar shu yerda chiqadi. Ilovani yopmang.`
-      : "Liniyaga chiqsangiz, yo‘lovchilar sizni xaritada ko‘radi va buyurtma beradi.";
+      ? `${document.getElementById("tFrom").value} → ${document.getElementById("tTo").value}. Ilovani yopmang.`
+      : "Liniyaga chiqing — buyurtmalar shu yerda chiqadi.";
     const btn = document.getElementById("driverToggle");
     btn.textContent = sharing ? "⏹ Liniyadan chiqish" : "🟢 Liniyaga chiqish";
     btn.className = sharing ? "danger" : "success";
@@ -2327,6 +2376,7 @@
     document.getElementById("ridePin").classList.toggle("to", mode === "to");
     document.getElementById("rideModeChip").classList.toggle("hidden", mode !== "to");
     document.getElementById("toConfirm").classList.toggle("hidden", mode !== "to");
+    document.getElementById("rideStatus").textContent = "";
     document.getElementById("rideOrder").classList.toggle("hidden", mode === "to");
     document.getElementById("rowFrom").classList.toggle("active", mode === "from");
     document.getElementById("rowTo").classList.toggle("active", mode === "to");
@@ -2871,7 +2921,7 @@
     if (profile?.phone && !phoneInput.value) phoneInput.value = profile.phone;
     const ridePhone = document.getElementById("ridePhone");
     if (profile?.phone && !ridePhone.value) ridePhone.value = profile.phone;
-    document.getElementById("ridePhoneBox").classList.toggle("hidden", !currentUser);
+    document.getElementById("ridePhoneBox").classList.toggle("hidden", !currentUser || !!profile?.phone);
   }
 
   // ---------- Profil va ro‘yxatdan o‘tish ----------
