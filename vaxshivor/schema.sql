@@ -171,3 +171,55 @@ create policy "submit_pending" on public.listings
     and user_id = auth.uid()
     and (kind <> 'taxi' or exists (select 1 from public.profiles p where p.id = auth.uid() and p.role = 'taxi'))
   );
+
+-- 8) Taksi buyurtmalari: yo'lovchi chaqiradi, liniyadagi haydovchi qabul qiladi.
+create or replace function public.is_taxi_driver()
+returns boolean language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.profiles where id = auth.uid() and role = 'taxi');
+$$;
+
+create table if not exists public.taxi_orders (
+  id bigint generated always as identity primary key,
+  passenger_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  passenger_name text not null check (char_length(passenger_name) between 1 and 80),
+  passenger_phone text not null check (char_length(passenger_phone) between 9 and 20),
+  from_text text not null check (char_length(from_text) between 1 and 160),
+  from_lat double precision not null check (from_lat between -90 and 90),
+  from_lng double precision not null check (from_lng between -180 and 180),
+  to_text text not null check (char_length(to_text) between 1 and 160),
+  to_lat double precision,
+  to_lng double precision,
+  seats int not null default 1 check (seats between 1 and 8),
+  price_offer int check (price_offer between 0 and 100000000),
+  status text not null default 'new' check (status in ('new', 'accepted', 'arrived', 'done', 'cancelled')),
+  cancelled_by text check (cancelled_by in ('passenger', 'driver')),
+  driver_id uuid references auth.users (id) on delete set null,
+  driver_name text,
+  driver_phone text,
+  driver_car text,
+  driver_plate text,
+  created_at timestamptz not null default now(),
+  accepted_at timestamptz,
+  updated_at timestamptz not null default now()
+);
+create index if not exists taxi_orders_status_idx on public.taxi_orders (status, created_at desc);
+alter table public.taxi_orders enable row level security;
+
+-- Buyurtmani yo'lovchining o'zi, uni olgan haydovchi va (yangi bo'lsa) barcha taksi haydovchilari ko'radi.
+drop policy if exists "orders_read" on public.taxi_orders;
+create policy "orders_read" on public.taxi_orders
+  for select to authenticated using (
+    passenger_id = auth.uid() or driver_id = auth.uid()
+    or (status = 'new' and public.is_taxi_driver()) or public.is_admin()
+  );
+
+drop policy if exists "orders_insert" on public.taxi_orders;
+create policy "orders_insert" on public.taxi_orders
+  for insert to authenticated with check (passenger_id = auth.uid() and status = 'new' and driver_id is null);
+
+-- Yangi buyurtmani haydovchi o'ziga oladi; keyin faqat yo'lovchi va o'sha haydovchi o'zgartiradi.
+drop policy if exists "orders_update" on public.taxi_orders;
+create policy "orders_update" on public.taxi_orders
+  for update to authenticated
+  using (passenger_id = auth.uid() or driver_id = auth.uid() or (status = 'new' and public.is_taxi_driver()))
+  with check (passenger_id = auth.uid() or driver_id = auth.uid());
