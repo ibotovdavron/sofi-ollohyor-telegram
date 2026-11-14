@@ -675,7 +675,8 @@
     body.taxi-page .appbar .titles span { display: none; }
     body.taxi-page .appbar .round { width: 34px; height: 34px; font-size: 17px; }
     body.taxi-page .appbar .badge { width: 32px; height: 32px; font-size: 16px; border-radius: 10px; }
-    .ride .taxi-map { height: 50vh; }
+    /* Xarita ekranning buyurtma oynasidan qolgan butun joyini egallaydi. */
+    .ride .taxi-map { height: calc(100vh - 318px); height: calc(100dvh - 318px); min-height: 300px; }
     .ride-sheet { padding: 4px 12px 10px; margin-top: -16px; border-radius: 18px; }
     .ride-sheet .grab { height: 3px; margin-bottom: 0; }
     .ride-row { padding: 9px 2px; }
