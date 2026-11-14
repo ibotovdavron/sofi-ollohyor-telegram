@@ -670,6 +670,56 @@
     body.taxi-page main { padding-top: 0; }
     body.taxi-page #listItems > .card { padding: 12px; margin: 8px 0; }
 
+    /* Taksi: yanada ixcham */
+    body.taxi-page .appbar { padding-top: calc(5px + env(safe-area-inset-top)); padding-bottom: 5px; }
+    body.taxi-page .appbar .titles span { display: none; }
+    body.taxi-page .appbar .round { width: 34px; height: 34px; font-size: 17px; }
+    body.taxi-page .appbar .badge { width: 32px; height: 32px; font-size: 16px; border-radius: 10px; }
+    .ride .taxi-map { height: 50vh; }
+    .ride-sheet { padding: 4px 12px 10px; margin-top: -16px; border-radius: 18px; }
+    .ride-sheet .grab { height: 3px; margin-bottom: 0; }
+    .ride-row { padding: 9px 2px; }
+    .ride-row small { display: none; }
+    .ride-row b, .ride-row input { font-size: 15px; line-height: 1.25; }
+    .ride-row .dot { width: 10px; height: 10px; border-width: 3px; }
+    .ride-opts { margin-top: 8px; gap: 8px; align-items: stretch; }
+    .opt { padding: 6px 10px; display: flex; align-items: center; }
+    .opt input { margin: 0; font-size: 15px; font-weight: 500; }
+    .stepper .lbl { font-size: 15px; }
+    .stepper button { width: 24px; height: 24px; font-size: 15px; }
+    .ride-info { margin-top: 6px; }
+    .ride-cta { margin-top: 8px; padding: 11px; font-size: 15px; border-radius: 13px; }
+    #rideStatus { margin: 4px 0 0; font-size: 12px; }
+    .ride-state h3 { font-size: 16px; margin: 4px 0 0; }
+    .ride-state p { font-size: 13px; }
+    .ride-state .spinner { width: 28px; height: 28px; margin: 2px auto; }
+    .ride-state .big { font-size: 24px; }
+    .ride-state .order-route { font-size: 13px; margin: 4px 0 !important; }
+    .ride-driver { margin: 6px 0; padding: 7px 9px; }
+    .ride-driver .plate { margin-top: 2px; font-size: 12px; padding: 2px 6px; }
+    .mini-acc { margin: 10px 0 0; border: 1px solid var(--border); border-radius: 14px; background: rgba(17, 28, 46, .95); }
+    .mini-acc summary { list-style: none; display: flex; align-items: center; gap: 8px; margin: 0; padding: 10px 12px; font-weight: 600; font-size: 14px; color: var(--text); }
+    .mini-acc summary::-webkit-details-marker { display: none; }
+    .mini-acc summary::after { content: "⌄"; margin-left: auto; color: var(--muted); transition: transform .2s ease; }
+    .mini-acc[open] summary::after { transform: rotate(180deg); }
+    .mini-acc #onlineList { padding: 0 8px 4px; }
+    #taxiLive .card { padding: 9px 11px; margin: 6px 0; }
+    #taxiLive .sec-head { margin: 12px 2px 6px; }
+    #taxiLive .sec-head h2 { font-size: 15px; }
+    #taxiLive .sec-head a { font-size: 13px; }
+    .driver-panel h3 { font-size: 14px !important; }
+    .driver-panel p { font-size: 13px !important; }
+    #driverToggle { padding: 9px; font-size: 14px; }
+    #driverStatus:empty { display: none; }
+    #driverStatus { margin: 4px 0 0; font-size: 12px; }
+    .order-route { font-size: 13px; }
+    #taxiLive .meta { margin: 4px 0; gap: 4px; }
+    #taxiLive .tag { font-size: 11px; padding: 3px 7px; }
+    body.taxi-page #listItems > .card { padding: 10px; margin: 6px 0; }
+    body.taxi-page #listItems .thumb { width: 52px; height: 52px; font-size: 24px; }
+    body.taxi-page #listItems h3 { font-size: 15px; }
+    body.taxi-page #listItems .actions .btn, body.taxi-page #listItems .actions button { padding: 7px 10px; font-size: 13px; }
+
     /* ---------- Yangi bosh sahifa ---------- */
     .home-hero { padding: 20px 18px 16px; border-radius: 26px; }
     .home-hero .date { font-size: 13px; color: #b9cbe6; letter-spacing: .3px; text-transform: capitalize; margin: 0; }
@@ -981,17 +1031,14 @@
             </div>
             <div id="rideOpts" class="ride-opts">
               <div class="opt">
-                <small>Yo‘lovchilar</small>
-                <div class="stepper"><button type="button" id="seatMinus" aria-label="Kamaytirish">−</button><b id="seatCount">1</b><button type="button" id="seatPlus" aria-label="Ko‘paytirish">+</button></div>
+                <div class="stepper"><span class="lbl">👥</span><button type="button" id="seatMinus" aria-label="Kamaytirish">−</button><b id="seatCount">1</b><button type="button" id="seatPlus" aria-label="Ko‘paytirish">+</button></div>
               </div>
               <div class="opt grow">
-                <small>Taklif narxi</small>
-                <input id="ridePrice" type="number" inputmode="numeric" min="0" step="1000" placeholder="so‘m">
+                <input id="ridePrice" type="number" inputmode="numeric" min="0" step="1000" placeholder="Taklif narxi, so‘m">
               </div>
             </div>
             <div class="opt" id="ridePhoneBox">
-              <small>Telefon raqamingiz</small>
-              <input id="ridePhone" type="tel" maxlength="20" placeholder="+998 90 123 45 67" autocomplete="tel">
+              <input id="ridePhone" type="tel" maxlength="20" placeholder="Telefon raqamingiz" autocomplete="tel">
             </div>
             <div class="ride-info" id="rideInfo"></div>
             <button type="button" id="toConfirm" class="ride-cta hidden">✓ Shu manzilni tanlash</button>
@@ -1002,8 +1049,10 @@
         </div>
       </div>
 
-      <div class="sec-head"><h2><span class="live-dot"></span> Onlayn taksilar <span id="onlineCount" class="muted"></span></h2></div>
-      <div id="onlineList"></div>
+      <details class="mini-acc">
+        <summary><span class="live-dot"></span> Onlayn taksilar <span id="onlineCount" class="muted"></span></summary>
+        <div id="onlineList"></div>
+      </details>
       <div class="sec-head"><h2>Doimiy qatnovlar</h2><a href="#add" onclick="addPreset='taxi'">➕ E’lon qo‘shish</a></div>
     </div>
     <div id="listItems"></div>
@@ -2362,7 +2411,6 @@
 
     const info = document.getElementById("rideInfo");
     info.replaceChildren();
-    if (near) info.append(el("span", { class: "tag status-ok" }, `🚕 Eng yaqin taksi: ${kmLabel(near.km)}, ~${etaMinutes(near.km)} daq`));
     if (rideFrom && rideTo?.lat != null) info.append(el("span", { class: "tag" }, `📏 Masofa: ~${kmLabel(kmBetween(rideFrom, rideTo) * 1.3)}`));
 
     if (!db || demoMode || !taxiDbReady) { btn.disabled = true; btn.textContent = "Buyurtma hozircha mavjud emas"; }
