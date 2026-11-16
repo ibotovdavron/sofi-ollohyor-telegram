@@ -728,6 +728,19 @@
     .tariff small { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tariff.loading b { opacity: .5; }
 
+    /* Haydovchiga kelgan buyurtma oynasi */
+    @keyframes ring { 0%, 100% { transform: rotate(0); } 20% { transform: rotate(-14deg); } 40% { transform: rotate(12deg); } 60% { transform: rotate(-8deg); } 80% { transform: rotate(6deg); } }
+    @keyframes countdown { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+    .order-pop { padding: 18px 16px calc(18px + env(safe-area-inset-bottom)) !important; border-color: #eab308 !important; }
+    .order-pop .bell { font-size: 34px; display: inline-block; animation: ring .9s ease-in-out infinite; }
+    .order-pop h3 { font-size: 20px; margin: 4px 0 2px; }
+    .order-pop .price { font-size: 30px; font-weight: 800; color: #fde047; margin: 6px 0; }
+    .order-pop .order-route { font-size: 16px; margin: 10px 0; }
+    .order-pop .bar { height: 4px; border-radius: 99px; background: rgba(255,255,255,.12); overflow: hidden; margin: 12px 0; }
+    .order-pop .bar i { display: block; height: 100%; background: linear-gradient(90deg, #fde047, #eab308); transform-origin: left; animation: countdown 25s linear forwards; }
+    .order-pop .ride-cta { margin-top: 8px; padding: 15px; font-size: 17px; }
+    .order-pop .skip { display: block; width: 100%; margin-top: 8px; text-align: center; background: none; border: 0; color: var(--muted); padding: 10px; }
+
     /* ---------- Yangi bosh sahifa ---------- */
     .home-hero { padding: 20px 18px 16px; border-radius: 26px; }
     .home-hero .date { font-size: 13px; color: #b9cbe6; letter-spacing: .3px; text-transform: capitalize; margin: 0; }
@@ -1351,6 +1364,7 @@
 </main>
 
 <div id="sheet" class="sheet-wrap hidden" role="dialog" aria-modal="true"></div>
+<div id="orderPopup" class="sheet-wrap hidden" role="alertdialog" aria-modal="true" style="z-index:60"></div>
 
 <button class="fab primary" id="fab" onclick="go('add')">➕ E’lon</button>
 
@@ -2690,6 +2704,7 @@
     if (error || !data) return;
     if (data.status !== myOrder.status || data.driver_id !== myOrder.driver_id) setMyOrder(data);
     else renderRideTimer();
+    if (myOrder?.status === "accepted") refreshOnline();   // haydovchining xaritadagi o‘rni tez-tez yangilanadi
   }
 
   // Sahifa qayta ochilganda tugallanmagan buyurtmani tiklaymiz.
@@ -2710,13 +2725,57 @@
     setMyOrder(data || { ...myOrder, status: "cancelled", cancelled_by: "passenger" });
   }
 
-  function trackMyDriver() {
+  // Haydovchining yo‘lovchigacha bo‘lgan yo‘li (ko‘k chiziq). Haydovchi siljigan sari yangilanadi.
+  let approachLine = null;
+  let approachFrom = null;     // chiziq oxirgi marta qaysi nuqtadan chizilgan
+  let approachInfo = null;     // { km, min }
+  let approachFittedFor = null;
+  let approachSeq = 0;
+
+  function clearApproach() {
+    approachSeq++;
+    approachLine?.remove();
+    approachLine = null; approachFrom = null; approachInfo = null; approachFittedFor = null;
+  }
+
+  async function drawApproach(orderId, from, to) {
+    if (!taxiMap) return;
+    // Haydovchi 80 metrdan kam siljigan bo‘lsa, yo‘lni qayta so‘ramaymiz.
+    if (approachFrom && kmBetween(approachFrom, from) < 0.08) return;
+    approachFrom = { lat: from.lat, lng: from.lng };
+    const seq = ++approachSeq;
+    const route = await fetchRoute(from, to);
+    if (seq !== approachSeq) return;
+    approachInfo = { km: route.km, min: route.min };
+    const line = route.line || [[from.lat, from.lng], [to.lat, to.lng]];
+    approachLine?.remove();
+    approachLine = L.polyline(line, { color: "#60a5fa", weight: 6, opacity: .95, dashArray: route.line ? null : "8 10" }).addTo(taxiMap);
+    if (approachFittedFor !== orderId) {
+      approachFittedFor = orderId;
+      taxiMap.fitBounds(L.latLngBounds([...line, [to.lat, to.lng]]).pad(0.25), { maxZoom: 16, animate: false });
+    }
+    trackMyDriver(true);
+  }
+
+  function trackMyDriver(fromRoute) {
     if (!myOrder?.driver_id || !["accepted", "arrived"].includes(myOrder.status)) return;
     const d = onlineDrivers.find(x => x.user_id === myOrder.driver_id);
     const etaEl = document.getElementById("rideDriverEta");
-    if (d && etaEl) {
-      const km = kmBetween({ lat: myOrder.from_lat, lng: myOrder.from_lng }, d);
-      etaEl.textContent = myOrder.status === "arrived" ? "Haydovchi sizni kutmoqda" : `Sizgacha ${kmLabel(km)} · ~${etaMinutes(km)} daq`;
+    const pickup = { lat: myOrder.from_lat, lng: myOrder.from_lng };
+    if (myOrder.status === "arrived") {
+      clearApproach();
+      if (etaEl) etaEl.textContent = "Haydovchi sizni kutmoqda";
+      return;
+    }
+    if (!d) {
+      if (etaEl) etaEl.textContent = "Haydovchi joylashuvi yangilanmoqda...";
+      return;
+    }
+    if (!fromRoute) drawApproach(myOrder.id, d, pickup);
+    if (etaEl) {
+      const km = approachInfo?.km ?? kmBetween(pickup, d) * 1.3;
+      const min = approachInfo ? Math.max(1, Math.round(approachInfo.min)) : etaMinutes(kmBetween(pickup, d));
+      etaEl.textContent = `Sizgacha ${kmLabel(km)} · ~${min} daq`;
     }
   }
 
@@ -2736,6 +2795,7 @@
     box.classList.toggle("hidden", !o);
     pin.classList.toggle("hidden", !rideReady || (!!o && ORDER_OPEN.includes(o.status)));
     drawRideMarkers();
+    if (!o || o.status !== "accepted") { if (!driverActive) clearApproach(); }
     if (!o) { updateEta(); return; }
 
     const route = el("div", { class: "order-route", style: "text-align:left;margin:10px 0" },
@@ -2760,8 +2820,8 @@
       renderRideTimer();
     } else if (o.status === "accepted") {
       box.replaceChildren(el("div", { class: "ride-state" },
-        el("div", { class: "big" }, "🚕"), el("h3", {}, "Haydovchi yo‘lda"), driver(), route, cancelBtn));
-      if (taxiMap) taxiMap.setView([o.from_lat, o.from_lng], Math.max(taxiMap.getZoom(), 14), { animate: false });
+        el("div", { class: "big" }, "🚕"), el("h3", {}, "Haydovchi yo‘lda"),
+        el("p", {}, "Xaritadagi ko‘k chiziq — haydovchining sizgacha yo‘li."), driver(), route, cancelBtn));
     } else if (o.status === "arrived") {
       box.replaceChildren(el("div", { class: "ride-state" },
         el("div", { class: "big" }, "✅"), el("h3", {}, "Haydovchi yetib keldi!"), driver(), route, cancelBtn));
@@ -2787,10 +2847,47 @@
     pollDriverOrders();
     driverOrderPoll = setInterval(pollDriverOrders, 5000);
   }
+  let popupOrder = null;
+  let popupTimer = null;
+
+  function closeOrderPopup() {
+    clearTimeout(popupTimer);
+    popupOrder = null;
+    document.getElementById("orderPopup").classList.add("hidden");
+  }
+
+  // Yangi buyurtma: ilovaning qaysi sahifasida bo‘lmasin, ekran pastidan oyna chiqadi.
+  function showOrderPopup(o) {
+    popupOrder = o;
+    const wrap = document.getElementById("orderPopup");
+    const pickup = { lat: o.from_lat, lng: o.from_lng };
+    wrap.replaceChildren(el("div", { class: "sheet order-pop", style: "text-align:center" },
+      el("span", { class: "bell" }, "🔔"),
+      el("h3", {}, "Buyurtma"),
+      el("div", { class: "price" }, o.price_offer ? money(o.price_offer) : "Narxi kelishiladi"),
+      el("div", { class: "order-route", style: "text-align:left" },
+        el("span", {}, `🟡 ${o.from_text}`), el("span", { class: "to" }, `🏁 ${o.to_text}`)),
+      el("div", { class: "meta", style: "justify-content:center" },
+        el("span", { class: "tag" }, `👤 ${o.passenger_name}`),
+        el("span", { class: "tag" }, `👥 ${o.seats} kishi`),
+        lastPos ? el("span", { class: "tag status-ok" }, `📍 Sizdan ${kmLabel(kmBetween(lastPos, pickup))} · ~${etaMinutes(kmBetween(lastPos, pickup))} daq`) : null),
+      el("div", { class: "bar" }, el("i")),
+      el("button", {
+        type: "button", class: "ride-cta",
+        onclick: async () => { const order = popupOrder; closeOrderPopup(); if (order) { await acceptOrder(order); go("taxi"); } }
+      }, "✅ Qabul qilish"),
+      el("button", { type: "button", class: "skip", onclick: closeOrderPopup }, "O‘tkazib yuborish")));
+    wrap.classList.remove("hidden");
+    clearTimeout(popupTimer);
+    popupTimer = setTimeout(closeOrderPopup, 25000);   // 25 soniyada o‘zi yopiladi, buyurtma ro‘yxatda qoladi
+  }
+
   function stopDriverOrders() {
     clearInterval(driverOrderPoll);
     driverOrderPoll = null;
     driverActive = null;
+    closeOrderPopup();
+    clearApproach();
     pickupMarker?.remove(); pickupMarker = null;
     document.getElementById("driverOrders").replaceChildren();
   }
@@ -2830,8 +2927,13 @@
       const res = await db.from("taxi_orders").select("*").eq("status", "new").gte("created_at", since)
         .order("created_at", { ascending: false }).limit(20);
       fresh = (res.data || []).filter(o => o.passenger_id !== currentUser.id);
-      if (fresh.some(o => !seenOrders.has(o.id))) alertDriver();
+      const unseen = fresh.filter(o => !seenOrders.has(o.id));
       fresh.forEach(o => seenOrders.add(o.id));
+      if (unseen.length) { alertDriver(); if (!popupOrder) showOrderPopup(unseen[0]); }
+      // Oynadagi buyurtmani boshqa haydovchi olgan yoki yo‘lovchi bekor qilgan bo‘lsa, yopamiz.
+      if (popupOrder && !fresh.some(o => o.id === popupOrder.id)) closeOrderPopup();
+    } else {
+      closeOrderPopup();
     }
     renderDriverOrders(fresh);
   }
@@ -2883,6 +2985,13 @@
 
     if (driverActive) {
       const o = driverActive;
+      if (o.status === "accepted" && lastPos) drawApproach(o.id, lastPos, { lat: o.from_lat, lng: o.from_lng });
+      else clearApproach();
+      if (taxiMap && !pickupMarker) {
+        pickupMarker = L.marker([o.from_lat, o.from_lng], {
+          icon: L.divIcon({ className: "", iconSize: [34, 34], iconAnchor: [17, 17], html: '<div class="pick-pin">🧍</div>' })
+        }).addTo(taxiMap).bindPopup(`${o.passenger_name}: ${o.from_text}`);
+      }
       const nav = `https://www.google.com/maps/dir/?api=1&destination=${o.from_lat},${o.from_lng}`;
       box.replaceChildren(el("div", { class: "card order-card active" },
         el("h3", {}, o.status === "arrived" ? "✅ Yo‘lovchi kutilmoqda" : "🚕 Yo‘lovchi sizni kutmoqda"),
@@ -2900,6 +3009,7 @@
       return;
     }
     pickupMarker?.remove(); pickupMarker = null;
+    if (!(myOrder && myOrder.status === "accepted")) clearApproach();
     if (!fresh.length) {
       box.replaceChildren(el("div", { class: "notice" }, "📭 Hozircha buyurtma yo‘q. Yangi buyurtma kelganda telefon ovoz beradi."));
       return;
